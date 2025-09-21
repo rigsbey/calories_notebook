@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  calories-bot:
+    image: ghcr.io/username/calories-bot:latest
+    container_name: calories-bot
+    restart: unless-stopped
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_CREDENTIALS_PATH=credentials.json
+    volumes:
+      - /opt/calories-bot/logs:/app/logs
+      - /opt/calories-bot/temp_photos:/app/temp_photos
+      - /opt/calories-bot/credentials.json:/app/credentials.json:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
