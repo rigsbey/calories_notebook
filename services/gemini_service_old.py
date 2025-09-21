@@ -67,7 +67,7 @@ class GeminiService:
     
     async def analyze_food(self, image_path: str, weight_grams: int) -> str:
         """
-        Анализирует фото еды с помощью Google Gemini API через VPN
+        Анализирует фото еды с помощью Google Gemini API
         
         Args:
             image_path: путь к файлу изображения
@@ -146,18 +146,36 @@ class GeminiService:
                 ]
             }
             
-            # Выполняем запрос через VPN
-            result = await self._make_vpn_request(payload)
+            headers = {
+                'Content-Type': 'application/json',
+                'X-goog-api-key': self.api_key
+            }
             
-            # Извлекаем текст ответа
-            if 'candidates' in result and len(result['candidates']) > 0:
-                if 'content' in result['candidates'][0]:
-                    if 'parts' in result['candidates'][0]['content']:
-                        if len(result['candidates'][0]['content']['parts']) > 0:
-                            return result['candidates'][0]['content']['parts'][0]['text']
-            
-            logger.error(f"Неожиданный формат ответа Gemini: {result}")
-            return "Не удалось получить анализ изображения"
+            # Выполняем запрос
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    self.base_url,
+                    headers=headers,
+                    json=payload,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    
+                    if response.status != 200:
+                        error_text = await response.text()
+                        logger.error(f"Ошибка Gemini API {response.status}: {error_text}")
+                        return f"Ошибка анализа изображения: {response.status}"
+                    
+                    result = await response.json()
+                    
+                    # Извлекаем текст ответа
+                    if 'candidates' in result and len(result['candidates']) > 0:
+                        if 'content' in result['candidates'][0]:
+                            if 'parts' in result['candidates'][0]['content']:
+                                if len(result['candidates'][0]['content']['parts']) > 0:
+                                    return result['candidates'][0]['content']['parts'][0]['text']
+                    
+                    logger.error(f"Неожиданный формат ответа Gemini: {result}")
+                    return "Не удалось получить анализ изображения"
             
         except Exception as e:
             logger.error(f"Ошибка при анализе еды через Gemini: {e}")
@@ -165,7 +183,7 @@ class GeminiService:
     
     async def analyze_food_auto_weight(self, image_path: str) -> str:
         """
-        Анализирует фото еды с автоматическим определением веса Gemini через VPN
+        Анализирует фото еды с автоматическим определением веса Gemini
         
         Args:
             image_path: путь к файлу изображения
@@ -247,18 +265,36 @@ class GeminiService:
                 ]
             }
             
-            # Выполняем запрос через VPN
-            result = await self._make_vpn_request(payload)
+            headers = {
+                'Content-Type': 'application/json',
+                'X-goog-api-key': self.api_key
+            }
             
-            # Извлекаем текст ответа
-            if 'candidates' in result and len(result['candidates']) > 0:
-                if 'content' in result['candidates'][0]:
-                    if 'parts' in result['candidates'][0]['content']:
-                        if len(result['candidates'][0]['content']['parts']) > 0:
-                            return result['candidates'][0]['content']['parts'][0]['text']
-            
-            logger.error(f"Неожиданный формат ответа Gemini: {result}")
-            return "Не удалось получить анализ изображения"
+            # Выполняем запрос
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    self.base_url,
+                    headers=headers,
+                    json=payload,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    
+                    if response.status != 200:
+                        error_text = await response.text()
+                        logger.error(f"Ошибка Gemini API {response.status}: {error_text}")
+                        return f"Ошибка анализа изображения: {response.status}"
+                    
+                    result = await response.json()
+                    
+                    # Извлекаем текст ответа
+                    if 'candidates' in result and len(result['candidates']) > 0:
+                        if 'content' in result['candidates'][0]:
+                            if 'parts' in result['candidates'][0]['content']:
+                                if len(result['candidates'][0]['content']['parts']) > 0:
+                                    return result['candidates'][0]['content']['parts'][0]['text']
+                    
+                    logger.error(f"Неожиданный формат ответа Gemini: {result}")
+                    return "Не удалось получить анализ изображения"
             
         except Exception as e:
             logger.error(f"Ошибка при анализе еды через Gemini (автовес): {e}")

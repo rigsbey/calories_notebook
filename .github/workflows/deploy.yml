@@ -56,29 +56,36 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           # Создаем директории если их нет
-          sudo mkdir -p /opt/calories-bot/{logs,temp_photos}
+          mkdir -p /opt/calories-bot/{logs,temp_photos}
           
           # Переходим в рабочую директорию
           cd /opt/calories-bot
           
           # Скачиваем docker-compose файл
-          sudo curl -o docker-compose.prod.yml https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.prod.yml
+          curl -o docker-compose.prod.yml https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.prod.yml
           
           # Создаем .env файл с секретами
-          sudo tee .env > /dev/null <<EOF
+          cat > .env <<EOF
           BOT_TOKEN=${{ secrets.BOT_TOKEN }}
           GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
           EOF
           
+          # Устанавливаем правильные права
+          chmod -R 777 logs temp_photos
+          
           # Останавливаем старый контейнер
-          sudo docker-compose -f docker-compose.prod.yml down || true
+          docker-compose -f docker-compose.prod.yml down || true
           
           # Удаляем старый образ
-          sudo docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || true
+          docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || true
           
           # Запускаем новый контейнер
-          sudo docker-compose -f docker-compose.prod.yml pull
-          sudo docker-compose -f docker-compose.prod.yml up -d
+          docker-compose -f docker-compose.prod.yml pull
+          docker-compose -f docker-compose.prod.yml up -d
           
           # Проверяем статус
-          sudo docker-compose -f docker-compose.prod.yml ps
+          docker-compose -f docker-compose.prod.yml ps
+          
+          # Показываем логи
+          sleep 5
+          docker-compose -f docker-compose.prod.yml logs --tail 10
