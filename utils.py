@@ -77,17 +77,17 @@ def clean_temp_files(directory: str, max_age_hours: int = 24):
         logger.error(f"Ошибка при очистке временных файлов: {e}")
 
 def create_vitamin_bar(percentage: int) -> str:
-    """Создает прогресс-бар для витамина"""
+    """Создает цветной прогресс-бар для витамина"""
     if percentage <= 0:
-        return "░░░░░░░░░░░░░"
+        return "⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜"
     elif percentage >= 100:
-        return "█████████████"
+        return "🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩"
     
-    # Рассчитываем количество заполненных блоков (максимум 13 блоков)
-    filled_blocks = int((percentage / 100) * 13)
-    empty_blocks = 13 - filled_blocks
+    # Рассчитываем количество заполненных блоков (максимум 10 блоков)
+    filled_blocks = int((percentage / 100) * 10)
+    empty_blocks = 10 - filled_blocks
     
-    return "█" * filled_blocks + "░" * empty_blocks
+    return "🟩" * filled_blocks + "⬜" * empty_blocks
 
 def get_vitamin_emoji(vitamin_name: str) -> str:
     """Возвращает эмодзи для витамина или минерала"""
@@ -143,7 +143,7 @@ def format_vitamins_section(text: str) -> str:
                 bar = create_vitamin_bar(percentage)
                 
                 # Форматируем строку с выравниванием
-                formatted_line = f"{emoji} {vitamin_name:<12} {bar} {percentage}%"
+                formatted_line = f"{emoji} {vitamin_name:<13} {bar}   {percentage}%"
                 formatted_lines.append(formatted_line)
                 continue
         
