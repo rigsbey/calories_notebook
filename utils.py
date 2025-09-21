@@ -123,6 +123,7 @@ def format_vitamins_section(text: str) -> str:
     formatted_lines = []
     
     in_vitamins_section = False
+    vitamin_lines = []  # Собираем все строки витаминов для обработки
     
     for line in lines:
         if 'ВИТАМИНЫ И МИНЕРАЛЫ' in line.upper():
@@ -142,22 +143,34 @@ def format_vitamins_section(text: str) -> str:
                 emoji = get_vitamin_emoji(vitamin_name)
                 bar = create_vitamin_bar(percentage)
                 
-                # Форматируем строку с выравниванием и невидимым символом
-                # Используем ljust для выравнивания названий, rjust для процентов
-                # Увеличиваем ширину поля для названий до 18 символов
-                formatted_line = f"{emoji} {vitamin_name:<18}  {bar}  {percentage:>3}%\u200B"
-                formatted_lines.append(formatted_line)
-                formatted_lines.append("")  # Добавляем пустую строку между витаминами
+                # Сохраняем данные витамина для последующего форматирования
+                vitamin_lines.append((emoji, vitamin_name, bar, percentage))
                 continue
         
         # Если вышли из раздела витаминов
         if in_vitamins_section and line.strip() and not line.strip().startswith('-'):
+            # Форматируем все витамины в моноширинном блоке
+            if vitamin_lines:
+                formatted_lines.append("```")
+                for emoji, name, bar, percent in vitamin_lines:
+                    # Используем простые ASCII символы для лучшего выравнивания
+                    ascii_bar = bar.replace('🟩', '█').replace('⬜', '░')
+                    formatted_lines.append(f"{name:<18} {ascii_bar} {percent:>3}%")
+                formatted_lines.append("```")
+                formatted_lines.append("")
+                vitamin_lines = []
+            
             in_vitamins_section = False
-            # Убираем последнюю пустую строку перед следующим разделом
-            if formatted_lines and formatted_lines[-1] == "":
-                formatted_lines.pop()
         
         formatted_lines.append(line)
+    
+    # Если файл закончился в разделе витаминов
+    if vitamin_lines:
+        formatted_lines.append("```")
+        for emoji, name, bar, percent in vitamin_lines:
+            ascii_bar = bar.replace('🟩', '█').replace('⬜', '░')
+            formatted_lines.append(f"{name:<18} {ascii_bar} {percent:>3}%")
+        formatted_lines.append("```")
     
     return '\n'.join(formatted_lines)
 
