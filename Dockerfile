@@ -24,6 +24,10 @@ RUN mkdir -p logs temp_photos
 # Создаем пользователя для безопасности
 RUN useradd --create-home --shell /bin/bash app \
     && chown -R app:app /app
+
+# Даем права на запись в папки логов и временных файлов
+RUN chmod 755 logs temp_photos
+
 USER app
 
 # Команда запуска
