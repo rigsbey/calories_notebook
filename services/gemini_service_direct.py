@@ -256,3 +256,84 @@ class GeminiService:
         except Exception as e:
             logger.error(f"Ошибка при анализе еды через Gemini (автовес): {e}")
             return f"Произошла ошибка при анализе изображения: {str(e)}"
+    
+    async def correct_analysis(self, original_analysis: str, user_correction: str) -> str:
+        """
+        Исправляет анализ на основе пользовательской коррекции
+        
+        Args:
+            original_analysis: Оригинальный анализ от Gemini
+            user_correction: Текст коррекции от пользователя
+            
+        Returns:
+            Исправленный анализ
+        """
+        try:
+            prompt = f"""
+            У тебя есть анализ еды, но пользователь хочет внести исправления. 
+            Пожалуйста, обнови анализ с учетом пользовательских исправлений.
+            
+            ОРИГИНАЛЬНЫЙ АНАЛИЗ:
+            {original_analysis}
+            
+            ИСПРАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯ:
+            {user_correction}
+            
+            ВАЖНО:
+            1. Сохрани исходный формат ответа (ПРОДУКТЫ, ПИЩЕВАЯ ЦЕННОСТЬ, ВИТАМИНЫ И МИНЕРАЛЫ)
+            2. Внеси только те изменения, которые указал пользователь
+            3. Пересчитай калории и КБЖУ если изменились продукты или вес
+            4. Обнови витамины и минералы если изменились продукты
+            5. Отвечай на русском языке
+            6. Если пользователь изменил вес, пересчитай все значения пропорционально
+            
+            Верни обновленный анализ в том же формате:
+            """
+            
+            payload = {
+                "contents": [
+                    {
+                        "parts": [
+                            {
+                                "text": prompt
+                            }
+                        ]
+                    }
+                ]
+            }
+            
+            headers = {
+                'Content-Type': 'application/json',
+                'X-goog-api-key': self.api_key
+            }
+            
+            # Выполняем запрос коррекции
+            logger.info("Выполняем запрос коррекции анализа к Gemini API")
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    self.base_url,
+                    headers=headers,
+                    json=payload,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    
+                    if response.status != 200:
+                        error_text = await response.text()
+                        logger.error(f"Ошибка Gemini API при коррекции {response.status}: {error_text}")
+                        return f"Ошибка при исправлении анализа: {response.status}"
+                    
+                    result = await response.json()
+                    
+                    # Извлекаем текст ответа
+                    if 'candidates' in result and len(result['candidates']) > 0:
+                        if 'content' in result['candidates'][0]:
+                            if 'parts' in result['candidates'][0]['content']:
+                                if len(result['candidates'][0]['content']['parts']) > 0:
+                                    return result['candidates'][0]['content']['parts'][0]['text']
+                    
+                    logger.error(f"Неожиданный формат ответа Gemini при коррекции: {result}")
+                    return "Не удалось исправить анализ"
+            
+        except Exception as e:
+            logger.error(f"Ошибка при коррекции анализа через Gemini: {e}")
+            return f"Произошла ошибка при исправлении анализа: {str(e)}"

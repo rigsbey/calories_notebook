@@ -7,6 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from services.gemini_service import GeminiService
 from services.google_calendar import GoogleCalendarService
+from services.analysis_storage import analysis_storage
 from config import TEMP_DIR
 from utils import error_handler, format_nutrition_info
 
@@ -101,6 +102,14 @@ async def unknown_weight_handler(callback: CallbackQuery, state: FSMContext):
     # Анализируем еду через Gemini без указания конкретного веса
     analysis_result = await gemini_service.analyze_food_auto_weight(photo_path)
     
+    # Сохраняем анализ для возможности редактирования
+    analysis_storage.store_analysis(
+        user_id=callback.from_user.id,
+        analysis_text=analysis_result,
+        image_path=photo_path,
+        weight=None  # Автоопределение веса
+    )
+    
     # Форматируем ответ
     formatted_response = format_nutrition_info(analysis_result)
     final_response = f"🍽️ **Ваш прием пищи (автоопределение веса):**\n\n{formatted_response}"
@@ -122,8 +131,13 @@ async def unknown_weight_handler(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     
     await callback.message.answer(
-        "✅ Анализ завершен! Отправьте новое фото для следующего анализа."
-    )
+            "✅ Анализ завершен! \n\n"
+            "💬 Если нужно что-то исправить, просто напишите текстом:\n"
+            "• \"На фото не руккола, а листья салата\"\n"
+            "• \"Вес не 450г, а 300г\"\n"
+            "• \"Добавь туда еще помидоры\"\n\n"
+            "📸 Или отправьте новое фото для следующего анализа."
+        )
 
 @router.message(FoodAnalysisStates.waiting_for_weight)
 @error_handler
@@ -161,6 +175,14 @@ async def weight_handler(message: Message, state: FSMContext):
         # Анализируем еду через Gemini
         analysis_result = await gemini_service.analyze_food(photo_path, weight)
         
+        # Сохраняем анализ для возможности редактирования
+        analysis_storage.store_analysis(
+            user_id=message.from_user.id,
+            analysis_text=analysis_result,
+            image_path=photo_path,
+            weight=weight
+        )
+        
         # Форматируем ответ
         formatted_response = format_nutrition_info(analysis_result)
         final_response = f"🍽️ **Ваш прием пищи ({weight} г):**\n\n{formatted_response}"
@@ -186,7 +208,12 @@ async def weight_handler(message: Message, state: FSMContext):
         await state.clear()
         
         await message.answer(
-            "\n✅ Анализ завершен! Отправьте новое фото для следующего анализа."
+            "✅ Анализ завершен!\n\n"
+            "💬 Если нужно что-то исправить, просто напишите текстом:\n"
+            "• \"На фото не руккола, а листья салата\"\n"
+            "• \"Вес не 450г, а 300г\"\n"
+            "• \"Добавь туда еще помидоры\"\n\n"
+            "📸 Или отправьте новое фото для следующего анализа."
         )
         
     except Exception as e:
@@ -200,10 +227,51 @@ async def weight_handler(message: Message, state: FSMContext):
 @router.message(F.text)
 @error_handler
 async def text_handler(message: Message):
-    """Обработчик обычных текстовых сообщений"""
+    """Обработчик текстовых сообщений (коррекции анализа)"""
+    user_id = message.from_user.id
+    
+    # Проверяем, есть ли у пользователя недавний анализ для редактирования
+    if analysis_storage.has_recent_analysis(user_id):
+        # Получаем последний анализ
+        last_analysis = analysis_storage.get_last_analysis(user_id)
+        
+        if last_analysis:
+            await message.answer("🔄 Исправляю анализ с учетом ваших замечаний...")
+            
+            # Исправляем анализ через Gemini
+            corrected_analysis = await gemini_service.correct_analysis(
+                original_analysis=last_analysis['analysis_text'],
+                user_correction=message.text
+            )
+            
+            # Обновляем сохраненный анализ
+            analysis_storage.update_analysis(user_id, corrected_analysis)
+            
+            # Форматируем и отправляем исправленный анализ
+            formatted_response = format_nutrition_info(corrected_analysis)
+            weight_info = f" ({last_analysis['weight']} г)" if last_analysis['weight'] else " (автоопределение веса)"
+            final_response = f"🔄 **Исправленный анализ{weight_info}:**\n\n{formatted_response}"
+            
+            try:
+                await message.answer(final_response, parse_mode="Markdown")
+            except Exception as e:
+                logger.warning(f"Ошибка отправки исправленного анализа с Markdown: {e}")
+                await message.answer(final_response)
+            
+            await message.answer(
+                "✅ Анализ исправлен!\n\n"
+                "💬 Нужны еще исправления? Просто напишите что изменить.\n"
+                "📸 Или отправьте новое фото для анализа."
+            )
+            return
+    
+    # Если нет недавнего анализа, предлагаем отправить фото
     await message.answer(
         "📸 Пожалуйста, отправьте фото еды для анализа!\n\n"
-        "Я умею анализировать только изображения блюд."
+        "💡 После анализа вы сможете исправить результат текстовыми сообщениями:\n"
+        "• \"На фото не руккола, а шпинат\"\n"
+        "• \"Вес не 300г, а 250г\"\n"
+        "• \"Добавь туда морковь\""
     )
 
 def register_handlers(dp):
