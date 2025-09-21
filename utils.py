@@ -144,7 +144,8 @@ def format_vitamins_section(text: str) -> str:
                 
                 # Форматируем строку с выравниванием и невидимым символом
                 # Используем ljust для выравнивания названий, rjust для процентов
-                formatted_line = f"{emoji} {vitamin_name:<15} {bar} {percentage:>3}%\u200B"
+                # Увеличиваем ширину поля для названий до 18 символов
+                formatted_line = f"{emoji} {vitamin_name:<18}  {bar}  {percentage:>3}%\u200B"
                 formatted_lines.append(formatted_line)
                 formatted_lines.append("")  # Добавляем пустую строку между витаминами
                 continue
