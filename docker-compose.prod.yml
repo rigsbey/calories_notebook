@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   calories-bot:
-    image: ghcr.io/username/calories-bot:latest
+    image: ghcr.io/rigsbey/calories_notebook:latest
     container_name: calories-bot
     restart: unless-stopped
     environment:
