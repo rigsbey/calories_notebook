@@ -21,54 +21,9 @@ class GoogleCalendarService:
     
     def _authenticate(self):
         """Аутентификация в Google Calendar API"""
-        creds = None
-        
-        # Загружаем сохраненные токены
-        if os.path.exists(self.TOKEN_FILE):
-            with open(self.TOKEN_FILE, 'rb') as token:
-                creds = pickle.load(token)
-        
-        # Если токены недействительны или отсутствуют
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                try:
-                    creds.refresh(Request())
-                except Exception as e:
-                    logger.error(f"Ошибка обновления токена: {e}")
-                    creds = None
-            
-            if not creds:
-                if not os.path.exists(GOOGLE_CREDENTIALS_PATH):
-                    logger.error(f"Файл credentials.json не найден по пути: {GOOGLE_CREDENTIALS_PATH}")
-                    return
-                
-                try:
-                    flow = Flow.from_client_secrets_file(
-                        GOOGLE_CREDENTIALS_PATH, self.SCOPES)
-                    flow.redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
-                    
-                    auth_url, _ = flow.authorization_url(prompt='consent')
-                    logger.info(f"Перейдите по ссылке для авторизации: {auth_url}")
-                    
-                    # В реальном приложении здесь должна быть интеграция с веб-интерфейсом
-                    # Для демонстрации оставляем заглушку
-                    logger.warning("Требуется ручная авторизация Google Calendar")
-                    return
-                    
-                except Exception as e:
-                    logger.error(f"Ошибка авторизации: {e}")
-                    return
-        
-        # Сохраняем токены
-        if creds:
-            with open(self.TOKEN_FILE, 'wb') as token:
-                pickle.dump(creds, token)
-            
-            try:
-                self.service = build('calendar', 'v3', credentials=creds)
-                logger.info("Google Calendar API успешно инициализирован")
-            except Exception as e:
-                logger.error(f"Ошибка создания сервиса Calendar: {e}")
+        # Временно отключаем Google Calendar для исправления ошибки 400
+        logger.warning("Google Calendar временно отключен")
+        self.service = None
     
     async def create_meal_event(self, description: str, user_id: int) -> bool:
         """

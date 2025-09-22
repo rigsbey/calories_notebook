@@ -6,24 +6,17 @@ from typing import Callable, Any
 
 def setup_logging():
     """Настройка системы логирования"""
-    # Создаем папку для логов
-    log_dir = "logs"
-    os.makedirs(log_dir, exist_ok=True)
-    
     # Настройка формата логов
     log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     date_format = '%Y-%m-%d %H:%M:%S'
     
-    # Настройка логирования в файл
-    log_filename = os.path.join(log_dir, f"bot_{datetime.now().strftime('%Y%m%d')}.log")
-    
+    # Настройка логирования только в консоль (без файла)
     logging.basicConfig(
         level=logging.INFO,
         format=log_format,
         datefmt=date_format,
         handlers=[
-            logging.FileHandler(log_filename, encoding='utf-8'),
-            logging.StreamHandler()  # Вывод в консоль
+            logging.StreamHandler()  # Только вывод в консоль
         ]
     )
     

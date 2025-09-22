@@ -18,15 +18,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем код приложения
 COPY . .
 
-# Создаем директории для логов и временных файлов
-RUN mkdir -p logs temp_photos
-
 # Создаем пользователя для безопасности
-RUN useradd --create-home --shell /bin/bash app \
-    && chown -R app:app /app
+RUN useradd --create-home --shell /bin/bash app
 
-# Даем права на запись в папки логов и временных файлов
-RUN chmod 755 logs temp_photos
+# Создаем директории для логов и временных файлов
+RUN mkdir -p logs temp_photos \
+    && chown -R app:app /app \
+    && chmod 777 logs temp_photos
 
 USER app
 
