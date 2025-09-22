@@ -61,8 +61,30 @@ jobs:
           # Переходим в рабочую директорию
           cd /opt/calories-bot
           
-          # Скачиваем docker-compose файл
-          curl -o docker-compose.prod.yml https://raw.githubusercontent.com/${{ github.repository }}/main/docker-compose.prod.yml
+          # Создаем docker-compose файл с правильными настройками
+          cat > docker-compose.prod.yml << 'DOCKEREOF'
+          version: '3.8'
+          
+          services:
+            calories-bot:
+              image: ghcr.io/rigsbey/calories_notebook:latest
+              container_name: calories-bot
+              restart: unless-stopped
+              environment:
+                - BOT_TOKEN=\${BOT_TOKEN}
+                - GEMINI_API_KEY=\${GEMINI_API_KEY}
+                - FIREBASE_CREDENTIALS_PATH=caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
+                - GOOGLE_CREDENTIALS_PATH=credentials.json
+              volumes:
+                - /opt/calories-bot/logs:/app/logs
+                - /opt/calories-bot/temp_photos:/app/temp_photos
+                - /opt/calories-bot/caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json:/app/caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
+              logging:
+                driver: "json-file"
+                options:
+                  max-size: "10m"
+                  max-file: "3"
+          DOCKEREOF
           
           # Создаем .env файл с секретами
           cat > .env <<EOF
