@@ -68,7 +68,12 @@ jobs:
           cat > .env <<EOF
           BOT_TOKEN=${{ secrets.BOT_TOKEN }}
           GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+          FIREBASE_CREDENTIALS_PATH=caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
+          GOOGLE_CREDENTIALS_PATH=credentials.json
           EOF
+          
+          # Создаем Firebase ключ из секрета
+          echo '${{ secrets.FIREBASE_CREDENTIALS }}' > caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
           
           # Устанавливаем правильные права
           chmod -R 777 logs temp_photos
