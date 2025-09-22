@@ -72,7 +72,7 @@ jobs:
               restart: unless-stopped
               environment:
                 - BOT_TOKEN=8289791710:AAF7Q6oTSbBHMbqtR1eGMGyQTwlZcXXRYuw
-                - GEMINI_API_KEY=\${GEMINI_API_KEY}
+                - GEMINI_API_KEY=${GEMINI_API_KEY}
                 - FIREBASE_CREDENTIALS_PATH=caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
                 - GOOGLE_CREDENTIALS_PATH=credentials.json
               volumes:
