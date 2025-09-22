@@ -1,0 +1,40 @@
+---
+globs: deploy/*,docker-compose*.yml,Dockerfile,DEPLOY*.md
+---
+
+# Деплой и сервер
+
+## SSH доступ:
+- Сервер: `german_server`
+- Подключение: `ssh german_server`
+- Рабочая директория: `/path/to/calories_notebook`
+
+## Docker:
+- [Dockerfile](mdc:Dockerfile) - образ приложения
+- [docker-compose.yml](mdc:docker-compose.yml) - локальная разработка
+- [docker-compose.prod.yml](mdc:docker-compose.prod.yml) - продакшн конфигурация
+
+## Скрипты деплоя:
+- [deploy/setup-server.sh](mdc:deploy/setup-server.sh) - настройка сервера
+- [deploy/monitor.sh](mdc:deploy/monitor.sh) - мониторинг приложения
+
+## Документация:
+- [DEPLOYMENT.md](mdc:DEPLOYMENT.md) - инструкции по деплою
+- [DEPLOY_STATUS.md](mdc:DEPLOY_STATUS.md) - статус деплоя
+
+## Автоматический деплой:
+- При пуше в main ветку GitHub автоматически запускается деплой
+- GitHub Actions выполняет деплой на сервер `german_server`
+- Деплой происходит через SSH подключение к серверу
+- После деплоя автоматически перезапускается Docker контейнер
+
+## Ручной процесс деплоя:
+1. Подключиться к серверу: `ssh german_server`
+2. Перейти в директорию проекта
+3. Запустить `docker-compose -f docker-compose.prod.yml up -d`
+4. Проверить статус через `./deploy/monitor.sh`
+
+## Мониторинг:
+- Логи контейнера: `docker-compose logs -f`
+- Статус: `docker-compose ps`
+- Перезапуск: `docker-compose restart`

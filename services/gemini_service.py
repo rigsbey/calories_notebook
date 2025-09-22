@@ -10,6 +10,10 @@ class GeminiService:
     def __init__(self):
         self.api_key = GEMINI_API_KEY
         self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+        
+        if not self.api_key:
+            logger.error("GEMINI_API_KEY не установлен в переменных окружения")
+            raise ValueError("GEMINI_API_KEY не может быть пустым")
     
     def encode_image(self, image_path: str) -> str:
         """Кодирует изображение в base64"""
@@ -19,6 +23,17 @@ class GeminiService:
         except Exception as e:
             logger.error(f"Ошибка при кодировании изображения: {e}")
             raise
+    
+    def clean_payload(self, payload: dict) -> dict:
+        """Удаляет None значения из payload для корректной сериализации JSON"""
+        def clean_dict(d):
+            if isinstance(d, dict):
+                return {k: clean_dict(v) for k, v in d.items() if v is not None}
+            elif isinstance(d, list):
+                return [clean_dict(item) for item in d if item is not None]
+            else:
+                return d
+        return clean_dict(payload)
     
     async def analyze_food(self, image_path: str, weight_grams: int) -> str:
         """
@@ -106,32 +121,44 @@ class GeminiService:
                 'X-goog-api-key': self.api_key
             }
             
+            # Очищаем payload от None значений
+            clean_payload = self.clean_payload(payload)
+            logger.debug(f"Payload keys: {list(clean_payload.keys())}")
+            
             # Выполняем прямой запрос (без VPN)
             logger.info("Выполняем запрос к Gemini API (прямое подключение)")
             async with aiohttp.ClientSession() as session:
-                async with session.post(
-                    self.base_url,
-                    headers=headers,
-                    json=payload,
-                    timeout=aiohttp.ClientTimeout(total=30)
-                ) as response:
-                    
-                    if response.status != 200:
-                        error_text = await response.text()
-                        logger.error(f"Ошибка Gemini API {response.status}: {error_text}")
-                        return f"Ошибка анализа изображения: {response.status}"
-                    
-                    result = await response.json()
-                    
-                    # Извлекаем текст ответа
-                    if 'candidates' in result and len(result['candidates']) > 0:
-                        if 'content' in result['candidates'][0]:
-                            if 'parts' in result['candidates'][0]['content']:
-                                if len(result['candidates'][0]['content']['parts']) > 0:
-                                    return result['candidates'][0]['content']['parts'][0]['text']
-                    
-                    logger.error(f"Неожиданный формат ответа Gemini: {result}")
-                    return "Не удалось получить анализ изображения"
+                try:
+                    async with session.post(
+                        self.base_url,
+                        headers=headers,
+                        json=clean_payload,
+                        timeout=aiohttp.ClientTimeout(total=30)
+                    ) as response:
+                        
+                        if response.status != 200:
+                            error_text = await response.text()
+                            logger.error(f"Ошибка Gemini API {response.status}: {error_text}")
+                            return f"Ошибка анализа изображения: {response.status}"
+                        
+                        result = await response.json()
+                        
+                        # Извлекаем текст ответа
+                        if 'candidates' in result and len(result['candidates']) > 0:
+                            if 'content' in result['candidates'][0]:
+                                if 'parts' in result['candidates'][0]['content']:
+                                    if len(result['candidates'][0]['content']['parts']) > 0:
+                                        return result['candidates'][0]['content']['parts'][0]['text']
+                        
+                        logger.error(f"Неожиданный формат ответа Gemini: {result}")
+                        return "Не удалось получить анализ изображения"
+                
+                except aiohttp.ClientError as e:
+                    logger.error(f"Ошибка HTTP клиента: {e}")
+                    return f"Ошибка соединения с Gemini API: {str(e)}"
+                except Exception as e:
+                    logger.error(f"Неожиданная ошибка при запросе к Gemini: {e}")
+                    return f"Неожиданная ошибка: {str(e)}"
             
         except Exception as e:
             logger.error(f"Ошибка при анализе еды через Gemini: {e}")
@@ -226,32 +253,44 @@ class GeminiService:
                 'X-goog-api-key': self.api_key
             }
             
+            # Очищаем payload от None значений
+            clean_payload = self.clean_payload(payload)
+            logger.debug(f"Payload keys: {list(clean_payload.keys())}")
+            
             # Выполняем прямой запрос (без VPN)
             logger.info("Выполняем запрос к Gemini API (автовес, прямое подключение)")
             async with aiohttp.ClientSession() as session:
-                async with session.post(
-                    self.base_url,
-                    headers=headers,
-                    json=payload,
-                    timeout=aiohttp.ClientTimeout(total=30)
-                ) as response:
-                    
-                    if response.status != 200:
-                        error_text = await response.text()
-                        logger.error(f"Ошибка Gemini API {response.status}: {error_text}")
-                        return f"Ошибка анализа изображения: {response.status}"
-                    
-                    result = await response.json()
-                    
-                    # Извлекаем текст ответа
-                    if 'candidates' in result and len(result['candidates']) > 0:
-                        if 'content' in result['candidates'][0]:
-                            if 'parts' in result['candidates'][0]['content']:
-                                if len(result['candidates'][0]['content']['parts']) > 0:
-                                    return result['candidates'][0]['content']['parts'][0]['text']
-                    
-                    logger.error(f"Неожиданный формат ответа Gemini: {result}")
-                    return "Не удалось получить анализ изображения"
+                try:
+                    async with session.post(
+                        self.base_url,
+                        headers=headers,
+                        json=clean_payload,
+                        timeout=aiohttp.ClientTimeout(total=30)
+                    ) as response:
+                        
+                        if response.status != 200:
+                            error_text = await response.text()
+                            logger.error(f"Ошибка Gemini API {response.status}: {error_text}")
+                            return f"Ошибка анализа изображения: {response.status}"
+                        
+                        result = await response.json()
+                        
+                        # Извлекаем текст ответа
+                        if 'candidates' in result and len(result['candidates']) > 0:
+                            if 'content' in result['candidates'][0]:
+                                if 'parts' in result['candidates'][0]['content']:
+                                    if len(result['candidates'][0]['content']['parts']) > 0:
+                                        return result['candidates'][0]['content']['parts'][0]['text']
+                        
+                        logger.error(f"Неожиданный формат ответа Gemini: {result}")
+                        return "Не удалось получить анализ изображения"
+                
+                except aiohttp.ClientError as e:
+                    logger.error(f"Ошибка HTTP клиента: {e}")
+                    return f"Ошибка соединения с Gemini API: {str(e)}"
+                except Exception as e:
+                    logger.error(f"Неожиданная ошибка при запросе к Gemini: {e}")
+                    return f"Неожиданная ошибка: {str(e)}"
             
         except Exception as e:
             logger.error(f"Ошибка при анализе еды через Gemini (автовес): {e}")
@@ -307,13 +346,16 @@ class GeminiService:
                 'X-goog-api-key': self.api_key
             }
             
+            # Очищаем payload от None значений
+            clean_payload = self.clean_payload(payload)
+            
             # Выполняем запрос коррекции
             logger.info("Выполняем запрос коррекции анализа к Gemini API")
             async with aiohttp.ClientSession() as session:
                 async with session.post(
                     self.base_url,
                     headers=headers,
-                    json=payload,
+                    json=clean_payload,
                     timeout=aiohttp.ClientTimeout(total=30)
                 ) as response:
                     

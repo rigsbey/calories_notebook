@@ -15,6 +15,9 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Google Calendar
 GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", "credentials.json")
 
+# Firebase
+FIREBASE_CREDENTIALS_PATH = os.getenv("FIREBASE_CREDENTIALS_PATH", "caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json")
+
 # Temporary files directory
 TEMP_DIR = "temp_photos"
 

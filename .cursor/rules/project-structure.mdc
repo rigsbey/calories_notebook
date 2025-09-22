@@ -1,0 +1,45 @@
+---
+alwaysApply: true
+---
+
+# Структура проекта калорийного блокнота
+
+Это Telegram-бот для анализа питания с использованием Google Gemini API.
+
+## Основные файлы:
+- [bot.py](mdc:bot.py) - точка входа приложения, инициализация бота и диспетчера
+- [handlers.py](mdc:handlers.py) - обработчики сообщений и состояний FSM
+- [config.py](mdc:config.py) - конфигурация и переменные окружения
+- [utils.py](mdc:utils.py) - утилиты для логирования, форматирования и обработки ошибок
+
+## Сервисы (services/):
+- [services/gemini_service.py](mdc:services/gemini_service.py) - основной сервис для работы с Google Gemini API
+- [services/google_calendar.py](mdc:services/google_calendar.py) - интеграция с Google Calendar
+- [services/analysis_storage.py](mdc:services/analysis_storage.py) - хранение анализов для редактирования
+- [services/firebase_service.py](mdc:services/firebase_service.py) - работа с Firebase Firestore
+- [services/report_service.py](mdc:services/report_service.py) - генерация отчетов
+- [services/scheduler_service.py](mdc:services/scheduler_service.py) - планировщик задач
+- [services/openai_service.py](mdc:services/openai_service.py) - устаревший сервис OpenAI (deprecated)
+
+## Архитектура:
+- Использует aiogram 3.x для Telegram Bot API
+- FSM (Finite State Machine) для управления состояниями пользователя
+- Асинхронное программирование с asyncio
+- Обработка изображений через base64 кодирование
+- Временные файлы автоматически очищаются
+
+## Важные директории:
+- `temp_photos/` - временные файлы изображений (автоочистка)
+- `logs/` - файлы логов с датой в названии
+- `deploy/` - скрипты для деплоя
+- `.github/workflows/` - GitHub Actions для автоматического деплоя
+
+## Сервер:
+- SSH доступ: `german_server`
+- Деплой через Docker Compose
+- Мониторинг через [deploy/monitor.sh](mdc:deploy/monitor.sh)
+
+## CI/CD:
+- Автоматический деплой при пуше в main ветку
+- GitHub Actions выполняет деплой на сервер
+- SSH подключение к `german_server` для обновления кода

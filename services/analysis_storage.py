@@ -23,6 +23,10 @@ class AnalysisStorage:
             image_path: Путь к изображению (для повторного анализа)
             weight: Вес в граммах (если был указан)
         """
+        if user_id is None:
+            logger.error("user_id не может быть None")
+            return
+            
         self._storage[user_id] = {
             'analysis_text': analysis_text,
             'image_path': image_path,

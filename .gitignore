@@ -59,6 +59,7 @@ yarn-error.log*
 temp_photos/
 credentials.json
 token.pickle
+caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
 
 # Docker
 .dockerignore

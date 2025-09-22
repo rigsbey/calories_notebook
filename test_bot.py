@@ -2,21 +2,34 @@ import asyncio
 import logging
 import os
 import atexit
+
+# Устанавливаем Gemini API ключ для тестирования ПЕРЕД импортом модулей
+os.environ["GEMINI_API_KEY"] = "AIzaSyAfF657E3lChR6whEdf1Rzw8eqJrrSR-qg"
+
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from handlers import register_handlers
-from config import BOT_TOKEN, TEMP_DIR
+from config import TEMP_DIR
 from utils import setup_logging, clean_temp_files
-from services.scheduler_service import SchedulerService
 
 # Настройка логирования
 setup_logging()
 logger = logging.getLogger(__name__)
 
 async def main():
+    # Устанавливаем тестовый токен
+    BOT_TOKEN = "8368637397:AAHeOqbS4KlrYhDiKQNJr8HsHxZcyLBNLYE"
+    
     # Проверяем наличие токена
     if not BOT_TOKEN:
-        logger.error("BOT_TOKEN не найден в переменных окружения!")
+        logger.error("BOT_TOKEN не найден!")
+        return
+    
+    # Проверяем наличие Gemini API ключа
+    from config import GEMINI_API_KEY
+    if not GEMINI_API_KEY:
+        logger.error("GEMINI_API_KEY не найден в переменных окружения!")
+        logger.error("Создайте файл .env на основе env_example.txt и добавьте ваш API ключ")
         return
     
     # Создаем папку для временных файлов
@@ -36,11 +49,7 @@ async def main():
     # Регистрируем обработчики
     register_handlers(dp)
     
-    # Инициализируем планировщик
-    scheduler = SchedulerService(bot)
-    scheduler.start_scheduler()
-    
-    logger.info("🤖 Бот успешно запущен!")
+    logger.info("🤖 Тестовый бот успешно запущен!")
     
     try:
         # Запускаем бота
@@ -50,8 +59,6 @@ async def main():
     except Exception as e:
         logger.error(f"Критическая ошибка: {e}")
     finally:
-        # Останавливаем планировщик
-        scheduler.stop_scheduler()
         await bot.session.close()
         logger.info("Бот остановлен")
 

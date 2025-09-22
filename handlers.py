@@ -1,13 +1,14 @@
 import os
 import logging
 from aiogram import Router, F
-from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from services.gemini_service import GeminiService
 from services.google_calendar import GoogleCalendarService
 from services.analysis_storage import analysis_storage
+from services.firebase_service import FirebaseService
 from config import TEMP_DIR
 from utils import error_handler, format_nutrition_info
 
@@ -17,9 +18,23 @@ logger = logging.getLogger(__name__)
 class FoodAnalysisStates(StatesGroup):
     waiting_for_weight = State()
 
+# Создаем клавиатуру с кнопками
+def get_main_keyboard():
+    """Создает основную клавиатуру с кнопками"""
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="📊 Итоги дня"), KeyboardButton(text="📈 Итоги недели")],
+            [KeyboardButton(text="📸 Анализ еды"), KeyboardButton(text="ℹ️ Помощь")]
+        ],
+        resize_keyboard=True,
+        one_time_keyboard=False
+    )
+    return keyboard
+
 # Инициализируем сервисы
 gemini_service = GeminiService()
 calendar_service = GoogleCalendarService()
+firebase_service = FirebaseService()
 
 # Создаем роутер
 router = Router()
@@ -37,9 +52,9 @@ async def start_handler(message: Message):
 • Укажу витамины и полезные вещества
 • Сохраню информацию в Google Calendar
 
-Просто отправьте фото еды!
+Используйте кнопки ниже для быстрого доступа к функциям!
     """
-    await message.answer(welcome_text)
+    await message.answer(welcome_text, reply_markup=get_main_keyboard())
 
 @router.message(F.photo)
 @error_handler
@@ -103,12 +118,24 @@ async def unknown_weight_handler(callback: CallbackQuery, state: FSMContext):
     analysis_result = await gemini_service.analyze_food_auto_weight(photo_path)
     
     # Сохраняем анализ для возможности редактирования
-    analysis_storage.store_analysis(
-        user_id=callback.from_user.id,
-        analysis_text=analysis_result,
-        image_path=photo_path,
-        weight=None  # Автоопределение веса
-    )
+    user_id = callback.from_user.id if callback.from_user else None
+    if user_id is not None:
+        analysis_storage.store_analysis(
+            user_id=user_id,
+            analysis_text=analysis_result,
+            image_path=photo_path,
+            weight=None  # Автоопределение веса
+        )
+    
+    # Сохраняем в Firebase
+    user_id = callback.from_user.id
+    if user_id is not None:
+        analysis_data = {
+            'analysis_text': analysis_result,
+            'weight': 'auto',
+            'user_id': str(user_id)
+        }
+        await firebase_service.save_analysis(user_id, analysis_data)
     
     # Форматируем ответ
     formatted_response = format_nutrition_info(analysis_result)
@@ -176,12 +203,24 @@ async def weight_handler(message: Message, state: FSMContext):
         analysis_result = await gemini_service.analyze_food(photo_path, weight)
         
         # Сохраняем анализ для возможности редактирования
-        analysis_storage.store_analysis(
-            user_id=message.from_user.id,
-            analysis_text=analysis_result,
-            image_path=photo_path,
-            weight=weight
-        )
+        user_id = message.from_user.id if message.from_user else None
+        if user_id is not None:
+            analysis_storage.store_analysis(
+                user_id=user_id,
+                analysis_text=analysis_result,
+                image_path=photo_path,
+                weight=weight
+            )
+        
+        # Сохраняем в Firebase
+        user_id = message.from_user.id
+        if user_id is not None:
+            analysis_data = {
+                'analysis_text': analysis_result,
+                'weight': str(weight),
+                'user_id': str(user_id)
+            }
+            await firebase_service.save_analysis(user_id, analysis_data)
         
         # Форматируем ответ
         formatted_response = format_nutrition_info(analysis_result)
@@ -224,6 +263,84 @@ async def weight_handler(message: Message, state: FSMContext):
         )
         await state.clear()
 
+# Обработчики кнопок (должны быть ПЕРЕД общим обработчиком текста)
+@router.message(F.text == "📊 Итоги дня")
+@error_handler
+async def daily_summary_button(message: Message):
+    """Обработчик кнопки 'Итоги дня'"""
+    from services.report_service import ReportService
+    report_service = ReportService()
+    
+    try:
+        await message.answer("📊 Генерирую отчет за день...")
+        report = await report_service.generate_daily_report(message.from_user.id)
+        await message.answer(report)
+    except Exception as e:
+        logger.error(f"Ошибка генерации дневного отчета: {e}")
+        await message.answer("❌ Ошибка при генерации отчета. Попробуйте позже.")
+
+@router.message(F.text == "📈 Итоги недели")
+@error_handler
+async def weekly_summary_button(message: Message):
+    """Обработчик кнопки 'Итоги недели'"""
+    from services.report_service import ReportService
+    report_service = ReportService()
+    
+    try:
+        await message.answer("📊 Генерирую отчет за неделю...")
+        report = await report_service.generate_weekly_report(message.from_user.id)
+        await message.answer(report)
+    except Exception as e:
+        logger.error(f"Ошибка генерации недельного отчета: {e}")
+        await message.answer("❌ Ошибка при генерации отчета. Попробуйте позже.")
+
+@router.message(F.text == "📸 Анализ еды")
+@error_handler
+async def food_analysis_button(message: Message):
+    """Обработчик кнопки 'Анализ еды'"""
+    await message.answer(
+        "📸 Отправьте фото еды для анализа!\n\n"
+        "Я проанализирую состав, рассчитаю КБЖУ и определю витамины.",
+        reply_markup=get_main_keyboard()
+    )
+
+@router.message(F.text == "ℹ️ Помощь")
+@error_handler
+async def help_button(message: Message):
+    """Обработчик кнопки 'Помощь'"""
+    help_text = """
+🤖 **Помощь по использованию бота**
+
+**Основные команды:**
+/start - Запустить бота
+/help - Показать эту справку
+/info - Информация о боте
+/day - Итоги дня (быстрый доступ)
+/week - Итоги недели (быстрый доступ)
+/summary - Итоги дня
+/summary week - Итоги недели
+
+**Как использовать:**
+1. 📸 Отправьте фото еды
+2. 🔢 Укажите вес в граммах
+3. 📊 Получите анализ КБЖУ
+4. 📅 Информация сохранится в календаре
+
+**Поддерживаемые форматы:**
+• Фото в формате JPG, PNG
+• Вес от 1 до 5000 грамм
+• Любые блюда и продукты
+
+**Что анализирует бот:**
+• Состав блюда
+• Калории и КБЖУ
+• Витамины и полезные вещества
+• Пищевую ценность
+
+Если возникли проблемы, попробуйте отправить фото заново.
+    """
+    await message.answer(help_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
+
 @router.message(F.text)
 @error_handler
 async def text_handler(message: Message):
@@ -250,13 +367,10 @@ async def text_handler(message: Message):
             # Форматируем и отправляем исправленный анализ
             formatted_response = format_nutrition_info(corrected_analysis)
             weight_info = f" ({last_analysis['weight']} г)" if last_analysis['weight'] else " (автоопределение веса)"
-            final_response = f"🔄 **Исправленный анализ{weight_info}:**\n\n{formatted_response}"
+            final_response = f"🔄 Исправленный анализ{weight_info}:\n\n{formatted_response}"
             
-            try:
-                await message.answer(final_response, parse_mode="Markdown")
-            except Exception as e:
-                logger.warning(f"Ошибка отправки исправленного анализа с Markdown: {e}")
-                await message.answer(final_response)
+            # Отправляем без Markdown чтобы избежать ошибок парсинга
+            await message.answer(final_response)
             
             await message.answer(
                 "✅ Анализ исправлен!\n\n"
@@ -273,6 +387,7 @@ async def text_handler(message: Message):
         "• \"Вес не 300г, а 250г\"\n"
         "• \"Добавь туда морковь\""
     )
+
 
 def register_handlers(dp):
     """Регистрирует все обработчики"""

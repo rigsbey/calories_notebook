@@ -1,0 +1,33 @@
+---
+globs: config.py,*.env*,requirements.txt
+---
+
+# Конфигурация проекта
+
+## Переменные окружения:
+- BOT_TOKEN - токен Telegram бота (обязательно)
+- GEMINI_API_KEY - ключ Google Gemini API (обязательно)
+- OPENAI_API_KEY - ключ OpenAI API (deprecated)
+- GOOGLE_CREDENTIALS_PATH - путь к файлу Google credentials
+- FIREBASE_CREDENTIALS_PATH - путь к файлу Firebase service account
+- TEMP_DIR - директория для временных файлов
+- LOG_LEVEL - уровень логирования
+
+## Безопасность:
+- Никогда не коммитьте .env файлы
+- Используйте env_example.txt как шаблон
+- Проверяйте наличие обязательных переменных при запуске
+
+## Зависимости:
+- aiogram==3.10.0 - Telegram Bot API
+- python-dotenv==1.0.0 - загрузка переменных окружения
+- aiohttp>=3.9.0 - HTTP клиент
+- google-api-python-client==2.95.0 - Google API
+- Pillow==10.0.0 - обработка изображений
+- firebase-admin==6.4.0 - Firebase Admin SDK
+- apscheduler==3.10.4 - планировщик задач
+
+## Структура config.py:
+- Используйте os.getenv() для получения переменных
+- Предоставляйте значения по умолчанию где возможно
+- Группируйте связанные настройки
