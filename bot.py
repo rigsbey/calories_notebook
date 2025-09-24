@@ -4,6 +4,7 @@ import os
 import atexit
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.types import BotCommand
 from handlers import register_handlers
 from config import BOT_TOKEN, TEMP_DIR
 from utils import setup_logging, clean_temp_files
@@ -12,6 +13,25 @@ from services.scheduler_service import SchedulerService
 # Настройка логирования
 setup_logging()
 logger = logging.getLogger(__name__)
+
+async def setup_bot_commands(bot: Bot):
+    """Настройка команд меню бота"""
+    commands = [
+        BotCommand(command="start", description="🚀 Запустить бота"),
+        BotCommand(command="help", description="ℹ️ Помощь по использованию"),
+        BotCommand(command="day", description="📊 Итоги дня"),
+        BotCommand(command="week", description="📈 Итоги недели"),
+        BotCommand(command="summary", description="📋 Сводка питания"),
+        BotCommand(command="gconnect", description="📅 Подключить Google Calendar"),
+        BotCommand(command="gstatus", description="🔍 Статус календаря"),
+        BotCommand(command="gdisconnect", description="❌ Отключить календарь"),
+    ]
+    
+    try:
+        await bot.set_my_commands(commands)
+        logger.info("Команды меню бота настроены успешно")
+    except Exception as e:
+        logger.error(f"Ошибка настройки команд меню: {e}")
 
 async def main():
     # Проверяем наличие токена
@@ -35,6 +55,9 @@ async def main():
     
     # Регистрируем обработчики
     register_handlers(dp)
+    
+    # Настраиваем команды меню
+    await setup_bot_commands(bot)
     
     # Инициализируем планировщик
     scheduler = SchedulerService(bot)

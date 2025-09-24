@@ -468,6 +468,59 @@ async def help_button(message: Message):
     await message.answer(help_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
 
 # Обработчики команд должны быть ПЕРЕД общим обработчиком текста
+@router.message(Command("day"))
+@error_handler
+async def day_command_handler(message: Message):
+    """Обработчик команды /day - быстрый доступ к итогам дня"""
+    from services.report_service import ReportService
+    report_service = ReportService()
+    
+    try:
+        await message.answer("📊 Генерирую отчет за день...")
+        report = await report_service.generate_daily_report(message.from_user.id)
+        await message.answer(report, reply_markup=get_main_keyboard())
+    except Exception as e:
+        logger.error(f"Ошибка генерации дневного отчета: {e}")
+        await message.answer("❌ Ошибка при генерации отчета. Попробуйте позже.", reply_markup=get_main_keyboard())
+
+@router.message(Command("week"))
+@error_handler
+async def week_command_handler(message: Message):
+    """Обработчик команды /week - быстрый доступ к итогам недели"""
+    from services.report_service import ReportService
+    report_service = ReportService()
+    
+    try:
+        await message.answer("📊 Генерирую отчет за неделю...")
+        report = await report_service.generate_weekly_report(message.from_user.id)
+        await message.answer(report, reply_markup=get_main_keyboard())
+    except Exception as e:
+        logger.error(f"Ошибка генерации недельного отчета: {e}")
+        await message.answer("❌ Ошибка при генерации отчета. Попробуйте позже.", reply_markup=get_main_keyboard())
+
+@router.message(Command("summary"))
+@error_handler
+async def summary_command_handler(message: Message):
+    """Обработчик команды /summary - сводка питания"""
+    # Получаем аргументы команды
+    command_args = message.text.split()[1:] if len(message.text.split()) > 1 else []
+    
+    from services.report_service import ReportService
+    report_service = ReportService()
+    
+    try:
+        if 'week' in command_args:
+            await message.answer("📊 Генерирую отчет за неделю...")
+            report = await report_service.generate_weekly_report(message.from_user.id)
+        else:
+            await message.answer("📊 Генерирую отчет за день...")
+            report = await report_service.generate_daily_report(message.from_user.id)
+        
+        await message.answer(report, reply_markup=get_main_keyboard())
+    except Exception as e:
+        logger.error(f"Ошибка генерации отчета: {e}")
+        await message.answer("❌ Ошибка при генерации отчета. Попробуйте позже.", reply_markup=get_main_keyboard())
+
 @router.message(Command("gconnect"))
 @error_handler
 async def gconnect_handler(message: Message):
