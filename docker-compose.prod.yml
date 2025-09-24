@@ -12,6 +12,8 @@ services:
     volumes:
       - /opt/calories-bot/logs:/app/logs
       - /opt/calories-bot/temp_photos:/app/temp_photos
+      - ./caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json:/app/caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json:ro
+      - ./credentials.json:/app/credentials.json:ro
     logging:
       driver: "json-file"
       options:
