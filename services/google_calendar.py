@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict
 from google.oauth2.credentials import Credentials
@@ -64,7 +65,7 @@ class GoogleCalendarService:
             code = request.rel_url.query.get('code')
             state = request.rel_url.query.get('state')
             if not code or not state:
-                return web.Response(text="Missing code/state", status=400)
+                return await self._render_error_page("Отсутствуют обязательные параметры авторизации")
 
             flow = self._pending_states.pop(state, None)
             if flow is None:
@@ -86,10 +87,58 @@ class GoogleCalendarService:
             # Убедимся, что у пользователя есть календарь
             await self._ensure_calendar(user_id, creds)
 
-            return web.Response(text="Готово! Можете вернуться в Telegram и продолжить.")
+            return await self._render_success_page()
         except Exception as e:
             logger.error(f"OAuth callback error: {e}")
-            return web.Response(text="Ошибка авторизации.", status=500)
+            return await self._render_error_page("Произошла ошибка при подключении календаря")
+    
+    async def _render_success_page(self) -> web.Response:
+        """Рендерит страницу успешного подключения"""
+        html_content = await self._load_html_template('oauth_callback.html')
+        return web.Response(
+            text=html_content,
+            content_type='text/html',
+            charset='utf-8'
+        )
+    
+    async def _render_error_page(self, error_message: str = "Неизвестная ошибка") -> web.Response:
+        """Рендерит страницу ошибки"""
+        html_content = await self._load_html_template('oauth_error.html')
+        # Можно добавить кастомизацию сообщения об ошибке
+        return web.Response(
+            text=html_content,
+            content_type='text/html',
+            charset='utf-8'
+        )
+    
+    async def _load_html_template(self, filename: str) -> str:
+        """Загружает HTML шаблон"""
+        try:
+            template_path = os.path.join(os.path.dirname(__file__), '..', 'templates', filename)
+            with open(template_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        except Exception as e:
+            logger.error(f"Не удалось загрузить шаблон {filename}: {e}")
+            # Возвращаем простую HTML страницу в случае ошибки
+            return f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>Календарь калорий</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; text-align: center; padding: 50px; }}
+                    .container {{ max-width: 500px; margin: 0 auto; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>✅ Google Calendar подключен!</h1>
+                    <p>Можете вернуться в Telegram и продолжить использование бота.</p>
+                </div>
+            </body>
+            </html>
+            """
 
     async def get_auth_url(self, user_id: int) -> str:
         await self._ensure_callback_server()
