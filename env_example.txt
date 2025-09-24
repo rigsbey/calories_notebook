@@ -11,9 +11,9 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 # Google Calendar API credentials file path
 GOOGLE_CREDENTIALS_PATH=credentials.json
-GOOGLE_OAUTH_REDIRECT_PORT=8088
+GOOGLE_OAUTH_REDIRECT_PORT=8000
 GOOGLE_OAUTH_REDIRECT_PATH=/oauth2callback
-GOOGLE_OAUTH_REDIRECT_BASE=
+GOOGLE_OAUTH_REDIRECT_BASE=https://api.toxiguard.site
 
 # Firebase credentials file path
 FIREBASE_CREDENTIALS_PATH=caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json

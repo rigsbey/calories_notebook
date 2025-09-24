@@ -75,10 +75,14 @@ jobs:
                 - GEMINI_API_KEY=${GEMINI_API_KEY}
                 - FIREBASE_CREDENTIALS_PATH=caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
                 - GOOGLE_CREDENTIALS_PATH=credentials.json
+                - GOOGLE_OAUTH_REDIRECT_PORT=8000
+                - GOOGLE_OAUTH_REDIRECT_PATH=/oauth2callback
+                - GOOGLE_OAUTH_REDIRECT_BASE=https://api.toxiguard.site
               volumes:
                 - /opt/calories-bot/logs:/app/logs
                 - /opt/calories-bot/temp_photos:/app/temp_photos
-                - /opt/calories-bot/caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json:/app/caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
+                - /opt/calories-bot/caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json:/app/caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json:ro
+                - /opt/calories-bot/credentials.json:/app/credentials.json:ro
               logging:
                 driver: "json-file"
                 options:
@@ -92,10 +96,16 @@ jobs:
           GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
           FIREBASE_CREDENTIALS_PATH=caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
           GOOGLE_CREDENTIALS_PATH=credentials.json
+          GOOGLE_OAUTH_REDIRECT_PORT=8000
+          GOOGLE_OAUTH_REDIRECT_PATH=/oauth2callback
+          GOOGLE_OAUTH_REDIRECT_BASE=https://api.toxiguard.site
           EOF
           
           # Создаем Firebase ключ из секрета
           echo '${{ secrets.FIREBASE_CREDENTIALS }}' > caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json
+          
+          # Создаем Google OAuth credentials из секрета
+          echo '${{ secrets.GOOGLE_OAUTH_CREDENTIALS }}' > credentials.json
           
           # Устанавливаем правильные права
           chmod -R 777 logs temp_photos
