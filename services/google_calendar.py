@@ -217,6 +217,21 @@ class GoogleCalendarService:
     async def ensure_connected(self, user_id: int) -> bool:
         service = await self._build_service_for_user(user_id)
         return service is not None
+    
+    async def disconnect_calendar(self, user_id: int) -> bool:
+        """Отвязывает Google Calendar от аккаунта пользователя"""
+        try:
+            # Удаляем токены из Firebase
+            await self.firebase.delete_user_google_tokens(user_id)
+            
+            # Удаляем calendar_id если есть
+            await self.firebase.delete_user_calendar_id(user_id)
+            
+            logger.info(f"Google Calendar отключен для пользователя {user_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка при отключении календаря для пользователя {user_id}: {e}")
+            return False
 
     async def update_meal_event(self, user_id: int, event_id: str, title: str, description: str) -> bool:
         """Обновляет существующее событие в календаре"""

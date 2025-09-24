@@ -175,6 +175,32 @@ class FirebaseService:
         except Exception as e:
             logger.error(f"Ошибка получения calendar_id: {e}")
             return None
+    
+    async def delete_user_google_tokens(self, user_id: int) -> bool:
+        """Удаляет Google токены пользователя"""
+        try:
+            user_ref = self.db.collection('users').document(str(user_id))
+            user_ref.update({
+                'google.tokens': firestore.DELETE_FIELD
+            })
+            logger.info(f"Google токены удалены для пользователя {user_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка удаления Google токенов: {e}")
+            return False
+    
+    async def delete_user_calendar_id(self, user_id: int) -> bool:
+        """Удаляет calendar_id пользователя"""
+        try:
+            user_ref = self.db.collection('users').document(str(user_id))
+            user_ref.update({
+                'google.calendar_id': firestore.DELETE_FIELD
+            })
+            logger.info(f"Calendar ID удален для пользователя {user_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка удаления calendar_id: {e}")
+            return False
     async def get_user_info(self, user_id: int) -> Dict:
         """Получает информацию о пользователе"""
         try:

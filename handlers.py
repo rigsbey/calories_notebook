@@ -403,7 +403,10 @@ async def calendar_button(message: Message):
             await message.answer(
                 "✅ **Google Calendar подключен!**\n\n"
                 "📅 Все анализы еды автоматически сохраняются в ваш календарь питания.\n"
-                "🔗 События создаются с подробной информацией о составе и КБЖУ.",
+                "🔗 События создаются с подробной информацией о составе и КБЖУ.\n\n"
+                "💡 **Команды:**\n"
+                "• `/gstatus` - проверить статус\n"
+                "• `/gdisconnect` - отключить календарь",
                 parse_mode="Markdown",
                 reply_markup=get_main_keyboard()
             )
@@ -441,6 +444,7 @@ async def help_button(message: Message):
 /summary week - Итоги недели
 /gconnect - Подключить Google Calendar
 /gstatus - Статус Google Calendar
+/gdisconnect - Отключить Google Calendar
 
 **Как использовать:**
 1. 📸 Отправьте фото еды
@@ -491,6 +495,39 @@ async def gstatus_handler(message: Message):
     except Exception as e:
         logger.error(f"Ошибка статуса авторизации: {e}")
         await message.answer("❌ Не удалось получить статус. Попробуйте позже.")
+
+@router.message(Command("gdisconnect"))
+@error_handler
+async def gdisconnect_handler(message: Message):
+    """Отключение Google Calendar от аккаунта"""
+    try:
+        # Проверяем, подключен ли календарь
+        connected = await calendar_service.ensure_connected(message.from_user.id)
+        
+        if not connected:
+            await message.answer(
+                "ℹ️ Google Calendar не подключен.\n\n"
+                "Если хотите подключить календарь, используйте команду /gconnect"
+            )
+            return
+        
+        # Отключаем календарь
+        success = await calendar_service.disconnect_calendar(message.from_user.id)
+        
+        if success:
+            await message.answer(
+                "✅ **Google Calendar отключен!**\n\n"
+                "📅 Календарь больше не будет синхронизироваться с вашими анализами еды.\n"
+                "🔗 Если захотите подключить снова, используйте команду /gconnect",
+                parse_mode="Markdown"
+            )
+        else:
+            await message.answer(
+                "❌ Не удалось отключить Google Calendar. Попробуйте позже."
+            )
+    except Exception as e:
+        logger.error(f"Ошибка отключения календаря: {e}")
+        await message.answer("❌ Произошла ошибка при отключении календаря. Попробуйте позже.")
 
 @router.message(F.text)
 @error_handler
