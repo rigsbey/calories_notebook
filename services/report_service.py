@@ -16,17 +16,21 @@ class ReportService:
             date = datetime.now().strftime('%Y-%m-%d')
         
         try:
+            # Получаем информацию о пользователе
+            user_info = await self.firebase.get_user_info(user_id)
+            user_display = self._get_user_display_name(user_info, user_id)
+            
             # Получаем анализы за день
             analyses = await self.firebase.get_daily_analyses(user_id, date)
             
             if not analyses:
-                return f"📅 Итоги дня ({date})\n\n❌ За этот день не было записей о питании."
+                return f"📅 Итоги дня ({date})\n👤 {user_display}\n\n❌ За этот день не было записей о питании."
             
             # Агрегируем данные
             total_nutrition = await self.firebase.aggregate_daily_nutrition(analyses)
             
             # Формируем отчет
-            report = self._format_daily_report(date, total_nutrition, len(analyses))
+            report = self._format_daily_report(date, total_nutrition, len(analyses), user_display)
             return report
             
         except Exception as e:
@@ -41,24 +45,44 @@ class ReportService:
             start_date = (today - timedelta(days=today.weekday())).strftime('%Y-%m-%d')
         
         try:
+            # Получаем информацию о пользователе
+            user_info = await self.firebase.get_user_info(user_id)
+            user_display = self._get_user_display_name(user_info, user_id)
+            
             # Получаем анализы за неделю
             analyses = await self.firebase.get_weekly_analyses(user_id, start_date)
             
             if not analyses:
-                return f"📅 Итоги недели ({start_date})\n\n❌ За эту неделю не было записей о питании."
+                return f"📅 Итоги недели ({start_date})\n👤 {user_display}\n\n❌ За эту неделю не было записей о питании."
             
             # Агрегируем данные
             total_nutrition = await self.firebase.aggregate_daily_nutrition(analyses)
             
             # Формируем отчет
-            report = self._format_weekly_report(start_date, total_nutrition, len(analyses))
+            report = self._format_weekly_report(start_date, total_nutrition, len(analyses), user_display)
             return report
             
         except Exception as e:
             logger.error(f"Ошибка генерации недельного отчета: {e}")
             return f"❌ Ошибка при генерации отчета за неделю {start_date}"
     
-    def _format_daily_report(self, date: str, nutrition: Dict, analysis_count: int) -> str:
+    def _get_user_display_name(self, user_info: Dict, user_id: int) -> str:
+        """Получает отображаемое имя пользователя"""
+        if not user_info:
+            return f"ID: {user_id}"
+        
+        # Приоритет: username -> first_name -> user_id
+        if user_info.get('username'):
+            return f"@{user_info['username']}"
+        elif user_info.get('first_name'):
+            name = user_info['first_name']
+            if user_info.get('last_name'):
+                name += f" {user_info['last_name']}"
+            return name
+        else:
+            return f"ID: {user_id}"
+    
+    def _format_daily_report(self, date: str, nutrition: Dict, analysis_count: int, user_display: str = None) -> str:
         """Форматирует дневной отчет"""
         # Нормы для взрослого человека (примерные)
         daily_norms = {
@@ -69,6 +93,8 @@ class ReportService:
         }
         
         report = f"📅 Итоги дня ({date})\n"
+        if user_display:
+            report += f"👤 {user_display}\n"
         report += f"📊 Проанализировано приемов пищи: {analysis_count}\n\n"
         
         # КБЖУ
@@ -94,7 +120,7 @@ class ReportService:
         
         return report
     
-    def _format_weekly_report(self, start_date: str, nutrition: Dict, analysis_count: int) -> str:
+    def _format_weekly_report(self, start_date: str, nutrition: Dict, analysis_count: int, user_display: str = None) -> str:
         """Форматирует недельный отчет"""
         # Нормы для недели (умножаем на 7)
         weekly_norms = {
@@ -105,6 +131,8 @@ class ReportService:
         }
         
         report = f"📅 Итоги недели ({start_date})\n"
+        if user_display:
+            report += f"👤 {user_display}\n"
         report += f"📊 Проанализировано приемов пищи: {analysis_count}\n\n"
         
         # КБЖУ
@@ -138,9 +166,13 @@ class ReportService:
             
             for user_id in users:
                 try:
+                    # Получаем информацию о пользователе для логирования
+                    user_info = await self.firebase.get_user_info(user_id)
+                    user_display = self._get_user_display_name(user_info, user_id)
+                    
                     report = await self.generate_daily_report(user_id, date)
                     await bot.send_message(user_id, report)
-                    logger.info(f"Отчет отправлен пользователю {user_id}")
+                    logger.info(f"Отчет отправлен пользователю {user_display} (ID: {user_id})")
                 except Exception as e:
                     logger.error(f"Ошибка отправки отчета пользователю {user_id}: {e}")
             
@@ -148,3 +180,5 @@ class ReportService:
             
         except Exception as e:
             logger.error(f"Ошибка отправки дневных отчетов: {e}")
+
+

@@ -192,3 +192,104 @@ def format_nutrition_info(analysis_text: str) -> str:
     formatted = format_vitamins_section(formatted)
     
     return formatted
+
+def extract_meal_title(analysis_text: str) -> str:
+    """Извлекает краткое название блюда из текста анализа."""
+    try:
+        text = analysis_text or ""
+        lines = [l.strip() for l in text.split('\n') if l.strip()]
+        if not lines:
+            return "Прием пищи"
+        
+        # Ищем раздел продуктов
+        for i, line in enumerate(lines):
+            if 'ПРОДУКТЫ' in line.upper():
+                # Берем следующую строку после "ПРОДУКТЫ"
+                if i + 1 < len(lines):
+                    products_line = lines[i + 1]
+                    # Извлекаем основные продукты из описания
+                    products = _extract_main_products(products_line)
+                    if products:
+                        return products
+                break
+        
+        # Если не нашли продукты, ищем в первой строке
+        first_line = lines[0]
+        if len(first_line) > 10:  # Не слишком короткая строка
+            return _extract_main_products(first_line) or "Прием пищи"
+        
+        return "Прием пищи"
+    except Exception:
+        return "Прием пищи"
+
+def _extract_main_products(text: str) -> str:
+    """Извлекает основные продукты из текста."""
+    text = text.lower()
+    
+    # Словарь основных продуктов
+    products = {
+        'крекеры': 'Крекеры',
+        'хлеб': 'Хлеб', 
+        'салат': 'Салат',
+        'суп': 'Суп',
+        'паста': 'Паста',
+        'макароны': 'Макароны',
+        'рис': 'Рис',
+        'картофель': 'Картофель',
+        'курица': 'Курица',
+        'мясо': 'Мясо',
+        'рыба': 'Рыба',
+        'яйца': 'Яйца',
+        'сыр': 'Сыр',
+        'йогурт': 'Йогурт',
+        'творог': 'Творог',
+        'фрукты': 'Фрукты',
+        'овощи': 'Овощи',
+        'каша': 'Каша',
+        'омлет': 'Омлет',
+        'бутерброд': 'Бутерброд',
+        'пицца': 'Пицца',
+        'бургер': 'Бургер',
+        'сэндвич': 'Сэндвич',
+        'мамалыга': 'Мамалыга',
+        'помидоры': 'Помидоры',
+        'масло': 'Масло',
+        'петрушка': 'Петрушка'
+    }
+    
+    # Ищем основные продукты
+    found_products = []
+    for key, value in products.items():
+        if key in text:
+            found_products.append(value)
+    
+    if found_products:
+        # Возвращаем до 2 основных продуктов
+        return ', '.join(found_products[:2])
+    
+    # Если не нашли конкретные продукты, берем первые слова (но не технические)
+    words = text.split()
+    # Фильтруем технические слова
+    filtered_words = []
+    skip_words = {
+        'примерный', 'вес', 'г', 'на', 'фото', 'не', 'знаю', 'граммовку', 'анализ', 'завершен',
+        'обновленный', 'анализ', 'продукты', 'пищевая', 'ценность', 'витамины', 'минералы',
+        'нормы', 'калории', 'белки', 'жиры', 'углеводы', 'приготовленная', 'воде', 'возможно',
+        'небольшим', 'количеством', 'масла', 'подсолнечное', 'кукурузное', 'мамалыга', 'кукурузная',
+        'каша', 'каши', 'пюре', 'нута', 'хумус', 'ломтика', 'помидора', 'помидоров', 'веточка',
+        'петрушки', 'украшения', 'полито', 'маслом', 'скорее', 'всего', 'оливковым'
+    }
+    
+    for word in words[:6]:  # Берем до 6 слов
+        clean_word = word.strip('.,!?()[]{}":;').lower()
+        if (clean_word and 
+            clean_word not in skip_words and 
+            len(clean_word) > 2 and 
+            not clean_word.isdigit() and  # Исключаем числа
+            not clean_word.endswith('г')):  # Исключаем "250г"
+            filtered_words.append(clean_word.title())
+    
+    if filtered_words:
+        return ' '.join(filtered_words[:3])  # Максимум 3 слова
+    
+    return None

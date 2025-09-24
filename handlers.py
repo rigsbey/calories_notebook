@@ -1,5 +1,6 @@
 import os
 import logging
+from datetime import datetime
 from aiogram import Router, F
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
@@ -10,7 +11,7 @@ from services.google_calendar import GoogleCalendarService
 from services.analysis_storage import analysis_storage
 from services.firebase_service import FirebaseService
 from config import TEMP_DIR
-from utils import error_handler, format_nutrition_info
+from utils import error_handler, format_nutrition_info, extract_meal_title
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,19 @@ router = Router()
 @error_handler
 async def start_handler(message: Message):
     """Обработчик команды /start"""
+    # Сохраняем/обновляем информацию о пользователе
+    user_id = message.from_user.id
+    username = message.from_user.username
+    first_name = message.from_user.first_name
+    last_name = message.from_user.last_name
+    
+    await firebase_service.create_or_update_user(
+        user_id=user_id,
+        username=username,
+        first_name=first_name,
+        last_name=last_name
+    )
+    
     welcome_text = """
 🍽️ Добро пожаловать в бот анализа питания!
 
@@ -61,6 +75,19 @@ async def start_handler(message: Message):
 async def photo_handler(message: Message, state: FSMContext):
     """Обработчик фото еды"""
     try:
+        # Сохраняем/обновляем информацию о пользователе
+        user_id = message.from_user.id
+        username = message.from_user.username
+        first_name = message.from_user.first_name
+        last_name = message.from_user.last_name
+        
+        await firebase_service.create_or_update_user(
+            user_id=user_id,
+            username=username,
+            first_name=first_name,
+            last_name=last_name
+        )
+        
         # Получаем файл с максимальным разрешением
         photo = message.photo[-1]
         
@@ -127,15 +154,15 @@ async def unknown_weight_handler(callback: CallbackQuery, state: FSMContext):
             weight=None  # Автоопределение веса
         )
     
-    # Сохраняем в Firebase
-    user_id = callback.from_user.id
-    if user_id is not None:
-        analysis_data = {
-            'analysis_text': analysis_result,
-            'weight': 'auto',
-            'user_id': str(user_id)
-        }
-        await firebase_service.save_analysis(user_id, analysis_data)
+        # Сохраняем в Firebase
+        user_id = callback.from_user.id
+        if user_id is not None:
+            analysis_data = {
+                'analysis_text': analysis_result,
+                'weight': 'auto',
+                'user_id': str(user_id)
+            }
+            analysis_id = await firebase_service.save_analysis(user_id, analysis_data)
     
     # Форматируем ответ
     formatted_response = format_nutrition_info(analysis_result)
@@ -154,6 +181,24 @@ async def unknown_weight_handler(callback: CallbackQuery, state: FSMContext):
     except Exception as e:
         logger.warning(f"Не удалось удалить временный файл: {e}")
     
+    # Пытаемся создать событие в Google Calendar (если подключен)
+    event_id = None
+    try:
+        if calendar_service:
+            title = extract_meal_title(analysis_result)
+            success = await calendar_service.create_meal_event(
+                user_id=user_id,
+                title=title,
+                description=formatted_response,
+                event_time=callback.message.date
+            )
+            if success:
+                # Получаем ID события из последнего созданного события
+                # (это упрощенный подход, в реальности лучше возвращать ID из create_meal_event)
+                event_id = "latest"  # Временное решение
+    except Exception as e:
+        logger.warning(f"Не удалось создать событие в календаре: {e}")
+
     # Очищаем состояние
     await state.clear()
     
@@ -237,6 +282,19 @@ async def weight_handler(message: Message, state: FSMContext):
         # Google Calendar отключен по запросу пользователя
         # await message.answer("📅 Google Calendar отключен")
         
+        # Пытаемся создать событие в Google Calendar (если подключен)
+        try:
+            if calendar_service:
+                title = extract_meal_title(analysis_result)
+                await calendar_service.create_meal_event(
+                    user_id=user_id,
+                    title=title,
+                    description=formatted_response,
+                    event_time=callback.message.date
+                )
+        except Exception as e:
+            logger.warning(f"Не удалось создать событие в календаре: {e}")
+
         # Удаляем временный файл
         try:
             os.remove(photo_path)
@@ -341,6 +399,35 @@ async def help_button(message: Message):
     """
     await message.answer(help_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
 
+# Обработчики команд должны быть ПЕРЕД общим обработчиком текста
+@router.message(Command("gconnect"))
+@error_handler
+async def gconnect_handler(message: Message):
+    """Старт авторизации в Google Calendar"""
+    try:
+        auth_url = await calendar_service.get_auth_url(message.from_user.id)
+        await message.answer(
+            "Для подключения Google Calendar перейдите по ссылке и дайте доступ:",
+        )
+        await message.answer(auth_url)
+    except Exception as e:
+        logger.error(f"Ошибка запуска авторизации: {e}")
+        await message.answer("❌ Не удалось начать авторизацию. Попробуйте позже.")
+
+@router.message(Command("gstatus"))
+@error_handler
+async def gstatus_handler(message: Message):
+    """Проверка статуса подключения Google Calendar"""
+    try:
+        connected = await calendar_service.ensure_connected(message.from_user.id)
+        if connected:
+            await message.answer("✅ Google Calendar подключен. События будут записываться в ваш календарь питания.")
+        else:
+            await message.answer("⚠️ Google Calendar не подключен. Отправьте /gconnect для подключения.")
+    except Exception as e:
+        logger.error(f"Ошибка статуса авторизации: {e}")
+        await message.answer("❌ Не удалось получить статус. Попробуйте позже.")
+
 @router.message(F.text)
 @error_handler
 async def text_handler(message: Message):
@@ -368,6 +455,20 @@ async def text_handler(message: Message):
             formatted_response = format_nutrition_info(corrected_analysis)
             weight_info = f" ({last_analysis['weight']} г)" if last_analysis['weight'] else " (автоопределение веса)"
             final_response = f"🔄 Исправленный анализ{weight_info}:\n\n{formatted_response}"
+            
+            # Пытаемся обновить событие в Google Calendar
+            try:
+                if calendar_service:
+                    title = extract_meal_title(corrected_analysis)
+                    # Для упрощения ищем последнее событие пользователя за сегодня
+                    # В реальности лучше хранить event_id в analysis_storage
+                    await calendar_service.update_latest_meal_event(
+                        user_id=user_id,
+                        title=title,
+                        description=formatted_response
+                    )
+            except Exception as e:
+                logger.warning(f"Не удалось обновить событие в календаре: {e}")
             
             # Отправляем без Markdown чтобы избежать ошибок парсинга
             await message.answer(final_response)

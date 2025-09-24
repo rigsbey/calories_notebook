@@ -7,6 +7,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 from utils import error_handler
 from services.report_service import ReportService
+from services.google_calendar import GoogleCalendarService
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ commands_router = Router()
 
 # Инициализируем сервис отчетов
 report_service = ReportService()
+calendar_service = GoogleCalendarService()
 
 @commands_router.message(Command("help"))
 @error_handler

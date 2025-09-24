@@ -25,8 +25,8 @@ class FirebaseService:
             logger.error(f"Ошибка инициализации Firebase: {e}")
             raise
     
-    async def save_analysis(self, user_id: int, analysis_data: Dict) -> bool:
-        """Сохраняет анализ питания в Firestore"""
+    async def save_analysis(self, user_id: int, analysis_data: Dict) -> str:
+        """Сохраняет анализ питания в Firestore и возвращает ID документа"""
         try:
             doc_ref = self.db.collection('users').document(str(user_id)).collection('analyses').document()
             analysis_data['timestamp'] = datetime.now()
@@ -34,9 +34,22 @@ class FirebaseService:
             
             doc_ref.set(analysis_data)
             logger.info(f"Анализ сохранен для пользователя {user_id}")
-            return True
+            return doc_ref.id
         except Exception as e:
             logger.error(f"Ошибка сохранения анализа: {e}")
+            return None
+
+    async def update_analysis(self, user_id: int, analysis_id: str, analysis_data: Dict) -> bool:
+        """Обновляет существующий анализ"""
+        try:
+            doc_ref = self.db.collection('users').document(str(user_id)).collection('analyses').document(analysis_id)
+            analysis_data['updated_at'] = datetime.now()
+            
+            doc_ref.update(analysis_data)
+            logger.info(f"Анализ {analysis_id} обновлен для пользователя {user_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка обновления анализа: {e}")
             return False
     
     async def get_daily_analyses(self, user_id: int, date: str) -> List[Dict]:
@@ -78,6 +91,103 @@ class FirebaseService:
             logger.error(f"Ошибка получения анализов за неделю: {e}")
             return []
     
+    async def create_or_update_user(self, user_id: int, username: str = None, first_name: str = None, last_name: str = None) -> bool:
+        """Создает или обновляет данные пользователя в Firestore"""
+        try:
+            user_ref = self.db.collection('users').document(str(user_id))
+            
+            user_data = {
+                'user_id': user_id,
+                'created_at': datetime.now(),
+                'last_activity': datetime.now()
+            }
+            
+            if username:
+                user_data['username'] = username
+            if first_name:
+                user_data['first_name'] = first_name
+            if last_name:
+                user_data['last_name'] = last_name
+            
+            # Используем merge=True чтобы не перезаписывать существующие данные
+            user_ref.set(user_data, merge=True)
+            logger.info(f"Пользователь {user_id} создан/обновлен с username: {username}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка создания/обновления пользователя: {e}")
+            return False
+
+    async def save_user_google_tokens(self, user_id: int, tokens: Dict) -> bool:
+        """Сохраняет OAuth токены пользователя Google в Firestore"""
+        try:
+            user_ref = self.db.collection('users').document(str(user_id))
+            data = {
+                'google': {
+                    'tokens': tokens,
+                    'updated_at': datetime.now()
+                }
+            }
+            user_ref.set(data, merge=True)
+            logger.info(f"Google токены сохранены для пользователя {user_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка сохранения Google токенов: {e}")
+            return False
+
+    async def get_user_google_tokens(self, user_id: int) -> Optional[Dict]:
+        """Возвращает OAuth токены Google пользователя"""
+        try:
+            doc = self.db.collection('users').document(str(user_id)).get()
+            if not doc.exists:
+                return None
+            data = doc.to_dict()
+            return (data.get('google') or {}).get('tokens')
+        except Exception as e:
+            logger.error(f"Ошибка получения Google токенов: {e}")
+            return None
+
+    async def save_user_calendar_id(self, user_id: int, calendar_id: str) -> bool:
+        """Сохраняет идентификатор календаря питания пользователя"""
+        try:
+            user_ref = self.db.collection('users').document(str(user_id))
+            data = {
+                'google': {
+                    'calendar_id': calendar_id,
+                    'updated_at': datetime.now()
+                }
+            }
+            user_ref.set(data, merge=True)
+            logger.info(f"Сохранен calendar_id для пользователя {user_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка сохранения calendar_id: {e}")
+            return False
+
+    async def get_user_calendar_id(self, user_id: int) -> Optional[str]:
+        """Возвращает идентификатор календаря питания пользователя, если есть"""
+        try:
+            doc = self.db.collection('users').document(str(user_id)).get()
+            if doc.exists:
+                data = doc.to_dict()
+                google = data.get('google') or {}
+                return google.get('calendar_id')
+            return None
+        except Exception as e:
+            logger.error(f"Ошибка получения calendar_id: {e}")
+            return None
+    async def get_user_info(self, user_id: int) -> Dict:
+        """Получает информацию о пользователе"""
+        try:
+            user_ref = self.db.collection('users').document(str(user_id))
+            doc = user_ref.get()
+            
+            if doc.exists:
+                return doc.to_dict()
+            return {}
+        except Exception as e:
+            logger.error(f"Ошибка получения информации о пользователе: {e}")
+            return {}
+
     async def get_all_users(self) -> List[int]:
         """Получает список всех пользователей"""
         try:
@@ -176,3 +286,5 @@ class FirebaseService:
                     total['vitamins'][vitamin] = percentage
         
         return total
+
+

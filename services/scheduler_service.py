@@ -66,3 +66,5 @@ class SchedulerService:
             logger.info("Тестовая задача удалена")
         except Exception as e:
             logger.error(f"Ошибка удаления тестовой задачи: {e}")
+
+
