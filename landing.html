@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Telegram-бот для анализа питания | Подсчет калорий по фото | @caloriesnote_bot</title>
+    <meta name="description" content="🤖 Telegram-бот для анализа питания. Отправь фото еды - получи точный расчет КБЖУ, калорий и витаминов за 5 секунд. Автоматическое сохранение в Google Calendar. Бесплатно!">
+    <meta name="keywords" content="telegram бот, анализ питания, подсчет калорий, КБЖУ, фото еды, диета, похудение, здоровое питание, калории, белки, жиры, углеводы, витамины">
+    <meta name="author" content="Calories Notebook Bot">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://caloriesnotebook.com/">
+    <meta property="og:title" content="Telegram-бот для анализа питания | Подсчет калорий по фото">
+    <meta property="og:description" content="Отправь фото еды - получи точный анализ КБЖУ, калорий и витаминов за 5 секунд. Автоматическое сохранение в Google Calendar.">
+    <meta property="og:image" content="https://caloriesnotebook.com/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Calories Notebook Bot">
+    <meta property="og:locale" content="ru_RU">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://caloriesnotebook.com/">
+    <meta property="twitter:title" content="Telegram-бот для анализа питания | Подсчет калорий по фото">
+    <meta property="twitter:description" content="Отправь фото еды - получи точный анализ КБЖУ, калорий и витаминов за 5 секунд. Автоматическое сохранение в Google Calendar.">
+    <meta property="twitter:image" content="https://caloriesnotebook.com/og-image.jpg">
+    
+    <!-- Additional SEO -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="msapplication-TileColor" content="#667eea">
+    <link rel="canonical" href="https://caloriesnotebook.com/">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Calories Notebook Bot",
+        "description": "Telegram-бот для анализа питания по фотографии еды",
+        "url": "https://t.me/caloriesnote_bot",
+        "applicationCategory": "HealthApplication",
+        "operatingSystem": "Telegram",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "RUB"
+        },
+        "featureList": [
+            "Анализ фото еды",
+            "Расчет КБЖУ и калорий",
+            "Определение витаминов",
+            "Сохранение в Google Calendar",
+            "Отчеты по питанию"
+        ]
+    }
+    </script>
+    
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Как бот определяет калорийность по фото?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Наш ИИ-бот использует технологии машинного обучения для распознавания еды по фотографии. Бот анализирует состав блюда, определяет ингредиенты и рассчитывает точную калорийность, белки, жиры, углеводы и витамины на основе базы данных пищевых продуктов."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Можно ли использовать бот для похудения?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Да! Бот идеально подходит для контроля питания при похудении. Он автоматически ведет дневник питания, сохраняя все данные в Google Calendar, что помогает отслеживать прогресс и соблюдать диету."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Точно ли бот считает калории?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Точность составляет 85-95% в зависимости от качества фото и сложности блюда. Бот учитывает вес порции и использует обширную базу данных пищевых продуктов. При неточности вы можете исправить результат текстовым сообщением."
+                }
+            }
+        ]
+    }
+    </script>
+    
+    <!-- HowTo Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "Как использовать бота для подсчета калорий по фото",
+        "description": "Пошаговая инструкция по использованию Telegram-бота для анализа питания",
+        "step": [
+            {
+                "@type": "HowToStep",
+                "name": "Сфотографируйте еду",
+                "text": "Отправьте фото еды в Telegram-бот @caloriesnote_bot",
+                "image": "https://caloriesnotebook.com/step1.jpg"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Укажите вес порции",
+                "text": "Введите вес еды в граммах или нажмите 'Не знаю' для автоопределения",
+                "image": "https://caloriesnotebook.com/step2.jpg"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Получите анализ КБЖУ",
+                "text": "Бот рассчитает калории, белки, жиры, углеводы и витамины",
+                "image": "https://caloriesnotebook.com/step3.jpg"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Данные сохранятся в календарь",
+                "text": "Анализ автоматически сохранится в Google Calendar для отслеживания прогресса"
+            }
+        ]
+    }
+    </script>
+    
+    <!-- Preconnect to external domains for better performance -->
+    <link rel="preconnect" href="https://t.me">
+    <link rel="dns-prefetch" href="https://t.me">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: #718096;
+            margin-bottom: 40px;
+        }
+
+        .problems {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .problems h2 {
+            font-size: 2.5rem;
+            color: #e53e3e;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .problem-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .problem-list li {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #fed7d7;
+            border-left: 4px solid #e53e3e;
+            border-radius: 8px;
+        }
+
+        .product {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .product h2 {
+            font-size: 2.5rem;
+            color: #38a169;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 30px;
+            background: #f7fafc;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .feature p {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        .demo {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .demo h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .demo-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .demo-step {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 15px;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 20px 40px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .telegram-icon {
+            margin-right: 10px;
+            font-size: 1.6rem;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero, .problems, .product, .cta {
+                padding: 40px 20px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+
+        /* FAQ Styles */
+        .faq {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .faq h2 {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f7fafc;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .faq-item h3 {
+            font-size: 1.3rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .faq-item p {
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Info Section Styles */
+        .info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .info-section h2 {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .info-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .info-block {
+            margin-bottom: 35px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 15px;
+            border-left: 5px solid #38a169;
+        }
+
+        .info-block h3 {
+            font-size: 1.4rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .info-block p {
+            color: #4a5568;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .info-block strong {
+            color: #2d3748;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <header class="hero">
+            <h1>🍽️ Telegram-бот для анализа питания и подсчета калорий</h1>
+            <p class="subtitle">Отправь фото еды — получи точный расчет КБЖУ, калорий и витаминов за 5 секунд. Бесплатный <strong>бот для похудения</strong>, <strong>food tracker</strong> и <strong>калькулятор калорий</strong> с <strong>распознаванием еды по фото</strong>.</p>
+        </header>
+
+        <!-- Боли -->
+        <section class="problems" aria-labelledby="problems-heading">
+            <h2 id="problems-heading">😤 Проблемы с подсчетом калорий и контролем питания</h2>
+            <ul class="problem-list">
+                <li><span class="emoji">🤔</span>Смотришь на тарелку и понятия не имеешь сколько там калорий?</li>
+                <li><span class="emoji">📱</span>Надоело искать каждый продукт в приложениях для подсчета калорий?</li>
+                <li><span class="emoji">⏰</span>Тратишь 10 минут на ввод каждого приема пищи вручную?</li>
+                <li><span class="emoji">🤷‍♀️</span>Не знаешь какие витамины получаешь с едой?</li>
+                <li><span class="emoji">📊</span>Хочешь следить за питанием, но лень ведать дневник еды?</li>
+            </ul>
+        </section>
+
+        <!-- Про продукт -->
+        <main class="product" aria-labelledby="product-heading">
+            <h2 id="product-heading">✅ ИИ-бот для анализа питания и автоматического подсчета калорий</h2>
+            
+            <div class="demo">
+                <h3>Как работает бот-диетолог для подсчета КБЖУ по фото:</h3>
+                <div class="demo-steps">
+                    <div class="demo-step">
+                        <div class="step-number">1</div>
+                        <h4>📸 Сфотографировал еду</h4>
+                        <p>Любое блюдо, любой ракурс</p>
+                    </div>
+                    <div class="demo-step">
+                        <div class="step-number">2</div>
+                        <h4>⚖️ Указал вес</h4>
+                        <p>Или нажал "не знаю"</p>
+                    </div>
+                    <div class="demo-step">
+                        <div class="step-number">3</div>
+                        <h4>📊 Получил анализ</h4>
+                        <p>КБЖУ, калории, витамины</p>
+                    </div>
+                    <div class="demo-step">
+                        <div class="step-number">4</div>
+                        <h4>📅 Сохранил в календарь</h4>
+                        <p>Автоматически в Google Calendar</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">🤖</span>
+                    <h3>ИИ-анализ фото</h3>
+                    <p>Определяет состав блюда по фотографии с точностью диетолога</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">⚡</span>
+                    <h3>5 секунд</h3>
+                    <p>От фото до результата. Быстрее чем найти продукт в базе</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📊</span>
+                    <h3>Полный анализ</h3>
+                    <p>Калории, белки, жиры, углеводы, витамины и микроэлементы</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📅</span>
+                    <h3>Автосохранение</h3>
+                    <p>Все данные в твой Google Calendar для отслеживания прогресса</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">✏️</span>
+                    <h3>Коррекция</h3>
+                    <p>Исправь анализ текстом: "Это не руккола, а шпинат"</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📈</span>
+                    <h3>Отчеты</h3>
+                    <p>Итоги дня и недели по питанию одной командой</p>
+                </div>
+            </div>
+
+            <div style="background: #e6fffa; padding: 30px; border-radius: 15px; margin: 40px 0; text-align: center;">
+                <h3 style="color: #234e52; margin-bottom: 20px;">🔥 Реальный пример работы бота:</h3>
+                <div style="background: white; padding: 25px; border-radius: 15px; text-align: left; max-width: 500px; margin: 0 auto; font-family: 'Courier New', monospace; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <div style="color: #2d3748; font-weight: bold; margin-bottom: 15px;">🍽️ Ваш прием пищи (автоопределение веса):</div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <strong>🍽️ ПРОДУКТЫ:</strong> Кусок запеченного лосося, порция вареного белого риса, жареная брокколи и шпинат.
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <strong>⚖️ ПРИМЕРНЫЙ ВЕС:</strong> 400 г (лосось - 150 г, рис - 150 г, овощи - 100 г)
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>📊 ПИЩЕВАЯ ЦЕННОСТЬ:</strong><br>
+                        • 🔥 Калории: 550 ккал<br>
+                        • 🥩 Белки: 35 г<br>
+                        • 🥑 Жиры: 25 г<br>
+                        • 🍞 Углеводы: 45 г
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>📊 ВИТАМИНЫ И МИНЕРАЛЫ:</strong><br>
+                        🥕 Витамин A: 🟩🟩🟩⬜⬜⬜⬜⬜⬜⬜ 35%<br>
+                        🍊 Витамин C: 🟩🟩🟩🟩🟩🟩⬜⬜⬜⬜ 60%<br>
+                        🌿 Витамин K: 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ 90%<br>
+                        🥩 Витамин B12: 🟩🟩🟩🟩🟩⬜⬜⬜⬜⬜ 50%
+                    </div>
+                    
+                    <div style="color: #38a169; font-weight: bold; text-align: center; padding: 10px; background: #f0fff4; border-radius: 8px;">
+                        ✅ Сохранено в Google Calendar!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <section class="faq" aria-labelledby="faq-heading">
+            <h2 id="faq-heading">❓ Часто задаваемые вопросы о боте для подсчета калорий</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <h3>Как бот определяет калорийность по фото?</h3>
+                    <p>Наш ИИ-бот использует технологии машинного обучения для распознавания еды по фотографии. Бот анализирует состав блюда, определяет ингредиенты и рассчитывает точную калорийность, белки, жиры, углеводы и витамины на основе базы данных пищевых продуктов.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Можно ли использовать бот для похудения?</h3>
+                    <p>Да! Бот идеально подходит для контроля питания при похудении. Он автоматически ведет дневник питания, сохраняя все данные в Google Calendar, что помогает отслеживать прогресс и соблюдать диету.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Сохраняются ли данные в календарь?</h3>
+                    <p>Да, все анализы питания автоматически сохраняются в ваш Google Calendar. Вы можете подключить календарь через команду /gconnect и получать подробные записи о каждом приеме пищи с полным анализом КБЖУ.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Точно ли бот считает калории?</h3>
+                    <p>Точность составляет 85-95% в зависимости от качества фото и сложности блюда. Бот учитывает вес порции и использует обширную базу данных пищевых продуктов. При неточности вы можете исправить результат текстовым сообщением.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Сколько стоит использование бота?</h3>
+                    <p>Бот полностью бесплатный! Никаких скрытых платежей или подписок. Просто запустите бота и начинайте анализировать свое питание.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>Какие форматы фото поддерживает бот?</h3>
+                    <p>Бот работает с фотографиями в форматах JPG и PNG. Рекомендуем делать четкие фото еды при хорошем освещении для лучшей точности анализа.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Информационный раздел -->
+        <section class="info-section" aria-labelledby="info-heading">
+            <h2 id="info-heading">📚 Все о правильном подсчете калорий и КБЖУ</h2>
+            
+            <div class="info-content">
+                <div class="info-block">
+                    <h3>🎯 Зачем нужен контроль калорий?</h3>
+                    <p>Подсчет калорий — основа <strong>здорового питания</strong> и эффективного <strong>похудения</strong>. Наш <strong>бот-диетолог</strong> помогает вести <strong>дневник питания онлайн</strong> без сложных расчетов. Просто фотографируйте еду и получайте точный анализ <strong>калорийности по фото</strong>.</p>
+                </div>
+                
+                <div class="info-block">
+                    <h3>⚖️ Что такое КБЖУ и почему это важно?</h3>
+                    <p><strong>КБЖУ</strong> — это калории, белки, жиры и углеводы. Правильный <strong>баланс БЖУ</strong> обеспечивает организм энергией и строительными материалами. Наш <strong>калькулятор КБЖУ</strong> автоматически рассчитывает все показатели на основе анализа фото еды.</p>
+                </div>
+                
+                <div class="info-block">
+                    <h3>🤖 Как работает ИИ для питания?</h3>
+                    <p>Наш <strong>ИИ-бот</strong> использует технологии <strong>распознавания еды по фото</strong> для определения состава блюда. Бот анализирует ингредиенты, рассчитывает <strong>питание и витамины</strong>, а затем сохраняет данные в <strong>Google Calendar</strong> для отслеживания прогресса.</p>
+                </div>
+                
+                <div class="info-block">
+                    <h3>📱 Преимущества Telegram-бота для диеты</h3>
+                    <p>В отличие от обычных <strong>приложений для похудения</strong>, наш бот работает прямо в Telegram. Не нужно скачивать дополнительные программы — просто отправляйте фото еды и получайте <strong>автоматический подсчет калорий</strong> с сохранением в календарь.</p>
+                </div>
+                
+                <div class="info-block">
+                    <h3>📊 Пример отчета за день</h3>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 15px; font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                        <div style="color: #2d3748; font-weight: bold; margin-bottom: 10px;">📅 Итоги дня (2025-09-24)</div>
+                        <div style="margin-bottom: 8px;">👤 @username</div>
+                        <div style="margin-bottom: 8px;">📊 Проанализировано приемов пищи: 10</div>
+                        <div style="margin-bottom: 8px;">🔥 Калории: 4580 ккал (из 2200)</div>
+                        <div style="margin-bottom: 8px;">🥩 Белки: 160.0 г / 120 г</div>
+                        <div style="margin-bottom: 8px;">🥑 Жиры: 262.0 г / 75 г</div>
+                        <div style="margin-bottom: 8px;">🌾 Углеводы: 425.0 г / 250 г</div>
+                        <div style="margin-bottom: 8px;">💊 Витамины: A(35%), C(60%), K(90%), B12(50%)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta" aria-labelledby="cta-heading">
+            <h2 id="cta-heading">🚀 Начни считать калории правильно с ботом-диетологом</h2>
+            <p>Забудь про утомительный ввод каждого продукта.<br>Просто фотографируй и получай результат!</p>
+            <a href="https://t.me/caloriesnote_bot" class="cta-button" 
+               title="Перейти к боту @caloriesnote_bot в Telegram"
+               aria-label="Запустить Telegram-бота для анализа питания">
+                <span class="telegram-icon" aria-hidden="true">📱</span>Запустить бота бесплатно
+            </a>
+            <div style="margin-top: 30px; font-size: 1.1rem; opacity: 0.9;">
+                <span class="emoji">⚡</span>Работает сразу • <span class="emoji">🆓</span>Бесплатно • <span class="emoji">🔒</span>Безопасно
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 20px; color: #718096;">
+            <p>Сделано с ❤️ для тех, кто следит за питанием</p>
+        </footer>
+    </div>
+
+    <script>
+        // Простая аналитика кликов по кнопке
+        document.querySelector('.cta-button').addEventListener('click', function() {
+            // Здесь можно добавить отправку события в аналитику
+            console.log('CTA button clicked');
+        });
+
+        // Плавная анимация при скролле
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Применяем анимацию к секциям
+        document.querySelectorAll('.problems, .product, .cta').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
