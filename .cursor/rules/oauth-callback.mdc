@@ -1,0 +1,261 @@
+---
+description: OAuth callback система с красивыми HTML страницами
+alwaysApply: false
+---
+
+# OAuth Callback система
+
+## Архитектура OAuth
+
+```
+Пользователь → Google OAuth → api.domain.site/oauth2callback → Cloudflare Tunnel → Сервер:8000 → Бот
+```
+
+## Компоненты системы
+
+### 1. Google Calendar Service
+
+[services/google_calendar.py](mdc:services/google_calendar.py) - основной сервис:
+
+- **OAuth callback обработчик** - `_oauth_callback()`
+- **HTML рендеринг** - `_render_success_page()`, `_render_error_page()`
+- **Управление календарем** - подключение/отключение
+- **Создание событий** - автоматическое сохранение анализов
+
+### 2. HTML шаблоны
+
+- [templates/oauth_callback.html](mdc:templates/oauth_callback.html) - страница успеха
+- [templates/oauth_error.html](mdc:templates/oauth_error.html) - страница ошибки
+
+### 3. Конфигурация
+
+[config.py](mdc:config.py) - настройки OAuth:
+
+```python
+GOOGLE_OAUTH_REDIRECT_PORT=8000
+GOOGLE_OAUTH_REDIRECT_PATH=/oauth2callback
+GOOGLE_OAUTH_REDIRECT_BASE=https://api.domain.site
+```
+
+## Настройка OAuth
+
+### 1. Google Cloud Console
+
+1. Создайте проект в Google Cloud Console
+2. Включите Google Calendar API
+3. Создайте OAuth 2.0 credentials
+4. Добавьте redirect URI: `https://api.yourdomain.site/oauth2callback`
+
+### 2. Credentials файл
+
+```json
+{
+  "web": {
+    "client_id": "your_client_id",
+    "project_id": "your_project_id",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "your_client_secret",
+    "redirect_uris": [
+      "https://api.yourdomain.site/oauth2callback"
+    ],
+    "javascript_origins": [
+      "https://api.yourdomain.site"
+    ]
+  }
+}
+```
+
+### 3. Переменные окружения
+
+```bash
+GOOGLE_CREDENTIALS_PATH=credentials.json
+GOOGLE_OAUTH_REDIRECT_PORT=8000
+GOOGLE_OAUTH_REDIRECT_PATH=/oauth2callback
+GOOGLE_OAUTH_REDIRECT_BASE=https://api.yourdomain.site
+```
+
+## HTML страницы
+
+### 1. Страница успеха
+
+- **Анимации** - slideUp, bounce эффекты
+- **Градиенты** - современный дизайн
+- **Автозакрытие** - через 10 секунд
+- **Счетчик** - обратный отсчет
+- **Адаптивность** - работает на мобильных
+
+### 2. Страница ошибки
+
+- **Инструкции** - что делать при ошибке
+- **Решения** - пошаговые действия
+- **Автозакрытие** - через 15 секунд
+- **Ссылки** - на команды бота
+
+## Команды бота
+
+### 1. Подключение календаря
+
+```python
+@router.message(Command("gconnect"))
+async def gconnect_handler(message: Message):
+    """Старт авторизации в Google Calendar"""
+    auth_url = await calendar_service.get_auth_url(message.from_user.id)
+    await message.answer("Для подключения Google Calendar перейдите по ссылке и дайте доступ:")
+    await message.answer(auth_url)
+```
+
+### 2. Проверка статуса
+
+```python
+@router.message(Command("gstatus"))
+async def gstatus_handler(message: Message):
+    """Проверка статуса подключения Google Calendar"""
+    connected = await calendar_service.ensure_connected(message.from_user.id)
+    if connected:
+        await message.answer("✅ Google Calendar подключен")
+    else:
+        await message.answer("⚠️ Google Calendar не подключен")
+```
+
+### 3. Отключение календаря
+
+```python
+@router.message(Command("gdisconnect"))
+async def gdisconnect_handler(message: Message):
+    """Отключение Google Calendar от аккаунта"""
+    success = await calendar_service.disconnect_calendar(message.from_user.id)
+    if success:
+        await message.answer("✅ Google Calendar отключен")
+    else:
+        await message.answer("❌ Не удалось отключить календарь")
+```
+
+## Кнопка календаря
+
+### 1. Обработчик кнопки
+
+```python
+@router.message(F.text == "📅 Календарь")
+async def calendar_button(message: Message):
+    """Обработчик кнопки 'Календарь'"""
+    connected = await calendar_service.ensure_connected(message.from_user.id)
+    
+    if connected:
+        await message.answer(
+            "✅ **Google Calendar подключен!**\n\n"
+            "📅 Все анализы еды автоматически сохраняются в ваш календарь питания.\n"
+            "🔗 События создаются с подробной информацией о составе и КБЖУ.\n\n"
+            "💡 **Команды:**\n"
+            "• `/gstatus` - проверить статус\n"
+            "• `/gdisconnect` - отключить календарь"
+        )
+    else:
+        await message.answer(
+            "📅 **Подключение Google Calendar**\n\n"
+            "🔗 Для автоматического сохранения анализов еды в календарь:\n\n"
+            "1. Нажмите /gconnect для подключения\n"
+            "2. Авторизуйтесь в Google\n"
+            "3. Разрешите доступ к календарю\n\n"
+            "✅ После подключения все анализы будут сохраняться автоматически!"
+        )
+```
+
+### 2. Уведомления после анализа
+
+```python
+# После анализа еды
+calendar_status = ""
+try:
+    connected = await calendar_service.ensure_connected(message.from_user.id)
+    if connected:
+        calendar_status = "\n✅ **Анализ сохранен в Google Calendar!**"
+    else:
+        calendar_status = "\n📅 **Подключите Google Calendar** (/gconnect) для автоматического сохранения анализов"
+except Exception as e:
+    calendar_status = "\n📅 **Подключите Google Calendar** (/gconnect) для автоматического сохранения анализов"
+
+await message.answer(
+    f"✅ Анализ завершен!{calendar_status}\n\n"
+    "💬 Если нужно что-то исправить, просто напишите текстом:\n"
+    "• \"На фото не руккола, а листья салата\"\n"
+    "• \"Вес не 450г, а 300г\"\n"
+    "• \"Добавь туда еще помидоры\"\n\n"
+    "📸 Или отправьте новое фото для следующего анализа.",
+    parse_mode="Markdown"
+)
+```
+
+## Меню бота
+
+### 1. Команды меню
+
+```python
+async def setup_bot_commands(bot: Bot):
+    """Настройка команд меню бота"""
+    commands = [
+        BotCommand(command="start", description="🚀 Запустить бота"),
+        BotCommand(command="help", description="ℹ️ Помощь по использованию"),
+        BotCommand(command="day", description="📊 Итоги дня"),
+        BotCommand(command="week", description="📈 Итоги недели"),
+        BotCommand(command="summary", description="📋 Сводка питания"),
+        BotCommand(command="gconnect", description="📅 Подключить Google Calendar"),
+        BotCommand(command="gstatus", description="🔍 Статус календаря"),
+        BotCommand(command="gdisconnect", description="❌ Отключить календарь"),
+    ]
+    
+    await bot.set_my_commands(commands)
+```
+
+## Для нового бота
+
+### 1. Обновите домен
+
+- Измените `GOOGLE_OAUTH_REDIRECT_BASE` в config.py
+- Обновите redirect_uris в credentials.json
+- Настройте новый поддомен в Cloudflare
+
+### 2. Обновите HTML шаблоны
+
+- Измените ссылки на Telegram бота
+- Обновите текст под новый бот
+- Адаптируйте дизайн под тематику
+
+### 3. Настройте Google OAuth
+
+- Создайте новый проект в Google Cloud Console
+- Добавьте новый redirect URI
+- Скачайте новые credentials
+
+## Мониторинг
+
+### 1. Логи OAuth
+
+```bash
+# Логи callback сервера
+docker logs bot-name | grep "OAuth callback"
+
+# Логи тоннеля
+journalctl -u cloudflared | grep "oauth2callback"
+```
+
+### 2. Тестирование
+
+```bash
+# Тест callback URL
+curl -I https://api.yourdomain.site/oauth2callback
+
+# Тест с параметрами
+curl "https://api.yourdomain.site/oauth2callback?state=123&code=test"
+```
+
+### 3. Проверка статуса
+
+```bash
+# Статус тоннеля
+cloudflared tunnel info your-tunnel-name
+
+# Статус контейнера
+docker ps | grep bot-name
+```

@@ -1,0 +1,457 @@
+---
+description: Развертывание нескольких ботов на одном сервере
+alwaysApply: false
+---
+
+# Развертывание нескольких ботов
+
+## Архитектура мульти-бота
+
+```
+Сервер (Ubuntu/Debian)
+├── Cloudflare Tunnel (один)
+├── Бот 1 (порт 8000) → api.domain.site
+├── Бот 2 (порт 8001) → api2.domain.site
+├── Бот 3 (порт 8002) → api3.domain.site
+└── Nginx (опционально) для балансировки
+```
+
+## Настройка Cloudflare Tunnel
+
+### 1. Единый тоннель для всех ботов
+
+```yaml
+# ~/.cloudflared/config.yml
+tunnel: multi-bot-tunnel
+credentials-file: /root/.cloudflared/TUNNEL_ID.json
+
+ingress:
+  - hostname: api.domain.site
+    service: http://localhost:8000
+  - hostname: api2.domain.site
+    service: http://localhost:8001
+  - hostname: api3.domain.site
+    service: http://localhost:8002
+  - service: http_status:404
+```
+
+### 2. DNS записи
+
+```bash
+# Регистрируем все поддомены
+cloudflared tunnel route dns multi-bot-tunnel api.domain.site
+cloudflared tunnel route dns multi-bot-tunnel api2.domain.site
+cloudflared tunnel route dns multi-bot-tunnel api3.domain.site
+```
+
+## Структура сервера
+
+```
+/opt/
+├── bot-calories/
+│   ├── docker-compose.prod.yml
+│   ├── .env
+│   └── credentials.json
+├── bot-fitness/
+│   ├── docker-compose.prod.yml
+│   ├── .env
+│   └── credentials.json
+└── bot-nutrition/
+    ├── docker-compose.prod.yml
+    ├── .env
+    └── credentials.json
+```
+
+## Конфигурация каждого бота
+
+### 1. Bot 1 (калории) - порт 8000
+
+```yaml
+# /opt/bot-calories/docker-compose.prod.yml
+version: '3.8'
+
+services:
+  bot-calories:
+    image: ghcr.io/username/calories-bot:latest
+    container_name: bot-calories
+    restart: unless-stopped
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_OAUTH_REDIRECT_PORT=8000
+      - GOOGLE_OAUTH_REDIRECT_BASE=https://api.domain.site
+    volumes:
+      - /opt/bot-calories/logs:/app/logs
+      - /opt/bot-calories/credentials.json:/app/credentials.json:ro
+```
+
+### 2. Bot 2 (фитнес) - порт 8001
+
+```yaml
+# /opt/bot-fitness/docker-compose.prod.yml
+version: '3.8'
+
+services:
+  bot-fitness:
+    image: ghcr.io/username/fitness-bot:latest
+    container_name: bot-fitness
+    restart: unless-stopped
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_OAUTH_REDIRECT_PORT=8001
+      - GOOGLE_OAUTH_REDIRECT_BASE=https://api2.domain.site
+    volumes:
+      - /opt/bot-fitness/logs:/app/logs
+      - /opt/bot-fitness/credentials.json:/app/credentials.json:ro
+```
+
+### 3. Bot 3 (питание) - порт 8002
+
+```yaml
+# /opt/bot-nutrition/docker-compose.prod.yml
+version: '3.8'
+
+services:
+  bot-nutrition:
+    image: ghcr.io/username/nutrition-bot:latest
+    container_name: bot-nutrition
+    restart: unless-stopped
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_OAUTH_REDIRECT_PORT=8002
+      - GOOGLE_OAUTH_REDIRECT_BASE=https://api3.domain.site
+    volumes:
+      - /opt/bot-nutrition/logs:/app/logs
+      - /opt/bot-nutrition/credentials.json:/app/credentials.json:ro
+```
+
+## OAuth настройки
+
+### 1. Google Cloud Console
+
+Для каждого бота создайте отдельный проект:
+
+- **Bot 1**: `calories-bot-project`
+- **Bot 2**: `fitness-bot-project`  
+- **Bot 3**: `nutrition-bot-project`
+
+### 2. Redirect URIs
+
+- **Bot 1**: `https://api.domain.site/oauth2callback`
+- **Bot 2**: `https://api2.domain.site/oauth2callback`
+- **Bot 3**: `https://api3.domain.site/oauth2callback`
+
+### 3. Credentials файлы
+
+```bash
+# Bot 1
+/opt/bot-calories/credentials.json
+
+# Bot 2  
+/opt/bot-fitness/credentials.json
+
+# Bot 3
+/opt/bot-nutrition/credentials.json
+```
+
+## Управление ботами
+
+### 1. Скрипт управления
+
+```bash
+#!/bin/bash
+# /opt/manage-bots.sh
+
+case $1 in
+    "start")
+        cd /opt/bot-calories && docker-compose -f docker-compose.prod.yml up -d
+        cd /opt/bot-fitness && docker-compose -f docker-compose.prod.yml up -d
+        cd /opt/bot-nutrition && docker-compose -f docker-compose.prod.yml up -d
+        ;;
+    "stop")
+        cd /opt/bot-calories && docker-compose -f docker-compose.prod.yml down
+        cd /opt/bot-fitness && docker-compose -f docker-compose.prod.yml down
+        cd /opt/bot-nutrition && docker-compose -f docker-compose.prod.yml down
+        ;;
+    "restart")
+        $0 stop
+        sleep 5
+        $0 start
+        ;;
+    "status")
+        echo "=== Bot Status ==="
+        docker ps | grep bot-
+        echo ""
+        echo "=== Tunnel Status ==="
+        cloudflared tunnel info multi-bot-tunnel
+        ;;
+    "logs")
+        docker logs $2 -f
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status|logs <bot-name>}"
+        ;;
+esac
+```
+
+### 2. Мониторинг
+
+```bash
+# Статус всех ботов
+/opt/manage-bots.sh status
+
+# Логи конкретного бота
+/opt/manage-bots.sh logs bot-calories
+
+# Перезапуск всех ботов
+/opt/manage-bots.sh restart
+```
+
+## GitHub Actions для каждого бота
+
+### 1. Отдельные репозитории
+
+Каждый бот в своем репозитории:
+
+- `username/calories-bot`
+- `username/fitness-bot`
+- `username/nutrition-bot`
+
+### 2. Workflow файлы
+
+```yaml
+# .github/workflows/deploy.yml для каждого бота
+name: Deploy Bot
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd /opt/bot-name
+          docker-compose -f docker-compose.prod.yml down
+          docker-compose -f docker-compose.prod.yml pull
+          docker-compose -f docker-compose.prod.yml up -d
+```
+
+## Nginx для балансировки (опционально)
+
+### 1. Установка Nginx
+
+```bash
+sudo apt install nginx
+```
+
+### 2. Конфигурация
+
+```nginx
+# /etc/nginx/sites-available/multi-bot
+server {
+    listen 80;
+    server_name api.domain.site;
+
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+server {
+    listen 80;
+    server_name api2.domain.site;
+
+    location / {
+        proxy_pass http://localhost:8001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+server {
+    listen 80;
+    server_name api3.domain.site;
+
+    location / {
+        proxy_pass http://localhost:8002;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+## Безопасность
+
+### 1. Изоляция контейнеров
+
+```yaml
+# Для каждого бота
+services:
+  bot-name:
+    networks:
+      - bot-network
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+    volumes:
+      - /opt/bot-name/logs:/app/logs:rw
+      - /opt/bot-name/credentials.json:/app/credentials.json:ro
+
+networks:
+  bot-network:
+    driver: bridge
+```
+
+### 2. Ограничения ресурсов
+
+```yaml
+services:
+  bot-name:
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+```
+
+## Масштабирование
+
+### 1. Горизонтальное масштабирование
+
+```yaml
+# docker-compose.prod.yml
+services:
+  bot-name:
+    deploy:
+      replicas: 2
+    ports:
+      - "8000-8001:8000"
+```
+
+### 2. Вертикальное масштабирование
+
+```yaml
+services:
+  bot-name:
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+```
+
+## Резервное копирование
+
+### 1. Скрипт бэкапа
+
+```bash
+#!/bin/bash
+# /opt/backup-bots.sh
+
+BACKUP_DIR="/opt/backups/$(date +%Y%m%d)"
+mkdir -p $BACKUP_DIR
+
+# Бэкап конфигураций
+cp -r /opt/bot-*/docker-compose.prod.yml $BACKUP_DIR/
+cp -r /opt/bot-*/.env $BACKUP_DIR/
+cp -r /opt/bot-*/credentials.json $BACKUP_DIR/
+
+# Бэкап логов
+tar -czf $BACKUP_DIR/logs.tar.gz /opt/bot-*/logs/
+
+echo "Backup completed: $BACKUP_DIR"
+```
+
+### 2. Автоматический бэкап
+
+```bash
+# Crontab
+0 2 * * * /opt/backup-bots.sh
+```
+
+## Мониторинг всех ботов
+
+### 1. Дашборд
+
+```bash
+#!/bin/bash
+# /opt/bot-dashboard.sh
+
+echo "=== Multi-Bot Dashboard ==="
+echo "Date: $(date)"
+echo ""
+
+echo "=== Docker Containers ==="
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+echo ""
+echo "=== Cloudflare Tunnel ==="
+cloudflared tunnel info multi-bot-tunnel
+
+echo ""
+echo "=== Disk Usage ==="
+df -h /opt
+
+echo ""
+echo "=== Memory Usage ==="
+free -h
+```
+
+### 2. Алерты
+
+```bash
+#!/bin/bash
+# /opt/check-bots.sh
+
+# Проверяем статус ботов
+for bot in bot-calories bot-fitness bot-nutrition; do
+    if ! docker ps | grep -q $bot; then
+        echo "ALERT: $bot is not running!"
+        # Отправка уведомления
+    fi
+done
+
+# Проверяем тоннель
+if ! cloudflared tunnel info multi-bot-tunnel | grep -q "active"; then
+    echo "ALERT: Cloudflare Tunnel is not active!"
+fi
+```
+
+## Для нового бота
+
+### 1. Добавление нового бота
+
+1. **Создайте директорию**: `/opt/bot-new/`
+2. **Настройте порт**: используйте следующий свободный (8003)
+3. **Обновите тоннель**: добавьте новый hostname в config.yml
+4. **Настройте DNS**: зарегистрируйте новый поддомен
+5. **Создайте OAuth**: новый проект в Google Cloud Console
+6. **Запустите бота**: docker-compose up -d
+
+### 2. Обновление скриптов
+
+- Добавьте новый бот в `manage-bots.sh`
+- Обновите `backup-bots.sh`
+- Добавьте в `check-bots.sh`
+
+### 3. Мониторинг
+
+- Добавьте в дашборд
+- Настройте алерты
+- Обновите документацию

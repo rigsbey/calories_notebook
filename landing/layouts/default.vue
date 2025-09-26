@@ -15,8 +15,8 @@
           </div>
           <div class="footer-links">
             <a href="https://t.me/caloriesnote_bot" class="footer-link">Telegram Bot</a>
-            <a href="#privacy" class="footer-link">Конфиденциальность</a>
-            <a href="#terms" class="footer-link">Условия использования</a>
+            <NuxtLink to="/privacy" class="footer-link">Конфиденциальность</NuxtLink>
+            <NuxtLink to="/terms" class="footer-link">Условия использования</NuxtLink>
           </div>
         </div>
         <div class="footer-bottom">

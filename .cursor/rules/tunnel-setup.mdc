@@ -1,0 +1,128 @@
+---
+description: Настройка Cloudflare Tunnel для OAuth callback
+alwaysApply: false
+---
+
+# Cloudflare Tunnel для OAuth Callback
+
+## Архитектура тоннеля
+
+Наш бот использует Cloudflare Tunnel для OAuth callback вместо покупки домена:
+
+```
+Пользователь → Google OAuth → api.toxiguard.site → Cloudflare Tunnel → german_server:8000 → Бот
+```
+
+## Настройка тоннеля
+
+### 1. Установка Cloudflare Tunnel на сервере
+
+```bash
+# Скачиваем и устанавливаем cloudflared
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+sudo dpkg -i cloudflared-linux-amd64.deb
+```
+
+### 2. Аутентификация в Cloudflare
+
+```bash
+# Логинимся в Cloudflare (откроется браузер)
+cloudflared tunnel login
+```
+
+### 3. Создание тоннеля
+
+```bash
+# Создаем тоннель
+cloudflared tunnel create my-bot-tunnel
+
+# Получаем ID тоннеля из вывода команды
+```
+
+### 4. Конфигурация тоннеля
+
+Создаем файл `~/.cloudflared/config.yml`:
+
+```yaml
+tunnel: my-bot-tunnel
+credentials-file: /root/.cloudflared/TUNNEL_ID.json
+
+ingress:
+  - hostname: api.yourdomain.site
+    service: http://localhost:8000
+  - service: http_status:404
+```
+
+### 5. DNS настройка
+
+```bash
+# Регистрируем DNS запись (замените на ваш домен)
+cloudflared tunnel route dns my-bot-tunnel api.yourdomain.site
+```
+
+### 6. Запуск тоннеля
+
+```bash
+# Запуск вручную
+cloudflared tunnel run my-bot-tunnel
+
+# Или через systemd сервис
+sudo systemctl enable cloudflared
+sudo systemctl start cloudflared
+```
+
+## Systemd сервис
+
+Создаем `/etc/systemd/system/cloudflared.service`:
+
+```ini
+[Unit]
+Description=Cloudflare Tunnel
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/cloudflared tunnel --config /root/.cloudflared/config.yml run
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## Проверка работы
+
+```bash
+# Статус тоннеля
+cloudflared tunnel info my-bot-tunnel
+
+# Логи
+journalctl -u cloudflared -f
+
+# Тест доступности
+curl -I https://api.yourdomain.site/oauth2callback
+```
+
+## Важные файлы
+
+- [services/google_calendar.py](mdc:services/google_calendar.py) - OAuth callback обработчик
+- [templates/oauth_callback.html](mdc:templates/oauth_callback.html) - HTML страница успеха
+- [templates/oauth_error.html](mdc:templates/oauth_error.html) - HTML страница ошибки
+- [config.py](mdc:config.py) - настройки OAuth (порт 8000, base URL)
+
+## Переменные окружения
+
+```bash
+GOOGLE_OAUTH_REDIRECT_PORT=8000
+GOOGLE_OAUTH_REDIRECT_PATH=/oauth2callback
+GOOGLE_OAUTH_REDIRECT_BASE=https://api.yourdomain.site
+```
+
+## Для нового бота на другом сервере
+
+1. Установите cloudflared на новом сервере
+2. Создайте новый тоннель с другим именем
+3. Настройте DNS для нового поддомена
+4. Обновите переменные окружения в боте
+5. Обновите Google OAuth credentials с новым redirect URI

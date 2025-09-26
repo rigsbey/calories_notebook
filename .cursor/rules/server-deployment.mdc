@@ -1,0 +1,275 @@
+---
+description: Деплой ботов на серверах с Cloudflare Tunnel
+alwaysApply: false
+---
+
+# Деплой ботов на серверах
+
+## Архитектура сервера
+
+```
+Сервер (Ubuntu/Debian)
+├── Docker + Docker Compose
+├── Cloudflare Tunnel
+├── Бот (Python)
+└── Firebase (внешний)
+```
+
+## Подготовка сервера
+
+### 1. Базовая настройка
+
+```bash
+# Обновление системы
+sudo apt update && sudo apt upgrade -y
+
+# Установка Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+# Установка Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+### 2. Структура проекта
+
+```
+/opt/bot-name/
+├── docker-compose.prod.yml
+├── .env
+├── credentials.json
+├── firebase-credentials.json
+└── logs/
+```
+
+## Настройка Cloudflare Tunnel
+
+### 1. Установка
+
+```bash
+# Скачиваем cloudflared
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+sudo dpkg -i cloudflared-linux-amd64.deb
+```
+
+### 2. Аутентификация
+
+```bash
+# Логинимся в Cloudflare
+cloudflared tunnel login
+```
+
+### 3. Создание тоннеля
+
+```bash
+# Создаем тоннель для бота
+cloudflared tunnel create bot-name-tunnel
+
+# Настраиваем конфигурацию
+cat > ~/.cloudflared/config.yml << EOF
+tunnel: bot-name-tunnel
+credentials-file: /root/.cloudflared/TUNNEL_ID.json
+
+ingress:
+  - hostname: api.yourdomain.site
+    service: http://localhost:8000
+  - service: http_status:404
+EOF
+```
+
+### 4. DNS настройка
+
+```bash
+# Регистрируем DNS
+cloudflared tunnel route dns bot-name-tunnel api.yourdomain.site
+```
+
+### 5. Systemd сервис
+
+```bash
+# Создаем сервис
+sudo tee /etc/systemd/system/cloudflared.service > /dev/null << EOF
+[Unit]
+Description=Cloudflare Tunnel
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/cloudflared tunnel --config /root/.cloudflared/config.yml run
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Запускаем сервис
+sudo systemctl daemon-reload
+sudo systemctl enable cloudflared
+sudo systemctl start cloudflared
+```
+
+## Настройка бота
+
+### 1. Переменные окружения
+
+```bash
+# Создаем .env файл
+cat > /opt/bot-name/.env << EOF
+BOT_TOKEN=your_bot_token_here
+GEMINI_API_KEY=your_gemini_api_key_here
+FIREBASE_CREDENTIALS_PATH=firebase-credentials.json
+GOOGLE_CREDENTIALS_PATH=credentials.json
+GOOGLE_OAUTH_REDIRECT_PORT=8000
+GOOGLE_OAUTH_REDIRECT_PATH=/oauth2callback
+GOOGLE_OAUTH_REDIRECT_BASE=https://api.yourdomain.site
+EOF
+```
+
+### 2. OAuth credentials
+
+```bash
+# Создаем credentials.json
+cat > /opt/bot-name/credentials.json << EOF
+{
+  "web": {
+    "client_id": "your_client_id",
+    "project_id": "your_project_id",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "your_client_secret",
+    "redirect_uris": [
+      "https://api.yourdomain.site/oauth2callback"
+    ],
+    "javascript_origins": [
+      "https://api.yourdomain.site"
+    ]
+  }
+}
+EOF
+```
+
+### 3. Docker Compose
+
+```yaml
+version: '3.8'
+
+services:
+  bot-name:
+    image: ghcr.io/username/repo:latest
+    container_name: bot-name
+    restart: unless-stopped
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - FIREBASE_CREDENTIALS_PATH=firebase-credentials.json
+      - GOOGLE_CREDENTIALS_PATH=credentials.json
+      - GOOGLE_OAUTH_REDIRECT_PORT=8000
+      - GOOGLE_OAUTH_REDIRECT_PATH=/oauth2callback
+      - GOOGLE_OAUTH_REDIRECT_BASE=https://api.yourdomain.site
+    volumes:
+      - /opt/bot-name/logs:/app/logs
+      - /opt/bot-name/temp_photos:/app/temp_photos
+      - /opt/bot-name/firebase-credentials.json:/app/firebase-credentials.json:ro
+      - /opt/bot-name/credentials.json:/app/credentials.json:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+```
+
+## GitHub Actions для деплоя
+
+### 1. Secrets в GitHub
+
+- `HOST` - IP адрес сервера
+- `USERNAME` - имя пользователя SSH
+- `SSH_KEY` - приватный SSH ключ
+- `BOT_TOKEN` - токен бота
+- `GEMINI_API_KEY` - ключ Gemini API
+- `FIREBASE_CREDENTIALS` - содержимое firebase-credentials.json
+- `GOOGLE_OAUTH_CREDENTIALS` - содержимое credentials.json
+
+### 2. Workflow файл
+
+```yaml
+name: Deploy Bot
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd /opt/bot-name
+          docker-compose -f docker-compose.prod.yml down
+          docker-compose -f docker-compose.prod.yml pull
+          docker-compose -f docker-compose.prod.yml up -d
+```
+
+## Мониторинг
+
+### 1. Логи бота
+
+```bash
+# Логи контейнера
+docker logs bot-name -f
+
+# Логи через docker-compose
+cd /opt/bot-name
+docker-compose -f docker-compose.prod.yml logs -f
+```
+
+### 2. Логи тоннеля
+
+```bash
+# Логи Cloudflare Tunnel
+journalctl -u cloudflared -f
+
+# Статус тоннеля
+cloudflared tunnel info bot-name-tunnel
+```
+
+### 3. Проверка здоровья
+
+```bash
+# Статус контейнера
+docker ps | grep bot-name
+
+# Тест OAuth callback
+curl -I https://api.yourdomain.site/oauth2callback
+
+# Тест тоннеля
+cloudflared tunnel info bot-name-tunnel
+```
+
+## Для нового бота
+
+1. **Создайте новый тоннель** с уникальным именем
+2. **Настройте новый поддомен** (например, `api2.yourdomain.site`)
+3. **Обновите переменные окружения** в боте
+4. **Обновите Google OAuth** с новым redirect URI
+5. **Скопируйте конфигурацию** и адаптируйте под новый бот
+
+## Важные файлы
+
+- [deploy/setup-server.sh](mdc:deploy/setup-server.sh) - скрипт настройки сервера
+- [deploy/monitor.sh](mdc:deploy/monitor.sh) - скрипт мониторинга
+- [.github/workflows/deploy.yml](mdc:.github/workflows/deploy.yml) - GitHub Actions
+- [docker-compose.prod.yml](mdc:docker-compose.prod.yml) - конфигурация Docker

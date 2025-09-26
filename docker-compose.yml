@@ -9,6 +9,8 @@ services:
       - BOT_TOKEN=${BOT_TOKEN}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GOOGLE_CREDENTIALS_PATH=credentials.json
+    ports:
+      - "8001:8001"
     volumes:
       - ./logs:/app/logs
       - ./temp_photos:/app/temp_photos
