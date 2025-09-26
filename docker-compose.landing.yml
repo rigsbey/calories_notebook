@@ -16,6 +16,8 @@ services:
       - ./_nuxt:/usr/share/nginx/html/_nuxt:ro
       - ./images:/usr/share/nginx/html/images:ro
       - ./blog:/usr/share/nginx/html/blog:ro
+      - ./privacy:/usr/share/nginx/html/privacy:ro
+      - ./terms:/usr/share/nginx/html/terms:ro
       - ./favicon.ico:/usr/share/nginx/html/favicon.ico:ro
       - ./favicon.png:/usr/share/nginx/html/favicon.png:ro
       - ./logo.jpg:/usr/share/nginx/html/logo.jpg:ro
