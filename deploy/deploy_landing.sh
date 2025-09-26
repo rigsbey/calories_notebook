@@ -20,6 +20,8 @@ scp landing/.output/public/robots.txt german_server:/opt/calories-bot/robots.txt
 scp -r landing/.output/public/_nuxt german_server:/opt/calories-bot/
 scp -r landing/.output/public/images german_server:/opt/calories-bot/
 scp -r landing/.output/public/blog german_server:/opt/calories-bot/
+scp -r landing/.output/public/privacy german_server:/opt/calories-bot/
+scp -r landing/.output/public/terms german_server:/opt/calories-bot/
 scp landing/.output/public/favicon.ico german_server:/opt/calories-bot/
 scp landing/.output/public/favicon.png german_server:/opt/calories-bot/
 scp landing/.output/public/logo.jpg german_server:/opt/calories-bot/

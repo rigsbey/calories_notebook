@@ -45,6 +45,7 @@ useSeoMeta({
   googlebot: 'index, follow'
 })
 
+
 // JSON-LD структурированные данные
 useHead({
   script: [

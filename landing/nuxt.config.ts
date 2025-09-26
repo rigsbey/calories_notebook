@@ -25,6 +25,7 @@ export default defineNuxtConfig({
         { name: 'author', content: 'Calories Notebook Bot' },
         { name: 'robots', content: 'index, follow' },
         { name: 'googlebot', content: 'index, follow' },
+        { name: 'google-site-verification', content: 'cJxB6xaxazRAHUhm1d7MgbgciM8QiVZY0Vg4TIwbhe8' },
         { name: 'theme-color', content: '#667eea' },
         { name: 'msapplication-TileColor', content: '#667eea' }
       ],
