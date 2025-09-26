@@ -68,3 +68,6 @@ class SchedulerService:
             logger.error(f"Ошибка удаления тестовой задачи: {e}")
 
 
+
+
+

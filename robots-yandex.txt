@@ -40,8 +40,6 @@ Disallow: /*.bak$
 Allow: /sitemap.xml
 Allow: /robots.txt
 Allow: /yandex_*.html
-Allow: /blog/
-Allow: /blog/*
 Allow: /*.css
 Allow: /*.js
 Allow: /*.png
