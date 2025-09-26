@@ -1,24 +1,22 @@
 # Используем официальный Node.js образ
 FROM node:20-alpine AS base
 
-# Устанавливаем pnpm для более быстрой установки пакетов
-RUN npm install -g pnpm
+# Устанавливаем зависимости
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
 # Копируем package.json и pnpm-lock.yaml
 COPY package*.json ./
-COPY pnpm-lock.yaml* ./
 
 # Устанавливаем зависимости
-RUN pnpm install --frozen-lockfile
+RUN npm ci
 
 # Копируем исходный код
 COPY . .
 
 # Сборка приложения
-RUN pnpm run build
+RUN npm run build
 
 # Продакшн образ
 FROM node:20-alpine AS production
