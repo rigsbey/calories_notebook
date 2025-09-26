@@ -27,8 +27,8 @@ WORKDIR /app
 # Копируем package.json
 COPY package*.json ./
 
-# Устанавливаем только продакшн зависимости
-RUN npm install --only=production && npm cache clean --force
+# Устанавливаем все зависимости
+RUN npm ci && npm cache clean --force
 
 # Копируем собранное приложение
 COPY --from=base /app/.output ./.output
