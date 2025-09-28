@@ -11,6 +11,7 @@ from services.google_calendar import GoogleCalendarService
 from services.analysis_storage import analysis_storage
 from services.firebase_service import FirebaseService
 from services.timezone_service import TimezoneService
+from services.subscription_service import SubscriptionService
 from config import TEMP_DIR
 from utils import error_handler, format_nutrition_info, extract_meal_title
 
@@ -42,6 +43,7 @@ gemini_service = GeminiService()
 calendar_service = GoogleCalendarService()
 firebase_service = FirebaseService()
 timezone_service = TimezoneService()
+subscription_service = SubscriptionService()
 
 # Создаем роутер
 router = Router()
@@ -83,8 +85,28 @@ async def start_handler(message: Message):
 async def photo_handler(message: Message, state: FSMContext):
     """Обработчик фото еды"""
     try:
-        # Сохраняем/обновляем информацию о пользователе
         user_id = message.from_user.id
+        
+        # Проверяем лимиты подписки
+        can_analyze, limit_message = await subscription_service.can_analyze_photo(user_id)
+        if not can_analyze:
+            # Показываем пейволл
+            from handlers_payments import show_paywall
+            await show_paywall(
+                message,
+                title="📸 Лимит анализов достигнут",
+                description=f"❌ {limit_message}\n\n🌟 **Pro** снимет все ограничения:",
+                features=[
+                    "• До 200 фото в месяц",
+                    "• Мульти-тарелка (несколько блюд)",
+                    "• Детальные витамины и советы", 
+                    "• Экспорт в PDF/CSV",
+                    "• Google Calendar интеграция"
+                ]
+            )
+            return
+        
+        # Сохраняем/обновляем информацию о пользователе
         username = message.from_user.username
         first_name = message.from_user.first_name
         last_name = message.from_user.last_name
@@ -110,15 +132,23 @@ async def photo_handler(message: Message, state: FSMContext):
         await state.update_data(photo_path=file_path)
         await state.set_state(FoodAnalysisStates.waiting_for_weight)
         
-        # Создаем кнопку "Не знаю"
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="❓ Не знаю граммовку", callback_data="unknown_weight")]
-        ])
+        # Проверяем доступность мульти-тарелки
+        can_multi_dish, multi_message = await subscription_service.can_use_feature(user_id, "multi_dish")
+        
+        # Создаем клавиатуру с кнопками
+        keyboard_buttons = [[InlineKeyboardButton(text="❓ Не знаю граммовку", callback_data="unknown_weight")]]
+        
+        if can_multi_dish:
+            keyboard_buttons.append([InlineKeyboardButton(text="🍽️ Несколько блюд на фото", callback_data="multi_dish")])
+        else:
+            keyboard_buttons.append([InlineKeyboardButton(text="🌟 Мульти-тарелка (Pro)", callback_data="multi_dish_paywall")])
+        
+        keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
         
         await message.answer(
             "📸 Фото получено!\n\n"
             "Теперь укажите вес еды в граммах (например: 250)\n"
-            "Или нажмите кнопку, если не знаете точный вес:",
+            "Или выберите опцию ниже:",
             reply_markup=keyboard
         )
         
@@ -209,6 +239,115 @@ async def unknown_weight_handler(callback: CallbackQuery, state: FSMContext):
 
     # Очищаем состояние
     await state.clear()
+
+@router.callback_query(F.data == "multi_dish_paywall")
+@error_handler
+async def multi_dish_paywall_handler(callback: CallbackQuery):
+    """Обработчик пейволла для мульти-тарелки"""
+    await callback.answer()
+    
+    from handlers_payments import show_paywall
+    await show_paywall(
+        callback.message,
+        title="🍽️ Мульти-тарелка доступна в Pro",
+        description="Анализируйте несколько блюд на одном фото:",
+        features=[
+            "• Определение каждого блюда отдельно",
+            "• КБЖУ для каждого продукта",
+            "• Общий подсчет питательности",
+            "• + все остальные функции Pro",
+            "• 7 дней бесплатно для новых пользователей"
+        ]
+    )
+
+@router.callback_query(F.data == "multi_dish")
+@error_handler
+async def multi_dish_handler(callback: CallbackQuery, state: FSMContext):
+    """Обработчик анализа мульти-тарелки (только для Pro)"""
+    await callback.answer()
+    
+    # Проверяем доступность функции
+    can_use, message = await subscription_service.can_use_feature(callback.from_user.id, "multi_dish")
+    if not can_use:
+        from handlers_payments import show_paywall
+        await show_paywall(
+            callback.message,
+            title="🍽️ Мульти-тарелка недоступна",
+            description=message,
+            features=[
+                "• Анализ нескольких блюд одновременно",
+                "• Детальный КБЖУ каждого продукта",
+                "• Общая питательная ценность"
+            ]
+        )
+        return
+    
+    # Получаем данные из состояния
+    data = await state.get_data()
+    photo_path = data.get('photo_path')
+    
+    if not photo_path or not os.path.exists(photo_path):
+        await callback.message.answer(
+            "❌ Фото не найдено. Пожалуйста, отправьте фото еды заново."
+        )
+        await state.clear()
+        return
+    
+    # Показываем индикатор загрузки
+    await callback.message.answer("🔍 Анализирую фото с несколькими блюдами...")
+    
+    # Увеличиваем счетчик анализов
+    await subscription_service.increment_photo_count(callback.from_user.id)
+    
+    # Анализируем через специальный метод для мульти-тарелки
+    # TODO: Добавить специальный метод в gemini_service для мульти-тарелки
+    analysis_result = await gemini_service.analyze_food_auto_weight(photo_path)
+    
+    # Сохраняем анализ
+    user_id = callback.from_user.id
+    analysis_storage.store_analysis(
+        user_id=user_id,
+        analysis_text=analysis_result,
+        image_path=photo_path,
+        weight=None,
+        is_multi_dish=True
+    )
+    
+    # Сохраняем в Firebase
+    analysis_data = {
+        'analysis_text': analysis_result,
+        'weight': 'multi_dish',
+        'user_id': str(user_id),
+        'is_multi_dish': True
+    }
+    await firebase_service.save_analysis(user_id, analysis_data)
+    
+    # Форматируем ответ
+    formatted_response = format_nutrition_info(analysis_result)
+    final_response = f"🍽️ **Мульти-тарелка анализ:**\n\n{formatted_response}"
+    
+    try:
+        await callback.message.answer(final_response, parse_mode="Markdown")
+    except Exception as e:
+        logger.warning(f"Ошибка отправки с Markdown: {e}")
+        await callback.message.answer(final_response)
+    
+    # Удаляем временный файл
+    try:
+        os.remove(photo_path)
+    except Exception as e:
+        logger.warning(f"Не удалось удалить временный файл: {e}")
+    
+    # Очищаем состояние
+    await state.clear()
+    
+    await callback.message.answer(
+        "✅ **Мульти-анализ завершен!**\n\n"
+        "🍽️ Проанализированы все блюда на фото\n"
+        "💬 Исправления: просто напишите текстом\n"
+        "📸 Или отправьте новое фото",
+        parse_mode="Markdown"
+    )
     
     # Проверяем статус календаря и добавляем уведомление
     calendar_status = ""
@@ -265,8 +404,15 @@ async def weight_handler(message: Message, state: FSMContext):
         # Показываем индикатор загрузки
         await message.answer("🔍 Анализирую фото еды...")
         
+        # Увеличиваем счетчик анализов
+        await subscription_service.increment_photo_count(message.from_user.id)
+        
         # Анализируем еду через Gemini
         analysis_result = await gemini_service.analyze_food(photo_path, weight)
+        
+        # Получаем информацию о подписке для адаптации ответа
+        subscription = await subscription_service.get_user_subscription(message.from_user.id)
+        subscription_type = subscription['type']
         
         # Сохраняем анализ для возможности редактирования
         user_id = message.from_user.id if message.from_user else None
@@ -284,7 +430,8 @@ async def weight_handler(message: Message, state: FSMContext):
             analysis_data = {
                 'analysis_text': analysis_result,
                 'weight': str(weight),
-                'user_id': str(user_id)
+                'user_id': str(user_id),
+                'subscription_type': subscription_type
             }
             await firebase_service.save_analysis(user_id, analysis_data)
         
@@ -337,15 +484,42 @@ async def weight_handler(message: Message, state: FSMContext):
             logger.warning(f"Не удалось проверить статус календаря: {e}")
             calendar_status = "\n📅 **Подключите Google Calendar** (/gconnect) для автоматического сохранения анализов"
         
-        await message.answer(
-            f"✅ Анализ завершен!{calendar_status}\n\n"
-            "💬 Если нужно что-то исправить, просто напишите текстом:\n"
-            "• \"На фото не руккола, а листья салата\"\n"
-            "• \"Вес не 450г, а 300г\"\n"
-            "• \"Добавь туда еще помидоры\"\n\n"
-            "📸 Или отправьте новое фото для следующего анализа.",
-            parse_mode="Markdown"
-        )
+        # Адаптивное сообщение в зависимости от подписки
+        if subscription_type == "lite":
+            # Показываем счетчик и рекламу Pro
+            daily_count = subscription['daily_photo_count']
+            remaining = 5 - daily_count
+            
+            pro_teaser = ""
+            if remaining <= 2:
+                pro_teaser = f"\n\n🌟 **Осталось {remaining} анализов сегодня**\n" \
+                           "• Pro: до 200 фото/мес + мульти-тарелка\n" \
+                           "• Команда /pro для подробностей"
+            elif daily_count == 1:
+                # Показываем "вау-эффект" после первого анализа
+                pro_teaser = "\n\n✨ **Понравился анализ?**\n" \
+                           "🌟 В Pro: детальные витамины, экспорт, календарь\n" \
+                           "🚀 Первые 7 дней бесплатно: /pro"
+            
+            await message.answer(
+                f"✅ Анализ завершен!{calendar_status}{pro_teaser}\n\n"
+                "💬 Если нужно что-то исправить, просто напишите текстом:\n"
+                "• \"На фото не руккола, а листья салата\"\n"
+                "• \"Вес не 450г, а 300г\"\n\n"
+                "📸 Или отправьте новое фото для анализа.",
+                parse_mode="Markdown"
+            )
+        else:
+            # Pro/Trial пользователи
+            await message.answer(
+                f"✅ Анализ завершен!{calendar_status}\n\n"
+                "💬 Если нужно что-то исправить, просто напишите текстом:\n"
+                "• \"На фото не руккола, а листья салата\"\n"
+                "• \"Вес не 450г, а 300г\"\n"
+                "• \"Добавь туда еще помидоры\"\n\n"
+                "📸 Или отправьте новое фото для следующего анализа.",
+                parse_mode="Markdown"
+            )
         
     except Exception as e:
         logger.error(f"Ошибка при анализе веса: {e}")
@@ -375,11 +549,30 @@ async def daily_summary_button(message: Message):
 @error_handler
 async def weekly_summary_button(message: Message):
     """Обработчик кнопки 'Итоги недели'"""
+    # Проверяем доступность полных отчетов
+    subscription = await subscription_service.get_user_subscription(message.from_user.id)
+    
+    if subscription['type'] == 'lite':
+        from handlers_payments import show_paywall
+        await show_paywall(
+            message,
+            title="📈 Полные отчеты в Pro",
+            description="Lite: только краткий отчет за день\n\n🌟 **Pro** открывает:",
+            features=[
+                "• Подробные отчеты за неделю",
+                "• Анализ трендов питания",
+                "• Рекомендации по улучшению",
+                "• Экспорт в PDF/CSV",
+                "• История без ограничений"
+            ]
+        )
+        return
+    
     from services.report_service import ReportService
     report_service = ReportService()
     
     try:
-        await message.answer("📊 Генерирую отчет за неделю...")
+        await message.answer("📊 Генерирую полный отчет за неделю...")
         report = await report_service.generate_weekly_report(message.from_user.id)
         await message.answer(report)
     except Exception as e:
@@ -400,6 +593,25 @@ async def food_analysis_button(message: Message):
 @error_handler
 async def calendar_button(message: Message):
     """Обработчик кнопки 'Календарь'"""
+    # Проверяем доступность календарной интеграции
+    subscription = await subscription_service.get_user_subscription(message.from_user.id)
+    
+    if subscription['type'] == 'lite':
+        from handlers_payments import show_paywall
+        await show_paywall(
+            message,
+            title="📅 Google Calendar в Pro",
+            description="Автосохранение всех анализов в календарь\n\n🌟 **Pro** подключает:",
+            features=[
+                "• Автосохранение каждого анализа",
+                "• Создание календаря питания",
+                "• Напоминания о приемах пищи",
+                "• Синхронизация на всех устройствах",
+                "• Долгосрочная история питания"
+            ]
+        )
+        return
+    
     try:
         # Проверяем статус подключения календаря
         connected = await calendar_service.ensure_connected(message.from_user.id)
@@ -492,6 +704,24 @@ async def day_command_handler(message: Message):
 @error_handler
 async def week_command_handler(message: Message):
     """Обработчик команды /week - быстрый доступ к итогам недели"""
+    # Проверяем доступность полных отчетов
+    subscription = await subscription_service.get_user_subscription(message.from_user.id)
+    
+    if subscription['type'] == 'lite':
+        from handlers_payments import show_paywall
+        await show_paywall(
+            message,
+            title="📈 Команда /week доступна в Pro",
+            description="В Lite доступны только дневные отчеты\n\n🌟 **Pro** разблокирует:",
+            features=[
+                "• Команды /week и /summary week",
+                "• Детальная аналитика за период",
+                "• Трекинг прогресса",
+                "• Экспорт данных"
+            ]
+        )
+        return
+    
     from services.report_service import ReportService
     report_service = ReportService()
     
@@ -509,6 +739,24 @@ async def summary_command_handler(message: Message):
     """Обработчик команды /summary - сводка питания"""
     # Получаем аргументы команды
     command_args = message.text.split()[1:] if len(message.text.split()) > 1 else []
+    
+    # Проверяем доступность недельных отчетов
+    if 'week' in command_args:
+        subscription = await subscription_service.get_user_subscription(message.from_user.id)
+        if subscription['type'] == 'lite':
+            from handlers_payments import show_paywall
+            await show_paywall(
+                message,
+                title="📊 /summary week в Pro",
+                description="В Lite: только /summary (день)\n\n🌟 **Pro** добавляет:",
+                features=[
+                    "• /summary week - недельная сводка",
+                    "• Детальная аналитика трендов",
+                    "• Сравнение с предыдущими периодами",
+                    "• Рекомендации по питанию"
+                ]
+            )
+            return
     
     from services.report_service import ReportService
     report_service = ReportService()
@@ -704,5 +952,7 @@ async def timezone_callback(callback: CallbackQuery, state: FSMContext):
 def register_handlers(dp):
     """Регистрирует все обработчики"""
     from commands import commands_router
+    from handlers_payments import payments_router
     dp.include_router(router)
+    dp.include_router(payments_router)
     dp.include_router(commands_router)

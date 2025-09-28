@@ -14,10 +14,13 @@
       <FeaturesSection />
     </div>
     
-    <!-- CTA Section (Pricing) -->
+    <!-- Pricing Section -->
     <div id="pricing">
-      <CtaSection />
+      <PricingSection />
     </div>
+    
+    <!-- CTA Section -->
+    <CtaSection />
     
     <!-- FAQ Section -->
     <div id="faq">

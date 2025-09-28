@@ -19,8 +19,9 @@ async def setup_bot_commands(bot: Bot):
     commands = [
         BotCommand(command="start", description="🚀 Запустить бота"),
         BotCommand(command="help", description="ℹ️ Помощь по использованию"),
+        BotCommand(command="pro", description="🌟 Pro подписка"),
         BotCommand(command="day", description="📊 Итоги дня"),
-        BotCommand(command="week", description="📈 Итоги недели"),
+        BotCommand(command="week", description="📈 Итоги недели (Pro)"),
         BotCommand(command="summary", description="📋 Сводка питания"),
         BotCommand(command="gconnect", description="📅 Подключить Google Calendar"),
         BotCommand(command="gstatus", description="🔍 Статус календаря"),

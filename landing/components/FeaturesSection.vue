@@ -7,10 +7,21 @@
       </div>
 
       <div class="features-grid">
-        <div class="feature-card" v-for="(feature, index) in features" :key="index">
+        <div 
+          class="feature-card" 
+          :class="{
+            'pro-feature': feature.available === 'pro',
+            'lite-feature': feature.available === 'lite',
+            'all-feature': feature.available === 'all'
+          }"
+          v-for="(feature, index) in features" 
+          :key="index"
+        >
           <div class="feature-icon">{{ feature.icon }}</div>
           <h3 class="feature-title">{{ feature.title }}</h3>
           <p class="feature-description">{{ feature.description }}</p>
+          <div class="feature-badge" v-if="feature.available === 'pro'">Pro</div>
+          <div class="feature-badge lite-badge" v-if="feature.available === 'lite'">Lite</div>
         </div>
       </div>
     </div>
@@ -22,32 +33,56 @@ const features = ref([
   {
     icon: '🤖',
     title: 'ИИ определяет продукты по фото',
-    description: 'Любое блюдо — от салата до пиццы. Просто сфотографируй и отправь.'
+    description: 'Любое блюдо — от салата до пиццы. Просто сфотографируй и отправь.',
+    available: 'all'
   },
   {
     icon: '⚡',
     title: 'Результат за 5 секунд',
-    description: 'Калории, БЖУ и витамины мгновенно. Никакого ручного ввода.'
+    description: 'Калории, БЖУ и витамины мгновенно. Никакого ручного ввода.',
+    available: 'all'
   },
   {
     icon: '📊',
-    title: 'Калории + БЖУ + витамины',
-    description: 'Полная информация о питательной ценности каждого блюда.'
+    title: 'Базовый анализ КБЖУ',
+    description: 'Калории, белки, жиры и углеводы для каждого блюда.',
+    available: 'lite'
+  },
+  {
+    icon: '🍽️',
+    title: 'Мульти-тарелка',
+    description: 'Анализ нескольких блюд на одном фото. Только в Pro.',
+    available: 'pro'
+  },
+  {
+    icon: '🧬',
+    title: 'Детальные витамины + советы',
+    description: 'Микронутриенты, дефициты и умные рекомендации. Только в Pro.',
+    available: 'pro'
   },
   {
     icon: '📅',
     title: 'Синхронизация с Google Calendar',
-    description: 'Все данные автоматически сохраняются в твой календарь.'
-  },
-  {
-    icon: '✏️',
-    title: 'Можно вручную уточнить',
-    description: 'Если что-то не так — просто напиши боту, и он исправит.'
+    description: 'Автосохранение всех анализов в календарь. Только в Pro.',
+    available: 'pro'
   },
   {
     icon: '📈',
-    title: 'Отчеты дня и недели',
-    description: 'Смотри статистику по дням и неделям для контроля прогресса.'
+    title: 'Полные отчеты за неделю',
+    description: 'Детальная аналитика и трекинг прогресса. Только в Pro.',
+    available: 'pro'
+  },
+  {
+    icon: '📄',
+    title: 'Экспорт в PDF/CSV',
+    description: 'Скачивай данные для дальнейшего анализа. Только в Pro.',
+    available: 'pro'
+  },
+  {
+    icon: '✏️',
+    title: 'Исправление результатов',
+    description: 'Если что-то не так — просто напиши боту, и он исправит.',
+    available: 'all'
   }
 ])
 
@@ -104,7 +139,7 @@ onMounted(() => {
 }
 
 .feature-card {
-  @apply bg-white p-8 rounded-xl transition-all duration-200;
+  @apply bg-white p-8 rounded-xl transition-all duration-200 relative;
   border: 1px solid #e5e7eb;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
@@ -112,6 +147,35 @@ onMounted(() => {
 .feature-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.feature-card.pro-feature {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff4 100%);
+}
+
+.feature-card.pro-feature:hover {
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05);
+}
+
+.feature-card.lite-feature {
+  border-color: #6b7280;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+}
+
+.feature-card.all-feature {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+}
+
+.feature-badge {
+  @apply absolute top-3 right-3 px-2 py-1 text-xs font-semibold rounded-full;
+  background: #10b981;
+  color: white;
+}
+
+.feature-badge.lite-badge {
+  background: #6b7280;
 }
 
 .feature-icon {

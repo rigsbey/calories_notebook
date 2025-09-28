@@ -3,58 +3,42 @@
     <div class="container">
       <div class="cta-content">
         <h2 id="cta-heading" class="cta-title">
-          Всегда бесплатно. Никаких подписок
+          Готов начать контролировать питание?
         </h2>
         <p class="cta-subtitle">
-          Просто запусти бота и начни считать калории прямо сейчас
+          Запусти бота прямо сейчас и получи первый анализ за 5 секунд
         </p>
         
-        <div class="pricing-card">
-          <div class="pricing-badge">Бесплатно навсегда</div>
-          <div class="pricing-plan">
-            <h3 class="plan-name">Calories Bot</h3>
-            <div class="plan-price">
-              <div class="price-main">
-                <span class="price">0₽</span>
-                <span class="period">/навсегда</span>
-              </div>
-            </div>
-            <p class="plan-description">Для всех, кто хочет легко считать калории по фото</p>
-            
-            <div class="plan-features">
-              <div class="feature-item">
-                <span class="feature-check">✓</span>
-                ИИ-анализ любых фото еды
-              </div>
-              <div class="feature-item">
-                <span class="feature-check">✓</span>
-                Калории, БЖУ и витамины
-              </div>
-              <div class="feature-item">
-                <span class="feature-check">✓</span>
-                Сохранение в Google Calendar
-              </div>
-              <div class="feature-item">
-                <span class="feature-check">✓</span>
-                Отчеты по дням и неделям
-              </div>
-              <div class="feature-item">
-                <span class="feature-check">✓</span>
-                Можно исправлять результаты
-              </div>
-              <div class="feature-item">
-                <span class="feature-check">✓</span>
-                Работает в Telegram
-              </div>
-            </div>
-            
-            <a 
-              href="https://t.me/caloriesnote_bot" 
-              class="cta-button"
-              @click="trackClick"
-            >
-              🚀 Запустить бота бесплатно
-            </a>
+        <div class="cta-buttons">
+          <a 
+            href="https://t.me/caloriesnote_bot" 
+            class="cta-button primary"
+            @click="trackClick('start_free')"
+          >
+            🚀 Попробовать бесплатно
+          </a>
+          
+          <a 
+            href="https://t.me/caloriesnote_bot?start=pro" 
+            class="cta-button secondary"
+            @click="trackClick('start_pro')"
+          >
+            ⭐ 7 дней Pro бесплатно
+          </a>
+        </div>
+        
+        <div class="cta-features">
+          <div class="cta-feature">
+            <span class="feature-icon">⚡</span>
+            <span class="feature-text">Результат за 5 секунд</span>
+          </div>
+          <div class="cta-feature">
+            <span class="feature-icon">📱</span>
+            <span class="feature-text">Работает в Telegram</span>
+          </div>
+          <div class="cta-feature">
+            <span class="feature-icon">🔒</span>
+            <span class="feature-text">Безопасно и конфиденциально</span>
           </div>
         </div>
       </div>
@@ -63,15 +47,15 @@
 </template>
 
 <script setup>
-const trackClick = () => {
+const trackClick = (action) => {
   // Отправка события в аналитику
   if (process.client && window.gtag) {
     window.gtag('event', 'cta_click', {
       event_category: 'engagement',
-      event_label: 'telegram_bot_button'
+      event_label: action
     })
   }
-  console.log('CTA button clicked')
+  console.log(`CTA button clicked: ${action}`)
 }
 
 // Анимация появления
@@ -112,90 +96,60 @@ onMounted(() => {
 .cta-subtitle {
   @apply text-xl text-gray-600 mb-12;
   font-weight: 400;
-}
-
-.pricing-card {
-  @apply relative bg-white rounded-2xl p-8 max-w-md mx-auto;
-  border: 2px solid #10b981;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.pricing-badge {
-  @apply absolute -top-3 left-1/2 transform -translate-x-1/2 text-white px-4 py-1 rounded-full text-sm font-medium;
-  background: #10b981;
-  font-weight: 500;
-}
-
-.pricing-plan {
-  @apply text-center;
-}
-
-.plan-name {
-  @apply text-2xl font-bold text-gray-900 mb-4;
-  font-weight: 700;
-}
-
-.plan-price {
-  @apply mb-4;
-}
-
-.price-small {
-  @apply block text-sm text-gray-500 mb-1;
-  font-weight: 400;
-}
-
-.price-main {
-  @apply flex items-baseline justify-center;
-}
-
-.price {
-  @apply text-4xl font-bold text-gray-900;
-  font-weight: 700;
-}
-
-.period {
-  @apply text-gray-600 ml-2;
-  font-weight: 400;
-}
-
-.plan-description {
-  @apply text-gray-600 mb-8;
-  font-weight: 400;
   line-height: 1.6;
 }
 
-.plan-features {
-  @apply space-y-3 mb-8;
-  max-width: 280px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.feature-item {
-  @apply text-gray-700 flex items-start;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.feature-check {
-  @apply text-green-500 mr-3 mt-0.5 flex-shrink-0;
-  font-weight: 600;
+.cta-buttons {
+  @apply flex flex-col sm:flex-row gap-4 justify-center items-center mb-12;
 }
 
 .cta-button {
-  @apply w-full text-white px-8 py-5 text-lg font-medium rounded-lg transition-all duration-200;
-  background: #10b981;
+  @apply px-8 py-4 text-lg font-medium rounded-lg transition-all duration-200;
   border: none;
   font-weight: 500;
   min-height: 56px;
+  min-width: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 }
 
-.cta-button:hover {
+.cta-button.primary {
+  @apply text-white;
+  background: #10b981;
+}
+
+.cta-button.primary:hover {
   background: #059669;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+
+.cta-button.secondary {
+  @apply text-gray-700 bg-gray-100 border-2 border-gray-200;
+}
+
+.cta-button.secondary:hover {
+  @apply bg-gray-200 border-gray-300;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.cta-features {
+  @apply flex flex-col sm:flex-row gap-8 justify-center items-center;
+}
+
+.cta-feature {
+  @apply flex items-center space-x-3;
+}
+
+.feature-icon {
+  @apply text-2xl;
+}
+
+.feature-text {
+  @apply text-gray-600 font-medium;
 }
 
 @media (max-width: 768px) {
@@ -204,15 +158,34 @@ onMounted(() => {
   }
   
   .cta-subtitle {
-    @apply text-lg;
+    @apply text-lg mb-8;
   }
   
-  .pricing-card {
-    @apply p-6;
+  .cta-buttons {
+    @apply mb-8;
   }
   
-  .price {
-    @apply text-3xl;
+  .cta-button {
+    @apply w-full text-base py-4;
+    min-width: auto;
+  }
+  
+  .cta-features {
+    @apply flex-col gap-4;
+  }
+  
+  .feature-icon {
+    @apply text-xl;
+  }
+  
+  .feature-text {
+    @apply text-sm;
+  }
+}
+
+@media (max-width: 640px) {
+  .cta-buttons {
+    @apply flex-col;
   }
 }
 </style>
