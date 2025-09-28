@@ -84,7 +84,7 @@ class PaymentService:
         """Обрабатывает успешный платеж"""
         try:
             payload = payment_info.get('invoice_payload', '')
-            total_amount = payment_info.get('total_amount', 0) // 100  # Из копеек в рубли
+            total_amount = payment_info.get('total_amount', 0)
             
             # Парсим payload
             parts = payload.split('_')
@@ -93,23 +93,70 @@ class PaymentService:
                 return False
             
             payment_type = parts[0]
-            plan = parts[1]
-            duration = int(parts[2])
-            user_id = int(parts[3])
             
-            # Сохраняем информацию о платеже
-            payment_data = {
-                'user_id': user_id,
-                'payment_type': payment_type,
-                'plan': plan,
-                'duration': duration,
-                'amount': total_amount,
-                'currency': 'RUB',
-                'status': 'completed',
-                'telegram_payment_charge_id': payment_info.get('telegram_payment_charge_id'),
-                'provider_payment_charge_id': payment_info.get('provider_payment_charge_id'),
-                'created_at': datetime.now()
-            }
+            # Обработка Stars платежей
+            if payment_type == "stars":
+                product = parts[1]
+                user_id = int(parts[2])
+                stars_amount = total_amount  # Для Stars amount уже в правильном формате
+                
+                # Сохраняем информацию о Stars платеже
+                payment_data = {
+                    'user_id': user_id,
+                    'payment_type': 'stars',
+                    'product': product,
+                    'stars_amount': stars_amount,
+                    'currency': 'XTR',  # Telegram Stars
+                    'status': 'completed',
+                    'telegram_payment_charge_id': payment_info.get('telegram_payment_charge_id'),
+                    'provider_payment_charge_id': payment_info.get('provider_payment_charge_id'),
+                    'created_at': datetime.now()
+                }
+                
+                await self.subscription_service.save_payment(payment_data)
+                
+                # Активируем покупку
+                success = await self.process_stars_payment(user_id, product, stars_amount)
+                
+                if success:
+                    await self.bot.send_message(
+                        user_id,
+                        f"🎉 **Покупка завершена!**\n\n"
+                        f"⭐ Потрачено: {stars_amount} Stars\n"
+                        f"✅ Товар активирован!\n\n"
+                        f"📸 Можете использовать новые возможности!",
+                        parse_mode="Markdown"
+                    )
+                    return True
+                else:
+                    logger.error(f"Не удалось активировать Stars покупку для пользователя {user_id}")
+                    await self.bot.send_message(
+                        user_id,
+                        "❌ Произошла ошибка при активации покупки. "
+                        "Обратитесь в поддержку."
+                    )
+                    return False
+            
+            # Обработка обычных подписок (RUB)
+            elif payment_type == "subscription":
+                plan = parts[1]
+                duration = int(parts[2])
+                user_id = int(parts[3])
+                total_amount = total_amount // 100  # Из копеек в рубли
+            
+                # Сохраняем информацию о платеже
+                payment_data = {
+                    'user_id': user_id,
+                    'payment_type': payment_type,
+                    'plan': plan,
+                    'duration': duration,
+                    'amount': total_amount,
+                    'currency': 'RUB',
+                    'status': 'completed',
+                    'telegram_payment_charge_id': payment_info.get('telegram_payment_charge_id'),
+                    'provider_payment_charge_id': payment_info.get('provider_payment_charge_id'),
+                    'created_at': datetime.now()
+                }
             
             await self.subscription_service.save_payment(payment_data)
             
@@ -148,6 +195,58 @@ class PaymentService:
         except Exception as e:
             logger.error(f"Ошибка обработки платежа: {e}")
             return False
+
+    async def create_stars_payment_invoice(self, user_id: int, product: str, stars_amount: int) -> Dict:
+        """Создает счет за Telegram Stars"""
+        try:
+            product_names = {
+                "extra_10_analyses": "💫 +10 дополнительных анализов",
+                "multi_dish_24h": "🍽️ Мульти-тарелка на 24 часа",  
+                "pdf_report": "📄 PDF отчет за неделю"
+            }
+            
+            product_name = product_names.get(product, "Неизвестный товар")
+            title = f"⭐ {product_name}"
+            description = f"Покупка за {stars_amount} Telegram Stars"
+            
+            # Создаем список цен для Telegram Stars
+            prices = [LabeledPrice(label=product_name, amount=stars_amount)]  # В Stars (не копейках!)
+            
+            payload = f"stars_{product}_{user_id}_{datetime.now().timestamp()}"
+            
+            # Отправляем счет за Stars (валюта XTR = Telegram Stars)
+            await self.bot.send_invoice(
+                chat_id=user_id,
+                title=title,
+                description=description,
+                payload=payload,
+                provider_token="",  # Для Stars не нужен provider_token
+                currency="XTR",  # XTR = Telegram Stars
+                prices=prices,
+                max_tip_amount=0,
+                suggested_tip_amounts=[],
+                photo_url="https://calories.toxiguard.site/og-image.jpg",
+                photo_size=512,
+                photo_width=512,
+                photo_height=512,
+                need_name=False,
+                need_phone_number=False,
+                need_email=False,
+                need_shipping_address=False,
+                send_phone_number_to_provider=False,
+                send_email_to_provider=False,
+                is_flexible=False,
+            )
+            
+            return {
+                "success": True,
+                "payload": payload,
+                "stars_amount": stars_amount
+            }
+            
+        except Exception as e:
+            logger.error(f"Ошибка создания Stars счета: {e}")
+            return {"success": False, "error": str(e)}
 
     async def create_stars_payment(self, user_id: int, product: str) -> InlineKeyboardMarkup:
         """Создает кнопку для покупки за Stars"""

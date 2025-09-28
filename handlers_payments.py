@@ -227,16 +227,29 @@ async def buy_stars_handler(callback: CallbackQuery):
     
     product_name = product_names.get(product, "Неизвестный товар")
     
-    await callback.message.edit_text(
-        f"⭐ **Покупка за Stars**\n\n"
-        f"🛒 Товар: {product_name}\n"
-        f"💰 Цена: {price} Stars\n\n"
-        f"🚧 **Функция в разработке**\n"
-        f"Telegram Stars API пока недоступен в России.\n\n"
-        f"💳 Используйте обычную подписку Pro:",
-        parse_mode="Markdown",
-        reply_markup=payment_service.get_subscription_keyboard("lite")
+    # Создаем реальный счет за Stars
+    result = await payment_service.create_stars_payment_invoice(
+        callback.from_user.id, 
+        product, 
+        price
     )
+    
+    if result["success"]:
+        await callback.message.edit_text(
+            f"⭐ **Покупка за Stars**\n\n"
+            f"🛒 Товар: {product_name}\n"
+            f"💰 Цена: {price} Stars\n\n"
+            f"✅ Счет создан! Проверьте сообщения выше для оплаты.",
+            parse_mode="Markdown"
+        )
+    else:
+        await callback.message.edit_text(
+            f"❌ **Ошибка создания счета**\n\n"
+            f"Не удалось создать счет для покупки {product_name}.\n\n"
+            f"💳 Попробуйте обычную подписку Pro:",
+            parse_mode="Markdown",
+            reply_markup=payment_service.get_subscription_keyboard("lite")
+        )
 
 @payments_router.callback_query(F.data == "back_to_subscriptions")
 @error_handler
