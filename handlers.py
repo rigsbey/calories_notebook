@@ -31,7 +31,8 @@ def get_main_keyboard():
         keyboard=[
             [KeyboardButton(text="📊 Итоги дня"), KeyboardButton(text="📈 Итоги недели")],
             [KeyboardButton(text="📸 Анализ еды"), KeyboardButton(text="📅 Календарь")],
-            [KeyboardButton(text="🌍 Часовой пояс"), KeyboardButton(text="ℹ️ Помощь")]
+            [KeyboardButton(text="⭐ Pro"), KeyboardButton(text="📊 Статус")],
+            [KeyboardButton(text="ℹ️ Помощь"), KeyboardButton(text="🌍 Часовой пояс")]
         ],
         resize_keyboard=True,
         one_time_keyboard=False
@@ -662,6 +663,20 @@ async def calendar_button(message: Message):
             "❌ Не удалось проверить статус календаря. Попробуйте позже.",
             reply_markup=get_main_keyboard()
         )
+
+@router.message(F.text == "⭐ Pro")
+@error_handler
+async def pro_button(message: Message):
+    """Обработчик кнопки 'Pro'"""
+    # Используем тот же обработчик, что и для команды /pro
+    await pro_handler(message)
+
+@router.message(F.text == "📊 Статус")
+@error_handler
+async def status_button(message: Message):
+    """Обработчик кнопки 'Статус'"""
+    # Используем тот же обработчик, что и для команды /status
+    await status_handler(message)
 
 @router.message(F.text == "ℹ️ Помощь")
 @error_handler
