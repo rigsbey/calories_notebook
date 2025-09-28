@@ -46,10 +46,10 @@ class TimezoneService:
             logger.error(f"Ошибка вычисления времени для часового пояса {timezone_str}: {e}")
             return time(20, 0)  # По умолчанию 20:00 UTC
     
-    def get_users_by_notification_time(self) -> Dict[time, List[Dict]]:
+    async def get_users_by_notification_time(self) -> Dict[time, List[Dict]]:
         """Группирует пользователей по времени отправки уведомлений"""
         try:
-            users = self.firebase.get_users_with_timezones()
+            users = await self.firebase.get_users_with_timezones()
             users_by_time = {}
             
             for user in users:

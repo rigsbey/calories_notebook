@@ -61,7 +61,7 @@ async def main():
     
     # Инициализируем планировщик
     scheduler = SchedulerService(bot)
-    scheduler.start_scheduler()
+    await scheduler.start_scheduler()
     
     logger.info("🤖 Бот успешно запущен!")
     

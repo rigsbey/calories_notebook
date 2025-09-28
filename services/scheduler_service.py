@@ -13,11 +13,11 @@ class SchedulerService:
         self.report_service = ReportService()
         self.timezone_service = TimezoneService()
     
-    def start_scheduler(self):
+    async def start_scheduler(self):
         """Запускает планировщик с учетом часовых поясов"""
         try:
             # Получаем пользователей, сгруппированных по времени уведомлений
-            users_by_time = self.timezone_service.get_users_by_notification_time()
+            users_by_time = await self.timezone_service.get_users_by_notification_time()
             
             # Добавляем задачи для каждого времени уведомлений
             job_count = 0
