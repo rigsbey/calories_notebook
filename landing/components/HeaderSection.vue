@@ -14,6 +14,7 @@
         <a href="#pricing" class="nav-link">Цены</a>
         <a href="/blog" class="nav-link">Блог</a>
         <a href="#faq" class="nav-link">FAQ</a>
+        <a href="/privacy" class="nav-link">Конфиденциальность</a>
       </nav>
       
       <div class="header-right">
@@ -38,6 +39,7 @@
         <a href="#pricing" class="mobile-nav-link" @click="closeMobileMenu">Цены</a>
         <a href="/blog" class="mobile-nav-link" @click="closeMobileMenu">Блог</a>
         <a href="#faq" class="mobile-nav-link" @click="closeMobileMenu">FAQ</a>
+        <a href="/privacy" class="mobile-nav-link" @click="closeMobileMenu">Конфиденциальность</a>
       </nav>
       <div class="mobile-buttons">
         <a href="https://t.me/caloriesnote_bot" class="btn-start-growing w-full">
