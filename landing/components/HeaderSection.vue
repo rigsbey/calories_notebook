@@ -9,11 +9,11 @@
       </div>
       
       <nav class="header-nav">
-        <a href="#features" class="nav-link">Возможности</a>
-        <a href="#how-it-works" class="nav-link">Как работает</a>
-        <a href="#pricing" class="nav-link">Цены</a>
+        <a href="/#features" class="nav-link">Возможности</a>
+        <a href="/#how-it-works" class="nav-link">Как работает</a>
+        <a href="/#pricing" class="nav-link">Цены</a>
         <a href="/blog" class="nav-link">Блог</a>
-        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="/#faq" class="nav-link">FAQ</a>
         <a href="/privacy" class="nav-link">Конфиденциальность</a>
       </nav>
       
@@ -34,11 +34,11 @@
     <!-- Mobile menu -->
     <div class="mobile-menu" :class="{ 'mobile-menu--open': mobileMenuOpen }">
       <nav class="mobile-nav">
-        <a href="#features" class="mobile-nav-link" @click="closeMobileMenu">Возможности</a>
-        <a href="#how-it-works" class="mobile-nav-link" @click="closeMobileMenu">Как работает</a>
-        <a href="#pricing" class="mobile-nav-link" @click="closeMobileMenu">Цены</a>
+        <a href="/#features" class="mobile-nav-link" @click="closeMobileMenu">Возможности</a>
+        <a href="/#how-it-works" class="mobile-nav-link" @click="closeMobileMenu">Как работает</a>
+        <a href="/#pricing" class="mobile-nav-link" @click="closeMobileMenu">Цены</a>
         <a href="/blog" class="mobile-nav-link" @click="closeMobileMenu">Блог</a>
-        <a href="#faq" class="mobile-nav-link" @click="closeMobileMenu">FAQ</a>
+        <a href="/#faq" class="mobile-nav-link" @click="closeMobileMenu">FAQ</a>
         <a href="/privacy" class="mobile-nav-link" @click="closeMobileMenu">Конфиденциальность</a>
       </nav>
       <div class="mobile-buttons">
