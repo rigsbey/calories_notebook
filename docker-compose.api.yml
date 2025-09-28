@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  api-nginx:
+    image: nginx:alpine
+    container_name: calories-api
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx-api.conf:/etc/nginx/nginx.conf:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
