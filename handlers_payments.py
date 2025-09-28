@@ -110,6 +110,7 @@ async def show_paywall(message_or_callback, title: str, description: str, featur
         await message_or_callback.answer(text, parse_mode="Markdown", reply_markup=keyboard)
 
 @payments_router.callback_query(F.data == "start_trial")
+@payments_router.callback_query(F.data == "start_pro_trial")
 @error_handler 
 async def start_trial_handler(callback: CallbackQuery):
     """Запуск 7-дневного триала"""
@@ -144,13 +145,20 @@ async def start_trial_handler(callback: CallbackQuery):
         )
 
 @payments_router.callback_query(F.data.startswith("buy_pro_"))
+@payments_router.callback_query(F.data == "buy_pro_monthly")
+@payments_router.callback_query(F.data == "buy_pro_annual")
 @error_handler
 async def buy_pro_handler(callback: CallbackQuery):
     """Обработчик покупки Pro подписки"""
     await callback.answer()
     
     # Извлекаем количество месяцев из callback_data
-    duration = int(callback.data.split("_")[-1])
+    if callback.data == "buy_pro_monthly":
+        duration = 1
+    elif callback.data == "buy_pro_annual":
+        duration = 12
+    else:
+        duration = int(callback.data.split("_")[-1])
     
     # Создаем счет для оплаты
     result = await payment_service.create_subscription_payment(
@@ -249,6 +257,16 @@ async def back_to_subscriptions_handler(callback: CallbackQuery):
             "• Полные отчеты"
         ]
     )
+
+@payments_router.callback_query(F.data == "show_status")
+@error_handler
+async def show_status_handler(callback: CallbackQuery):
+    """Показать статус подписки через callback"""
+    await callback.answer()
+    
+    # Импортируем обработчик из handlers.py
+    from handlers import status_handler
+    await status_handler(callback.message)
 
 @payments_router.callback_query(F.data == "cancel_payment")
 @error_handler
