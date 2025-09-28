@@ -24,6 +24,14 @@ scp -r landing/.output/public/privacy german_server:/opt/calories-bot/
 scp -r landing/.output/public/terms german_server:/opt/calories-bot/
 scp landing/.output/public/favicon.ico german_server:/opt/calories-bot/
 scp landing/.output/public/favicon.png german_server:/opt/calories-bot/
+scp landing/.output/public/favicon-16x16.png german_server:/opt/calories-bot/
+scp landing/.output/public/favicon-32x32.png german_server:/opt/calories-bot/
+scp landing/.output/public/favicon-96x96.png german_server:/opt/calories-bot/
+scp landing/.output/public/apple-icon-*.png german_server:/opt/calories-bot/
+scp landing/.output/public/android-icon-*.png german_server:/opt/calories-bot/
+scp landing/.output/public/ms-icon-*.png german_server:/opt/calories-bot/
+scp landing/.output/public/manifest.json german_server:/opt/calories-bot/
+scp landing/.output/public/browserconfig.xml german_server:/opt/calories-bot/
 scp landing/.output/public/logo.jpg german_server:/opt/calories-bot/
 scp sitemap.xml german_server:/opt/calories-bot/
 scp nginx.conf german_server:/opt/calories-bot/

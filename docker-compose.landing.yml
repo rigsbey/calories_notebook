@@ -20,6 +20,32 @@ services:
       - ./terms:/usr/share/nginx/html/terms:ro
       - ./favicon.ico:/usr/share/nginx/html/favicon.ico:ro
       - ./favicon.png:/usr/share/nginx/html/favicon.png:ro
+      - ./favicon-16x16.png:/usr/share/nginx/html/favicon-16x16.png:ro
+      - ./favicon-32x32.png:/usr/share/nginx/html/favicon-32x32.png:ro
+      - ./favicon-96x96.png:/usr/share/nginx/html/favicon-96x96.png:ro
+      - ./apple-icon-57x57.png:/usr/share/nginx/html/apple-icon-57x57.png:ro
+      - ./apple-icon-60x60.png:/usr/share/nginx/html/apple-icon-60x60.png:ro
+      - ./apple-icon-72x72.png:/usr/share/nginx/html/apple-icon-72x72.png:ro
+      - ./apple-icon-76x76.png:/usr/share/nginx/html/apple-icon-76x76.png:ro
+      - ./apple-icon-114x114.png:/usr/share/nginx/html/apple-icon-114x114.png:ro
+      - ./apple-icon-120x120.png:/usr/share/nginx/html/apple-icon-120x120.png:ro
+      - ./apple-icon-144x144.png:/usr/share/nginx/html/apple-icon-144x144.png:ro
+      - ./apple-icon-152x152.png:/usr/share/nginx/html/apple-icon-152x152.png:ro
+      - ./apple-icon-180x180.png:/usr/share/nginx/html/apple-icon-180x180.png:ro
+      - ./apple-icon.png:/usr/share/nginx/html/apple-icon.png:ro
+      - ./apple-icon-precomposed.png:/usr/share/nginx/html/apple-icon-precomposed.png:ro
+      - ./android-icon-36x36.png:/usr/share/nginx/html/android-icon-36x36.png:ro
+      - ./android-icon-48x48.png:/usr/share/nginx/html/android-icon-48x48.png:ro
+      - ./android-icon-72x72.png:/usr/share/nginx/html/android-icon-72x72.png:ro
+      - ./android-icon-96x96.png:/usr/share/nginx/html/android-icon-96x96.png:ro
+      - ./android-icon-144x144.png:/usr/share/nginx/html/android-icon-144x144.png:ro
+      - ./android-icon-192x192.png:/usr/share/nginx/html/android-icon-192x192.png:ro
+      - ./ms-icon-70x70.png:/usr/share/nginx/html/ms-icon-70x70.png:ro
+      - ./ms-icon-144x144.png:/usr/share/nginx/html/ms-icon-144x144.png:ro
+      - ./ms-icon-150x150.png:/usr/share/nginx/html/ms-icon-150x150.png:ro
+      - ./ms-icon-310x310.png:/usr/share/nginx/html/ms-icon-310x310.png:ro
+      - ./manifest.json:/usr/share/nginx/html/manifest.json:ro
+      - ./browserconfig.xml:/usr/share/nginx/html/browserconfig.xml:ro
       - ./logo.jpg:/usr/share/nginx/html/logo.jpg:ro
       - ./nginx-simple.conf:/etc/nginx/nginx.conf:ro
       - ./ssl:/etc/nginx/ssl:ro
