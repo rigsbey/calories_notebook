@@ -19,6 +19,7 @@ async def setup_bot_commands(bot: Bot):
     commands = [
         BotCommand(command="start", description="🚀 Запустить бота"),
         BotCommand(command="help", description="ℹ️ Помощь по использованию"),
+        BotCommand(command="status", description="📊 Мой статус подписки"),
         BotCommand(command="pro", description="🌟 Pro подписка"),
         BotCommand(command="day", description="📊 Итоги дня"),
         BotCommand(command="week", description="📈 Итоги недели (Pro)"),

@@ -673,7 +673,7 @@ async def help_button(message: Message):
 **Основные команды:**
 /start - Запустить бота
 /help - Показать эту справку
-/info - Информация о боте
+/status - Мой статус подписки
 /pro - Информация о Pro подписке
 /day - Итоги дня (быстрый доступ)
 /week - Итоги недели (Pro)
@@ -708,6 +708,161 @@ async def help_button(message: Message):
 Если возникли проблемы, попробуйте отправить фото заново.
     """
     await message.answer(help_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
+
+@router.message(Command("status"))
+@error_handler
+async def status_handler(message: Message):
+    """Обработчик команды /status - показать статус подписки"""
+    user_id = message.from_user.id
+    
+    # Получаем информацию о подписке
+    user_subscription = await subscription_service.get_user_subscription(user_id)
+    subscription_type = user_subscription.get('type', 'lite') if user_subscription else 'lite'
+    
+    # Получаем статистику использования
+    if subscription_type == 'lite':
+        daily_count = await subscription_service.get_daily_photo_count(user_id)
+        remaining_daily = 5 - daily_count
+        
+        status_text = f"""
+📊 **Ваш статус подписки**
+
+🎯 **Текущий план:** Lite (бесплатно)
+📸 **Использовано сегодня:** {daily_count}/5 анализов
+⏳ **Осталось сегодня:** {remaining_daily} анализов
+📅 **Сброс лимита:** завтра в 00:00
+
+**Доступные функции:**
+✅ Базовый анализ КБЖУ
+✅ Краткий дневной отчет
+✅ История 7 дней
+✅ Исправление результатов
+
+**Ограничения:**
+❌ Мульти-тарелка
+❌ Детальные витамины
+❌ Экспорт в PDF/CSV
+❌ Google Calendar интеграция
+❌ Недельные отчеты
+
+💡 **Хотите больше?** Используйте команду /pro
+        """
+        
+        # Добавляем кнопки для апгрейда
+        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="⭐ Попробовать Pro бесплатно", callback_data="start_pro_trial")],
+            [InlineKeyboardButton(text="💎 Купить Pro (399₽/мес)", callback_data="buy_pro_monthly")],
+            [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")]
+        ])
+        
+    elif subscription_type == 'trial':
+        end_date = user_subscription.get('end_date')
+        daily_count = await subscription_service.get_daily_photo_count(user_id)
+        monthly_count = await subscription_service.get_monthly_photo_count(user_id)
+        
+        status_text = f"""
+⭐ **Ваш статус подписки**
+
+🎯 **Текущий план:** Pro Trial (7 дней бесплатно)
+📅 **Истекает:** {end_date.strftime('%d.%m.%Y %H:%M') if end_date else 'Неизвестно'}
+📸 **Использовано сегодня:** {daily_count}/∞ анализов
+📊 **Использовано в месяце:** {monthly_count}/200 анализов
+
+**Доступные функции:**
+✅ До 200 фото в месяц
+✅ Мульти-тарелка
+✅ Детальные витамины + советы
+✅ Google Calendar интеграция
+✅ Экспорт в PDF/CSV
+✅ Недельные отчеты
+✅ Приоритетная очередь
+
+🚀 **Продлите подписку** для продолжения после триала!
+        """
+        
+        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="💎 Продлить Pro (399₽/мес)", callback_data="buy_pro_monthly")],
+            [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")]
+        ])
+        
+    elif subscription_type == 'pro':
+        end_date = user_subscription.get('end_date')
+        daily_count = await subscription_service.get_daily_photo_count(user_id)
+        monthly_count = await subscription_service.get_monthly_photo_count(user_id)
+        
+        status_text = f"""
+⭐ **Ваш статус подписки**
+
+🎯 **Текущий план:** Pro
+📅 **Активен до:** {end_date.strftime('%d.%m.%Y %H:%M') if end_date else 'Бессрочно'}
+📸 **Использовано сегодня:** {daily_count}/∞ анализов
+📊 **Использовано в месяце:** {monthly_count}/200 анализов
+
+**Доступные функции:**
+✅ До 200 фото в месяц
+✅ Мульти-тарелка
+✅ Детальные витамины + советы
+✅ Google Calendar интеграция
+✅ Экспорт в PDF/CSV
+✅ Недельные отчеты
+✅ Приоритетная очередь
+
+🎉 **Вы используете все возможности Pro!**
+        """
+        
+        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="💎 Продлить Pro (399₽/мес)", callback_data="buy_pro_monthly")],
+            [InlineKeyboardButton(text="🏆 Перейти на Pro Год (-50%)", callback_data="buy_pro_annual")]
+        ])
+    
+    else:
+        status_text = """
+❓ **Статус подписки неизвестен**
+
+Попробуйте использовать команду /start для инициализации.
+        """
+        keyboard = None
+    
+    await message.answer(status_text, parse_mode="Markdown", reply_markup=keyboard)
+
+@router.message(Command("pro"))
+@error_handler
+async def pro_handler(message: Message):
+    """Обработчик команды /pro - информация о Pro подписке"""
+    pro_text = """
+⭐ **Pro подписка - все возможности бота**
+
+🎯 **Что входит в Pro:**
+✅ До 200 фото в месяц (vs 5 в день в Lite)
+✅ Мульти-тарелка (несколько блюд на фото)
+✅ Детальные витамины и микронутриенты
+✅ Умные советы по питанию
+✅ Полные отчеты за неделю
+✅ Экспорт в PDF и CSV
+✅ Google Calendar интеграция
+✅ Приоритетная очередь обработки
+✅ Неограниченная история
+
+💰 **Тарифы:**
+💎 **Pro Месяц:** 399₽/месяц
+🏆 **Pro Год:** 2990₽/год (скидка 50%!)
+⭐ **Пробный период:** 7 дней бесплатно
+
+🚀 **Попробуйте прямо сейчас!**
+    """
+    
+    from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="⭐ 7 дней Pro бесплатно", callback_data="start_pro_trial")],
+        [InlineKeyboardButton(text="💎 Pro Месяц (399₽)", callback_data="buy_pro_monthly")],
+        [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")],
+        [InlineKeyboardButton(text="📊 Мой статус", callback_data="show_status")]
+    ])
+    
+    await message.answer(pro_text, parse_mode="Markdown", reply_markup=keyboard)
 
 # Обработчики команд должны быть ПЕРЕД общим обработчиком текста
 @router.message(Command("day"))
