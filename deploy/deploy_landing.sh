@@ -34,7 +34,9 @@ scp landing/.output/public/manifest.json german_server:/opt/calories-bot/
 scp landing/.output/public/browserconfig.xml german_server:/opt/calories-bot/
 scp landing/.output/public/logo.jpg german_server:/opt/calories-bot/
 scp sitemap.xml german_server:/opt/calories-bot/
-scp nginx.conf german_server:/opt/calories-bot/
+scp llms.txt german_server:/opt/calories-bot/
+scp og-image.jpg german_server:/opt/calories-bot/
+scp nginx-simple.conf german_server:/opt/calories-bot/
 scp docker-compose.landing.yml german_server:/opt/calories-bot/
 
 echo "🐳 Запускаем nginx контейнер на сервере..."

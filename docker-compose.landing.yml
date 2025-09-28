@@ -11,8 +11,10 @@ services:
     volumes:
       - ./landing.html:/usr/share/nginx/html/index.html:ro
       - ./robots.txt:/usr/share/nginx/html/robots.txt:ro
-      - ./sitemap.xml:/usr/share/nginx/html/sitemap.xml:ro
-      - ./yandex_841d1740cc0f06a7.html:/usr/share/nginx/html/yandex_841d1740cc0f06a7.html:ro
+              - ./sitemap.xml:/usr/share/nginx/html/sitemap.xml:ro
+              - ./llms.txt:/usr/share/nginx/html/llms.txt:ro
+              - ./og-image.jpg:/usr/share/nginx/html/og-image.jpg:ro
+              - ./yandex_841d1740cc0f06a7.html:/usr/share/nginx/html/yandex_841d1740cc0f06a7.html:ro
       - ./_nuxt:/usr/share/nginx/html/_nuxt:ro
       - ./images:/usr/share/nginx/html/images:ro
       - ./blog:/usr/share/nginx/html/blog:ro

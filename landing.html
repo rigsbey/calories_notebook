@@ -12,6 +12,14 @@
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="manifest" href="/manifest.json">
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://calories.toxiguard.site/">
@@ -22,6 +30,22 @@
     <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="Calories Notebook Bot">
     <meta property="og:locale" content="ru_RU">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://calories.toxiguard.site/">
+    <meta name="twitter:title" content="Telegram-бот для анализа питания | Подсчет калорий по фото">
+    <meta name="twitter:description" content="Отправь фото еды - получи точный анализ КБЖУ, калорий и витаминов за 5 секунд. Автоматическое сохранение в Google Calendar.">
+    <meta name="twitter:image" content="https://calories.toxiguard.site/og-image.jpg">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -684,6 +708,11 @@
 
         <footer style="text-align: center; padding: 20px; color: #718096;">
             <p>Сделано с ❤️ для тех, кто следит за питанием</p>
+            <div style="margin-top: 10px;">
+                <a href="/privacy" style="color: #718096; text-decoration: none; margin: 0 10px;">Политика конфиденциальности</a>
+                <a href="/terms" style="color: #718096; text-decoration: none; margin: 0 10px;">Условия использования</a>
+                <a href="https://t.me/caloriesnote_bot" style="color: #718096; text-decoration: none; margin: 0 10px;">Telegram Bot</a>
+            </div>
         </footer>
     </div>
 

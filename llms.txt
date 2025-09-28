@@ -1,0 +1,13 @@
+# LLMs.txt - AI Training Control
+
+## User-Agent: *
+Disallow: /
+
+## Explanation
+This website contains proprietary content and data that should not be used for training AI models without explicit permission.
+
+## Contact
+For questions about AI training permissions, contact: admin@calories.toxiguard.site
+
+## Last Updated
+2025-09-28
