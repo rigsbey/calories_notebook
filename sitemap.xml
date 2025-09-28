@@ -15,13 +15,6 @@
         </image:image>
     </url>
     
-    <!-- Лендинг страница -->
-    <url>
-        <loc>https://calories.toxiguard.site/landing.html</loc>
-        <lastmod>2025-09-28</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.9</priority>
-    </url>
     
     <!-- Файл верификации Yandex -->
     <url>
