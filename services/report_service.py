@@ -180,5 +180,26 @@ class ReportService:
             
         except Exception as e:
             logger.error(f"Ошибка отправки дневных отчетов: {e}")
+    
+    async def send_daily_reports_to_users(self, bot, users):
+        """Отправляет дневные отчеты конкретным пользователям"""
+        try:
+            date = datetime.now().strftime('%Y-%m-%d')
+            
+            for user in users:
+                try:
+                    user_id = user['user_id']
+                    user_display = self._get_user_display_name(user, user_id)
+                    
+                    report = await self.generate_daily_report(user_id, date)
+                    await bot.send_message(user_id, report)
+                    logger.info(f"Отчет отправлен пользователю {user_display} (ID: {user_id})")
+                except Exception as e:
+                    logger.error(f"Ошибка отправки отчета пользователю {user_id}: {e}")
+            
+            logger.info(f"Дневные отчеты отправлены {len(users)} пользователям")
+            
+        except Exception as e:
+            logger.error(f"Ошибка отправки дневных отчетов: {e}")
 
 

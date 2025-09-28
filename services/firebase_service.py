@@ -91,7 +91,7 @@ class FirebaseService:
             logger.error(f"Ошибка получения анализов за неделю: {e}")
             return []
     
-    async def create_or_update_user(self, user_id: int, username: str = None, first_name: str = None, last_name: str = None) -> bool:
+    async def create_or_update_user(self, user_id: int, username: str = None, first_name: str = None, last_name: str = None, timezone: str = None) -> bool:
         """Создает или обновляет данные пользователя в Firestore"""
         try:
             user_ref = self.db.collection('users').document(str(user_id))
@@ -108,10 +108,12 @@ class FirebaseService:
                 user_data['first_name'] = first_name
             if last_name:
                 user_data['last_name'] = last_name
+            if timezone:
+                user_data['timezone'] = timezone
             
             # Используем merge=True чтобы не перезаписывать существующие данные
             user_ref.set(user_data, merge=True)
-            logger.info(f"Пользователь {user_id} создан/обновлен с username: {username}")
+            logger.info(f"Пользователь {user_id} создан/обновлен с username: {username}, timezone: {timezone}")
             return True
         except Exception as e:
             logger.error(f"Ошибка создания/обновления пользователя: {e}")
@@ -227,6 +229,29 @@ class FirebaseService:
             return user_ids
         except Exception as e:
             logger.error(f"Ошибка получения списка пользователей: {e}")
+            return []
+    
+    async def get_users_with_timezones(self) -> List[Dict]:
+        """Получает список всех пользователей с их часовыми поясами"""
+        try:
+            users_ref = self.db.collection('users')
+            docs = users_ref.stream()
+            
+            users = []
+            for doc in docs:
+                user_data = doc.to_dict()
+                if user_data and 'user_id' in user_data:
+                    users.append({
+                        'user_id': user_data['user_id'],
+                        'timezone': user_data.get('timezone', 'UTC'),
+                        'username': user_data.get('username'),
+                        'first_name': user_data.get('first_name'),
+                        'last_name': user_data.get('last_name')
+                    })
+            
+            return users
+        except Exception as e:
+            logger.error(f"Ошибка получения пользователей с часовыми поясами: {e}")
             return []
     
     def parse_nutrition_data(self, analysis_text: str) -> Dict:
