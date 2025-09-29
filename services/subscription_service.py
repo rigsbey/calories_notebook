@@ -364,3 +364,12 @@ class SubscriptionService:
         except Exception as e:
             logger.error(f"Ошибка получения дневного счетчика: {e}")
             return 0
+
+    async def get_monthly_photo_count(self, user_id: int) -> int:
+        """Получает количество фото, проанализированных в этом месяце"""
+        try:
+            subscription = await self.get_user_subscription(user_id)
+            return subscription.get('monthly_photo_count', 0)
+        except Exception as e:
+            logger.error(f"Ошибка получения месячного счетчика: {e}")
+            return 0
