@@ -87,6 +87,9 @@ class GoogleCalendarService:
             # Убедимся, что у пользователя есть календарь
             await self._ensure_calendar(user_id, creds)
 
+            # Отправляем уведомление в бот
+            await self._send_telegram_notification(user_id, "✅ Google Calendar успешно подключен! Теперь все анализы питания будут автоматически сохраняться в ваш календарь.")
+
             return await self._render_success_page()
         except Exception as e:
             logger.error(f"OAuth callback error: {e}")
@@ -393,3 +396,16 @@ class GoogleCalendarService:
         except Exception as e:
             logger.error(f"Ошибка при обновлении последнего события: {e}")
             return False
+
+    async def _send_telegram_notification(self, user_id: int, message: str):
+        """Отправляет уведомление в Telegram бот"""
+        try:
+            from config import BOT_TOKEN
+            from aiogram import Bot
+            
+            bot = Bot(token=BOT_TOKEN)
+            await bot.send_message(user_id, message)
+            await bot.session.close()
+            logger.info(f"Уведомление отправлено пользователю {user_id}: {message}")
+        except Exception as e:
+            logger.error(f"Ошибка отправки уведомления пользователю {user_id}: {e}")
