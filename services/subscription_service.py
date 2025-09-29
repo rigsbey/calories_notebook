@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Optional, Tuple
 from enum import Enum
 from firebase_admin import firestore
@@ -125,8 +125,8 @@ class SubscriptionService:
                 'subscription_end_date': None,
                 'daily_photo_count': 0,
                 'monthly_photo_count': 0,
-                'last_reset_date': datetime.now().strftime('%Y-%m-%d'),
-                'created_at': datetime.now()
+                'last_reset_date': datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+                'created_at': datetime.now(timezone.utc)
             }
             user_ref.set(subscription_data, merge=True)
             logger.info(f"Инициализирована подписка Lite для пользователя {user_id}")
@@ -137,13 +137,17 @@ class SubscriptionService:
     async def _validate_subscription_status(self, user_id: int, subscription: Dict):
         """Валидирует статус подписки и обновляет при необходимости"""
         try:
-            now = datetime.now()
+            now = datetime.now(timezone.utc)
             
             # Проверяем истечение подписки
             if subscription.get('end_date'):
                 end_date = subscription['end_date']
                 if isinstance(end_date, str):
                     end_date = datetime.fromisoformat(end_date)
+                
+                # Убеждаемся, что end_date имеет timezone
+                if end_date.tzinfo is None:
+                    end_date = end_date.replace(tzinfo=timezone.utc)
                 
                 if end_date <= now and subscription['status'] == 'active':
                     # Подписка истекла, переводим на Lite
@@ -171,7 +175,7 @@ class SubscriptionService:
             user_ref = self.firebase_service.db.collection('users').document(str(user_id))
             user_ref.update({
                 'daily_photo_count': 0,
-                'last_reset_date': datetime.now().strftime('%Y-%m-%d')
+                'last_reset_date': datetime.now(timezone.utc).strftime('%Y-%m-%d')
             })
             logger.info(f"Сброшены дневные счетчики для пользователя {user_id}")
             
@@ -266,7 +270,7 @@ class SubscriptionService:
                 return False
             
             # Устанавливаем триал на 7 дней
-            end_date = datetime.now() + timedelta(days=7)
+            end_date = datetime.now(timezone.utc) + timedelta(days=7)
             
             user_ref = self.firebase_service.db.collection('users').document(str(user_id))
             user_ref.update({
@@ -274,7 +278,7 @@ class SubscriptionService:
                 'subscription_status': 'active',
                 'subscription_end_date': end_date,
                 'trial_used': True,
-                'trial_start_date': datetime.now()
+                'trial_start_date': datetime.now(timezone.utc)
             })
             
             logger.info(f"Запущен триал для пользователя {user_id}")
@@ -287,14 +291,14 @@ class SubscriptionService:
     async def activate_pro_subscription(self, user_id: int, duration_months: int) -> bool:
         """Активирует Pro подписку"""
         try:
-            end_date = datetime.now() + timedelta(days=30 * duration_months)
+            end_date = datetime.now(timezone.utc) + timedelta(days=30 * duration_months)
             
             user_ref = self.firebase_service.db.collection('users').document(str(user_id))
             user_ref.update({
                 'subscription_type': 'pro',
                 'subscription_status': 'active',
                 'subscription_end_date': end_date,
-                'pro_activated_at': datetime.now()
+                'pro_activated_at': datetime.now(timezone.utc)
             })
             
             logger.info(f"Активирована Pro подписка на {duration_months} мес. для пользователя {user_id}")
@@ -313,7 +317,7 @@ class SubscriptionService:
             current_bonus = user_data.get('bonus_analyses', 0)
             user_ref.update({
                 'bonus_analyses': current_bonus + count,
-                'last_stars_purchase': datetime.now()
+                'last_stars_purchase': datetime.now(timezone.utc)
             })
             
             logger.info(f"Добавлено {count} бонусных анализов для пользователя {user_id}")
@@ -327,7 +331,7 @@ class SubscriptionService:
         """Сохраняет информацию о платеже"""
         try:
             payments_ref = self.firebase_service.db.collection('payments')
-            payment_data['created_at'] = datetime.now()
+            payment_data['created_at'] = datetime.now(timezone.utc)
             payments_ref.add(payment_data)
             
             logger.info(f"Сохранен платеж для пользователя {payment_data.get('user_id')}")
@@ -351,3 +355,12 @@ class SubscriptionService:
             "subscriptions": self.PRICES,
             "stars": self.STARS_PRICES
         }
+
+    async def get_daily_photo_count(self, user_id: int) -> int:
+        """Получает количество фото, проанализированных сегодня"""
+        try:
+            subscription = await self.get_user_subscription(user_id)
+            return subscription.get('daily_photo_count', 0)
+        except Exception as e:
+            logger.error(f"Ошибка получения дневного счетчика: {e}")
+            return 0
