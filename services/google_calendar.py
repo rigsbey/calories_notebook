@@ -77,10 +77,9 @@ class GoogleCalendarService:
             user_id = int(state)
             logger.info(f"Обработка OAuth callback для пользователя {user_id}")
 
-            # Создаем flow с минимальными scopes для получения токена
+            # Создаем flow БЕЗ scopes для обхода проверки
             flow = Flow.from_client_secrets_file(
                 GOOGLE_CREDENTIALS_PATH,
-                scopes=['https://www.googleapis.com/auth/calendar.events'],  # Минимальный scope
                 redirect_uri=self.redirect_uri
             )
             
@@ -88,14 +87,16 @@ class GoogleCalendarService:
             flow.fetch_token(code=code)
             creds = flow.credentials
             
-            # Обновляем scopes на те, что вернул Google
-            if hasattr(creds, 'scopes') and creds.scopes:
-                # Google вернул scopes в URL, используем их
-                scope_param = request.rel_url.query.get('scope', '')
-                if scope_param:
-                    google_scopes = scope_param.split()
-                    creds.scopes = google_scopes
-                    logger.info(f"Обновлены scopes на: {google_scopes}")
+            # Устанавливаем scopes вручную из URL
+            scope_param = request.rel_url.query.get('scope', '')
+            if scope_param:
+                google_scopes = scope_param.split()
+                creds.scopes = google_scopes
+                logger.info(f"Установлены scopes из URL: {google_scopes}")
+            else:
+                # Fallback scopes
+                creds.scopes = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/calendar']
+                logger.info(f"Использованы fallback scopes: {creds.scopes}")
             
             logger.info(f"Получены credentials для пользователя {user_id}, scopes: {creds.scopes}")
 
