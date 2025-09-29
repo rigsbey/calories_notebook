@@ -77,26 +77,42 @@ class GoogleCalendarService:
             user_id = int(state)
             logger.info(f"Обработка OAuth callback для пользователя {user_id}")
 
-            # Создаем flow БЕЗ scopes для обхода проверки
-            flow = Flow.from_client_secrets_file(
-                GOOGLE_CREDENTIALS_PATH,
-                redirect_uri=self.redirect_uri
+            # Используем raw OAuth2 для обхода проблем с scopes
+            import json
+            import requests
+            
+            # Загружаем credentials
+            with open(GOOGLE_CREDENTIALS_PATH, 'r') as f:
+                client_config = json.load(f)
+            
+            # Получаем токен напрямую через OAuth2
+            token_url = 'https://oauth2.googleapis.com/token'
+            token_data = {
+                'client_id': client_config['web']['client_id'],
+                'client_secret': client_config['web']['client_secret'],
+                'code': code,
+                'grant_type': 'authorization_code',
+                'redirect_uri': self.redirect_uri
+            }
+            
+            response = requests.post(token_url, data=token_data)
+            token_response = response.json()
+            
+            if 'error' in token_response:
+                raise Exception(f"OAuth2 error: {token_response['error']}")
+            
+            # Создаем credentials вручную
+            from google.oauth2.credentials import Credentials
+            creds = Credentials(
+                token=token_response['access_token'],
+                refresh_token=token_response.get('refresh_token'),
+                token_uri=token_url,
+                client_id=client_config['web']['client_id'],
+                client_secret=client_config['web']['client_secret'],
+                scopes=['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/calendar']
             )
             
-            # Получаем токен
-            flow.fetch_token(code=code)
-            creds = flow.credentials
-            
-            # Устанавливаем scopes вручную из URL
-            scope_param = request.rel_url.query.get('scope', '')
-            if scope_param:
-                google_scopes = scope_param.split()
-                creds.scopes = google_scopes
-                logger.info(f"Установлены scopes из URL: {google_scopes}")
-            else:
-                # Fallback scopes
-                creds.scopes = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/calendar']
-                logger.info(f"Использованы fallback scopes: {creds.scopes}")
+            logger.info(f"Получен токен через raw OAuth2, scopes: {creds.scopes}")
             
             logger.info(f"Получены credentials для пользователя {user_id}, scopes: {creds.scopes}")
 
