@@ -32,7 +32,7 @@ def _credentials_to_dict(credentials: Credentials) -> Dict:
 
 
 class GoogleCalendarService:
-    SCOPES = ['https://www.googleapis.com/auth/calendar.events']
+    SCOPES = ['https://www.googleapis.com/auth/calendar']
     CALENDAR_NAME = 'Календарь питания'
 
     def __init__(self):
@@ -152,7 +152,8 @@ class GoogleCalendarService:
                 access_type='offline',
                 include_granted_scopes='true',
                 state=str(user_id),
-                approval_prompt='force'
+                approval_prompt='force',
+                login_hint=''
             )
             self._pending_states[state] = flow
             return auth_url
