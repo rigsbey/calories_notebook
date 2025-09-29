@@ -32,7 +32,7 @@ def _credentials_to_dict(credentials: Credentials) -> Dict:
 
 
 class GoogleCalendarService:
-    SCOPES = ['https://www.googleapis.com/auth/calendar']
+    SCOPES = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/calendar']
     CALENDAR_NAME = 'Календарь питания'
 
     def __init__(self):
@@ -64,24 +64,42 @@ class GoogleCalendarService:
         try:
             code = request.rel_url.query.get('code')
             state = request.rel_url.query.get('state')
+            error = request.rel_url.query.get('error')
+            
+            # Проверяем на ошибки авторизации
+            if error:
+                logger.error(f"OAuth error: {error}")
+                return await self._render_error_page(f"Ошибка авторизации: {error}")
+                
             if not code or not state:
                 return await self._render_error_page("Отсутствуют обязательные параметры авторизации")
 
-            flow = self._pending_states.pop(state, None)
-            if flow is None:
-                # Восстанавливаем flow на лету
-                flow = Flow.from_client_secrets_file(
-                    GOOGLE_CREDENTIALS_PATH,
-                    scopes=self.SCOPES,
-                    redirect_uri=self.redirect_uri
-                )
-                flow.fetch_token(code=code)
-            else:
-                flow.fetch_token(code=code)
-
-            creds = flow.credentials
             user_id = int(state)
+            logger.info(f"Обработка OAuth callback для пользователя {user_id}")
 
+            # Создаем flow с минимальными scopes для получения токена
+            flow = Flow.from_client_secrets_file(
+                GOOGLE_CREDENTIALS_PATH,
+                scopes=['https://www.googleapis.com/auth/calendar.events'],  # Минимальный scope
+                redirect_uri=self.redirect_uri
+            )
+            
+            # Получаем токен
+            flow.fetch_token(code=code)
+            creds = flow.credentials
+            
+            # Обновляем scopes на те, что вернул Google
+            if hasattr(creds, 'scopes') and creds.scopes:
+                # Google вернул scopes в URL, используем их
+                scope_param = request.rel_url.query.get('scope', '')
+                if scope_param:
+                    google_scopes = scope_param.split()
+                    creds.scopes = google_scopes
+                    logger.info(f"Обновлены scopes на: {google_scopes}")
+            
+            logger.info(f"Получены credentials для пользователя {user_id}, scopes: {creds.scopes}")
+
+            # Сохраняем токены
             await self.firebase.save_user_google_tokens(user_id, _credentials_to_dict(creds))
 
             # Убедимся, что у пользователя есть календарь
@@ -90,9 +108,11 @@ class GoogleCalendarService:
             # Отправляем уведомление в бот
             await self._send_telegram_notification(user_id, "✅ Google Calendar успешно подключен! Теперь все анализы питания будут автоматически сохраняться в ваш календарь.")
 
+            logger.info(f"Google Calendar успешно подключен для пользователя {user_id}")
             return await self._render_success_page()
+            
         except Exception as e:
-            logger.error(f"OAuth callback error: {e}")
+            logger.error(f"OAuth callback error: {e}", exc_info=True)
             return await self._render_error_page("Произошла ошибка при подключении календаря")
     
     async def _render_success_page(self) -> web.Response:

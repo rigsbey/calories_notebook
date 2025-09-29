@@ -81,7 +81,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   // Рендеринг
-  ssr: false,
+  ssr: true,
   nitro: {
     preset: 'static'
   },

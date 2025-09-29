@@ -16,7 +16,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GOOGLE_CREDENTIALS_PATH = os.getenv("GOOGLE_CREDENTIALS_PATH", "credentials.json")
 GOOGLE_OAUTH_REDIRECT_PORT = int(os.getenv("GOOGLE_OAUTH_REDIRECT_PORT", "8088"))
 GOOGLE_OAUTH_REDIRECT_PATH = os.getenv("GOOGLE_OAUTH_REDIRECT_PATH", "/oauth2callback")
-GOOGLE_OAUTH_REDIRECT_BASE = os.getenv("GOOGLE_OAUTH_REDIRECT_BASE", "")  # если пусто, используем localhost
+GOOGLE_OAUTH_REDIRECT_BASE = os.getenv("GOOGLE_OAUTH_REDIRECT_BASE", "https://calories.toxiguard.site")  # если пусто, используем localhost
 
 # Firebase
 FIREBASE_CREDENTIALS_PATH = os.getenv("FIREBASE_CREDENTIALS_PATH", "caloriesbot-949dd-firebase-adminsdk-fbsvc-4ecc1b1ad9.json")
