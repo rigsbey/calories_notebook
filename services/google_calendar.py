@@ -151,7 +151,7 @@ class GoogleCalendarService:
             auth_url, state = flow.authorization_url(
                 access_type='offline',
                 include_granted_scopes='true',
-                prompt='consent',
+                prompt='select_account',
                 state=str(user_id)
             )
             self._pending_states[state] = flow
