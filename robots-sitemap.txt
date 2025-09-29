@@ -1,0 +1,13 @@
+# Дополнительная информация для поисковых систем
+# Основной sitemap
+Sitemap: https://calories.toxiguard.site/sitemap.xml
+
+# Дополнительные sitemaps (если будут)
+# Sitemap: https://calories.toxiguard.site/blog-sitemap.xml
+# Sitemap: https://calories.toxiguard.site/images-sitemap.xml
+
+# Время последнего обновления
+Last-Modified: 2025-09-29
+
+# Контактная информация
+# Contact: @caloriesnote_bot

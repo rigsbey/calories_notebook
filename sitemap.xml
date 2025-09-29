@@ -24,40 +24,33 @@
         <priority>0.1</priority>
     </url>
     
-    <!-- Виртуальные страницы для SEO -->
+    <!-- Якорные ссылки на главной странице -->
     <url>
-        <loc>https://calories.toxiguard.site/faq</loc>
+        <loc>https://calories.toxiguard.site/#faq</loc>
         <lastmod>2025-09-28</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>https://calories.toxiguard.site/how-it-works</loc>
+        <loc>https://calories.toxiguard.site/#how-it-works</loc>
         <lastmod>2025-09-28</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     
     <url>
-        <loc>https://calories.toxiguard.site/features</loc>
+        <loc>https://calories.toxiguard.site/#features</loc>
         <lastmod>2025-09-28</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     
     <url>
-        <loc>https://calories.toxiguard.site/pricing</loc>
+        <loc>https://calories.toxiguard.site/#pricing</loc>
         <lastmod>2025-09-28</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
-    </url>
-    
-    <url>
-        <loc>https://calories.toxiguard.site/contact</loc>
-        <lastmod>2025-09-28</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.5</priority>
     </url>
     
     <!-- Политика конфиденциальности и условия -->
@@ -77,89 +70,48 @@
     
     <!-- Блог -->
     <url>
-        <loc>https://calories.toxiguard.site/blog</loc>
-        <lastmod>2025-09-26</lastmod>
+        <loc>https://calories.toxiguard.site/blog/</loc>
+        <lastmod>2025-09-28</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <!-- Статьи блога -->
     <url>
-        <loc>https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto-telegram-bot</loc>
-        <lastmod>2025-09-26</lastmod>
+        <loc>https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto-telegram-bot/</loc>
+        <lastmod>2025-09-28</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
     
-    <!-- SEO-страницы для ключевых слов -->
     <url>
-        <loc>https://calories.toxiguard.site/telegram-bot-calories</loc>
+        <loc>https://calories.toxiguard.site/blog/avtomaticheskiy-dnevnik-pitaniya/</loc>
         <lastmod>2025-09-28</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
+        <priority>0.7</priority>
     </url>
     
     <url>
-        <loc>https://calories.toxiguard.site/calorie-counter-photo</loc>
+        <loc>https://calories.toxiguard.site/blog/ii-v-pitanii-kak-iskusstvennyy-intellekt-menyaet-zdorove/</loc>
         <lastmod>2025-09-28</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
+        <priority>0.7</priority>
     </url>
     
     <url>
-        <loc>https://calories.toxiguard.site/nutrition-analysis-bot</loc>
+        <loc>https://calories.toxiguard.site/blog/pochemu-vazhno-sledit-za-kaloriyami-nauka-zdorove-prakticheskie-vyvody/</loc>
         <lastmod>2025-09-28</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
+        <priority>0.7</priority>
     </url>
     
-    <url>
-        <loc>https://calories.toxiguard.site/diet-bot-telegram</loc>
-        <lastmod>2025-09-28</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
     
+    <!-- LLMs.txt для контроля обучения ИИ -->
     <url>
-        <loc>https://calories.toxiguard.site/food-tracker-bot</loc>
+        <loc>https://calories.toxiguard.site/llms.txt</loc>
         <lastmod>2025-09-28</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <url>
-        <loc>https://calories.toxiguard.site/weight-loss-bot</loc>
-        <lastmod>2025-09-28</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <url>
-        <loc>https://calories.toxiguard.site/calories-calculator</loc>
-        <lastmod>2025-09-28</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <url>
-        <loc>https://calories.toxiguard.site/nutrition-tracker</loc>
-        <lastmod>2025-09-28</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <url>
-        <loc>https://calories.toxiguard.site/healthy-eating-bot</loc>
-        <lastmod>2025-09-28</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <url>
-        <loc>https://calories.toxiguard.site/ai-nutrition-analysis</loc>
-        <lastmod>2025-09-28</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
+        <changefreq>yearly</changefreq>
+        <priority>0.1</priority>
     </url>
     
 </urlset>
