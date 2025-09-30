@@ -2,7 +2,7 @@
   <section class="faq" aria-labelledby="faq-heading">
     <div class="container">
       <h2 id="faq-heading" class="faq-title">
-        {{ $t('faq.title') }}
+        Правильный текст
       </h2>
       
       <div class="faq-container">

@@ -3,10 +3,10 @@
     <div class="container">
       <div class="cta-content">
         <h2 id="cta-heading" class="cta-title">
-          {{ $t('cta.title') }}
+          Правильный текст
         </h2>
         <p class="cta-subtitle">
-          {{ $t('cta.subtitle') }}
+          Правильный текст
         </p>
         
         <div class="cta-buttons">
@@ -15,7 +15,7 @@
             class="cta-button primary"
             @click="trackClick('start_free')"
           >
-            {{ $t('cta.tryFree') }}
+            Правильный текст
           </a>
           
           <a 
@@ -23,28 +23,28 @@
             class="cta-button secondary"
             @click="trackClick('start_pro')"
           >
-            {{ $t('cta.proTrial') }}
+            Правильный текст
           </a>
         </div>
         
         <div class="cta-features">
           <div class="cta-feature">
             <span class="feature-icon">⚡</span>
-            <span class="feature-text">{{ $t('cta.features.fast') }}</span>
+            <span class="feature-text">Правильный текст</span>
           </div>
           <div class="cta-feature">
             <span class="feature-icon">📱</span>
-            <span class="feature-text">{{ $t('cta.features.telegram') }}</span>
+            <span class="feature-text">Правильный текст</span>
           </div>
           <div class="cta-feature">
             <span class="feature-icon">🔒</span>
-            <span class="feature-text">{{ $t('cta.features.secure') }}</span>
+            <span class="feature-text">Правильный текст</span>
           </div>
         </div>
         
         <div class="cta-legal">
           <p class="legal-text">
-            {{ $t('cta.legal') }}
+            Правильный текст
           </p>
         </div>
       </div>

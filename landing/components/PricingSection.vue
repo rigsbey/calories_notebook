@@ -2,46 +2,46 @@
   <section class="pricing" id="pricing">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">{{ $t('pricing.title') }}</h2>
-        <p class="section-subtitle">{{ $t('pricing.subtitle') }}</p>
+        <h2 class="section-title">Выберите свой тарифный план</h2>
+        <p class="section-subtitle">Начните с бесплатного Lite или получите все функции Pro</p>
       </div>
 
       <div class="pricing-grid">
         <!-- Lite Plan -->
         <div class="pricing-card lite-card">
-          <div class="pricing-badge">{{ $t('pricing.lite.badge') }}</div>
+          <div class="pricing-badge">Правильный текст</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">{{ $t('pricing.lite.name') }}</h3>
+            <h3 class="plan-name">Правильный текст</h3>
             <div class="plan-price">
-              <span class="price">{{ $t('pricing.lite.price') }}{{ getCurrencySymbol() }}</span>
-              <span class="period">{{ $t('pricing.lite.period') }}</span>
+              <span class="price">Правильный текст</span>
+              <span class="period">Правильный текст</span>
             </div>
-            <p class="plan-description">{{ $t('pricing.lite.description') }}</p>
+            <p class="plan-description">Правильный текст</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.lite.features.photosPerDay') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.lite.features.basicAnalysis') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.lite.features.dailyReport') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.lite.features.history') }}
+                Правильный текст
               </div>
               <div class="feature-item disabled">
                 <span class="feature-check">✗</span>
-                {{ $t('pricing.lite.features.multiPlate') }}
+                Правильный текст
               </div>
               <div class="feature-item disabled">
                 <span class="feature-check">✗</span>
-                {{ $t('pricing.lite.features.export') }}
+                Правильный текст
               </div>
             </div>
           </div>
@@ -51,52 +51,52 @@
             class="cta-button lite-button"
             @click="trackClick('lite')"
           >
-            {{ $t('pricing.lite.button') }}
+            Правильный текст
           </a>
         </div>
 
         <!-- Pro Plan -->
         <div class="pricing-card pro-card">
-          <div class="pricing-badge pro-badge">{{ $t('pricing.pro.badge') }}</div>
+          <div class="pricing-badge pro-badge">Правильный текст</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">{{ $t('pricing.pro.name') }}</h3>
+            <h3 class="plan-name">Правильный текст</h3>
             <div class="plan-price">
               <span class="price">{{ getPrice('pro') }}{{ getCurrencySymbol() }}</span>
-              <span class="period">{{ $t('pricing.pro.period') }}</span>
+              <span class="period">Правильный текст</span>
             </div>
             <div class="plan-savings">
-              {{ $t('pricing.pro.savings') }}
+              Правильный текст
             </div>
-            <p class="plan-description">{{ $t('pricing.pro.description') }}</p>
+            <p class="plan-description">Правильный текст</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.pro.features.photosPerMonth') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.pro.features.multiPlate') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.pro.features.vitamins') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.pro.features.reports') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.pro.features.export') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.pro.features.calendar') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.pro.features.priority') }}
+                Правильный текст
               </div>
             </div>
           </div>
@@ -106,44 +106,44 @@
             class="cta-button pro-button"
             @click="trackClick('pro')"
           >
-            {{ $t('pricing.pro.button') }}
+            Правильный текст
           </a>
         </div>
 
         <!-- Annual Plan -->
         <div class="pricing-card annual-card">
-          <div class="pricing-badge annual-badge">{{ $t('pricing.annual.badge') }}</div>
+          <div class="pricing-badge annual-badge">Правильный текст</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">{{ $t('pricing.annual.name') }}</h3>
+            <h3 class="plan-name">Правильный текст</h3>
             <div class="plan-price">
-              <span class="price">{{ $t('pricing.annual.price') }}{{ getCurrencySymbol() }}</span>
-              <span class="period">{{ $t('pricing.annual.period') }}</span>
+              <span class="price">Правильный текст</span>
+              <span class="period">Правильный текст</span>
             </div>
             <div class="plan-savings">
-              {{ $t('pricing.annual.savings') }}
+              Правильный текст
             </div>
-            <p class="plan-description">{{ $t('pricing.annual.description') }}</p>
+            <p class="plan-description">Правильный текст</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.annual.features.allPro') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.annual.features.monthlyPrice') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.annual.features.support') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.annual.features.noAutoRenewal') }}
+                Правильный текст
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                {{ $t('pricing.annual.features.earlyAccess') }}
+                Правильный текст
               </div>
             </div>
           </div>
@@ -153,30 +153,30 @@
             class="cta-button annual-button"
             @click="trackClick('annual')"
           >
-            {{ $t('pricing.annual.button') }}
+            Правильный текст
           </a>
         </div>
       </div>
 
       <!-- Additional Features -->
       <div class="additional-features">
-        <h3 class="features-title">{{ $t('pricing.additionalFeatures.title') }}</h3>
+        <h3 class="features-title">Правильный текст</h3>
         <div class="stars-features">
           <div class="star-feature">
             <span class="star-icon">💫</span>
-            <span class="star-text">{{ $t('pricing.additionalFeatures.extraAnalyses') }}</span>
+            <span class="star-text">Правильный текст</span>
           </div>
           <div class="star-feature">
             <span class="star-icon">🍽️</span>
-            <span class="star-text">{{ $t('pricing.additionalFeatures.multiPlate24h') }}</span>
+            <span class="star-text">Правильный текст</span>
           </div>
           <div class="star-feature">
             <span class="star-icon">📄</span>
-            <span class="star-text">{{ $t('pricing.additionalFeatures.pdfReport') }}</span>
+            <span class="star-text">Правильный текст</span>
           </div>
         </div>
         <p class="stars-note">
-          {{ $t('pricing.additionalFeatures.note') }}
+          Правильный текст
         </p>
       </div>
     </div>

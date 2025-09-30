@@ -11,17 +11,17 @@
         <div class="footer-content">
           <div class="footer-brand">
             <img src="/logo.jpg" alt="Calories Bot" class="brand-icon" />
-            <span class="brand-text">{{ $t('footer.brand') }}</span>
+            <span class="brand-text">Calories Notebook Bot</span>
           </div>
           <div class="footer-links">
-            <a href="https://t.me/caloriesnote_bot" class="footer-link">{{ $t('footer.telegramBot') }}</a>
-            <NuxtLink to="/privacy" class="footer-link privacy-link">{{ $t('footer.privacy') }}</NuxtLink>
-            <NuxtLink to="/terms" class="footer-link">{{ $t('footer.terms') }}</NuxtLink>
+            <a href="https://t.me/caloriesnote_bot" class="footer-link">Telegram Bot</a>
+            <NuxtLink to="/privacy" class="footer-link privacy-link">Политика конфиденциальности</NuxtLink>
+            <NuxtLink to="/terms" class="footer-link">Условия использования</NuxtLink>
           </div>
         </div>
         <div class="footer-bottom">
           <p class="footer-text">
-            {{ $t('footer.madeWith') }}
+            Сделано с ❤️ для тех, кто следит за питанием
           </p>
         </div>
       </div>

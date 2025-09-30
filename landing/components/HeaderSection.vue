@@ -9,18 +9,17 @@
       </div>
       
       <nav class="header-nav">
-        <a href="/#features" class="nav-link">{{ $t('nav.features') }}</a>
-        <a href="/#how-it-works" class="nav-link">{{ $t('nav.howItWorks') }}</a>
-        <a href="/#pricing" class="nav-link">{{ $t('nav.pricing') }}</a>
-        <a href="/blog" class="nav-link">{{ $t('nav.blog') }}</a>
-        <a href="/#faq" class="nav-link">{{ $t('nav.faq') }}</a>
-        <a href="/privacy" class="nav-link">{{ $t('nav.privacy') }}</a>
+        <a href="/#features" class="nav-link">Возможности</a>
+        <a href="/#how-it-works" class="nav-link">Как работает</a>
+        <a href="/#pricing" class="nav-link">Цены</a>
+        <a href="/blog" class="nav-link">Блог</a>
+        <a href="/#faq" class="nav-link">FAQ</a>
+        <a href="/privacy" class="nav-link">Конфиденциальность</a>
       </nav>
       
       <div class="header-right">
-        <LanguageSwitcher />
         <a href="https://t.me/caloriesnote_bot" class="btn-start-growing">
-          {{ $t('nav.launchBot') }}
+          Запустить бота
         </a>
       </div>
 
@@ -35,22 +34,17 @@
     <!-- Mobile menu -->
     <div class="mobile-menu" :class="{ 'mobile-menu--open': mobileMenuOpen }">
       <nav class="mobile-nav">
-        <a href="/#features" class="mobile-nav-link" @click="closeMobileMenu">{{ $t('nav.features') }}</a>
-        <a href="/#how-it-works" class="mobile-nav-link" @click="closeMobileMenu">{{ $t('nav.howItWorks') }}</a>
-        <a href="/#pricing" class="mobile-nav-link" @click="closeMobileMenu">{{ $t('nav.pricing') }}</a>
-        <a href="/blog" class="mobile-nav-link" @click="closeMobileMenu">{{ $t('nav.blog') }}</a>
-        <a href="/#faq" class="mobile-nav-link" @click="closeMobileMenu">{{ $t('nav.faq') }}</a>
-        <a href="/privacy" class="mobile-nav-link" @click="closeMobileMenu">{{ $t('nav.privacy') }}</a>
+        <a href="/#features" class="mobile-nav-link" @click="closeMobileMenu">Возможности</a>
+        <a href="/#how-it-works" class="mobile-nav-link" @click="closeMobileMenu">Как работает</a>
+        <a href="/#pricing" class="mobile-nav-link" @click="closeMobileMenu">Цены</a>
+        <a href="/blog" class="mobile-nav-link" @click="closeMobileMenu">Блог</a>
+        <a href="/#faq" class="mobile-nav-link" @click="closeMobileMenu">FAQ</a>
+        <a href="/privacy" class="mobile-nav-link" @click="closeMobileMenu">Конфиденциальность</a>
       </nav>
-      
-      <!-- Language Switcher for Mobile -->
-      <div class="mobile-language-section">
-        <LanguageSwitcher @language-changed="closeMobileMenu" />
-      </div>
       
       <div class="mobile-buttons">
         <a href="https://t.me/caloriesnote_bot" class="btn-start-growing w-full">
-          {{ $t('nav.launchBot') }}
+          Запустить бота
         </a>
       </div>
     </div>
@@ -58,8 +52,6 @@
 </template>
 
 <script setup>
-import LanguageSwitcher from './ui/LanguageSwitcher.vue'
-
 const mobileMenuOpen = ref(false)
 
 const toggleMobileMenu = () => {
