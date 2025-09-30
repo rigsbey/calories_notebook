@@ -861,6 +861,10 @@ async def status_handler(message: Message):
     user_subscription = await subscription_service.get_user_subscription(user_id)
     subscription_type = user_subscription.get('type', 'lite') if user_subscription else 'lite'
     
+    # Проверяем, использовал ли пользователь уже пробный период
+    user_data = await firebase_service.get_user_info(user_id)
+    trial_used = user_data.get('trial_used', False) if user_data else False
+    
     # Получаем статистику использования
     if subscription_type == 'lite':
         daily_count = await subscription_service.get_daily_photo_count(user_id)
@@ -891,11 +895,18 @@ async def status_handler(message: Message):
         
         # Добавляем кнопки для апгрейда
         from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="⭐ Попробовать Pro бесплатно", callback_data="start_pro_trial")],
+        keyboard_buttons = []
+        
+        # Добавляем кнопку пробного периода только если пользователь его еще не использовал
+        if not trial_used:
+            keyboard_buttons.append([InlineKeyboardButton(text="⭐ Попробовать Pro бесплатно", callback_data="start_pro_trial")])
+        
+        keyboard_buttons.extend([
             [InlineKeyboardButton(text="💎 Купить Pro (399₽/мес)", callback_data="buy_pro_monthly")],
             [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")]
         ])
+        
+        keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
         
     elif subscription_type == 'trial':
         end_date = user_subscription.get('end_date')
@@ -971,6 +982,16 @@ async def status_handler(message: Message):
 @error_handler
 async def pro_handler(message: Message):
     """Обработчик команды /pro - информация о Pro подписке"""
+    user_id = message.from_user.id
+    
+    # Проверяем статус подписки пользователя
+    subscription = await subscription_service.get_user_subscription(user_id)
+    subscription_type = subscription.get('type', 'lite') if subscription else 'lite'
+    
+    # Проверяем, использовал ли пользователь уже пробный период
+    user_data = await firebase_service.get_user_info(user_id)
+    trial_used = user_data.get('trial_used', False) if user_data else False
+    
     pro_text = """
 ⭐ **Pro подписка - все возможности бота**
 
@@ -988,18 +1009,30 @@ async def pro_handler(message: Message):
 💰 **Тарифы:**
 💎 **Pro Месяц:** 399₽/месяц
 🏆 **Pro Год:** 2990₽/год (скидка 50%!)
-⭐ **Пробный период:** 7 дней бесплатно
-
-🚀 **Попробуйте прямо сейчас!**
     """
     
+    # Добавляем информацию о пробном периоде только если пользователь его еще не использовал
+    if subscription_type != 'trial' and not trial_used:
+        pro_text += "⭐ **Пробный период:** 7 дней бесплатно\n\n"
+    
+    pro_text += "🚀 **Попробуйте прямо сейчас!**"
+    
     from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⭐ 7 дней Pro бесплатно", callback_data="start_pro_trial")],
+    
+    # Формируем клавиатуру в зависимости от статуса пользователя
+    keyboard_buttons = []
+    
+    # Добавляем кнопку пробного периода только если пользователь его еще не использовал
+    if subscription_type != 'trial' and not trial_used:
+        keyboard_buttons.append([InlineKeyboardButton(text="⭐ 7 дней Pro бесплатно", callback_data="start_pro_trial")])
+    
+    keyboard_buttons.extend([
         [InlineKeyboardButton(text="💎 Pro Месяц (399₽)", callback_data="buy_pro_monthly")],
         [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")],
         [InlineKeyboardButton(text="📊 Мой статус", callback_data="show_status")]
     ])
+    
+    keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
     
     await message.answer(pro_text, parse_mode="Markdown", reply_markup=keyboard)
 
