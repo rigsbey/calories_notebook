@@ -6,8 +6,8 @@
     <!-- Privacy Policy Content -->
     <section class="privacy-hero">
       <div class="container">
-        <h1 class="privacy-title">Политика конфиденциальности</h1>
-        <p class="privacy-subtitle">Как мы защищаем ваши данные</p>
+        <h1 class="privacy-title">{{ $t('privacy.title') }}</h1>
+        <p class="privacy-subtitle">{{ $t('privacy.subtitle') }}</p>
       </div>
     </section>
 
@@ -15,62 +15,65 @@
       <div class="container">
         <div class="content-wrapper">
           <div class="privacy-section">
-            <h2>1. Сбор информации</h2>
-            <p>Calories Bot собирает минимально необходимую информацию для предоставления услуг:</p>
+            <h2>{{ $t('privacy.sections.dataCollection.title') }}</h2>
+            <p>{{ $t('privacy.sections.dataCollection.content') }}</p>
             <ul>
-              <li><strong>Telegram ID</strong> - для идентификации пользователя</li>
-              <li><strong>Фотографии еды</strong> - для анализа питания (обрабатываются автоматически и не сохраняются)</li>
-              <li><strong>Данные Google Calendar</strong> - только при вашем согласии для сохранения анализов</li>
+              <li><strong>Telegram ID</strong> - {{ $t('privacy.dataCollection.telegramId') }}</li>
+              <li><strong>{{ $t('privacy.dataCollection.photos') }}</strong> - {{ $t('privacy.dataCollection.photosDesc') }}</li>
+              <li><strong>{{ $t('privacy.dataCollection.googleCalendar') }}</strong> - {{ $t('privacy.dataCollection.googleCalendarDesc') }}</li>
             </ul>
           </div>
 
           <div class="privacy-section">
-            <h2>2. Использование данных</h2>
-            <p>Мы используем ваши данные исключительно для:</p>
+            <h2>{{ $t('privacy.sections.dataUsage.title') }}</h2>
+            <p>{{ $t('privacy.sections.dataUsage.content') }}</p>
             <ul>
-              <li>Анализа фотографий еды с помощью ИИ</li>
-              <li>Предоставления информации о калориях и питательных веществах</li>
-              <li>Сохранения анализов в Google Calendar (по вашему запросу)</li>
-              <li>Улучшения качества сервиса</li>
+              <li>{{ $t('privacy.dataUsage.aiAnalysis') }}</li>
+              <li>{{ $t('privacy.dataUsage.nutritionInfo') }}</li>
+              <li>{{ $t('privacy.dataUsage.calendarSave') }}</li>
+              <li>{{ $t('privacy.dataUsage.serviceImprovement') }}</li>
             </ul>
           </div>
 
           <div class="privacy-section">
-            <h2>3. Защита данных</h2>
-            <p>Мы принимаем все необходимые меры для защиты ваших данных:</p>
+            <h2>{{ $t('privacy.sections.dataSecurity.title') }}</h2>
+            <p>{{ $t('privacy.sections.dataSecurity.content') }}</p>
             <ul>
-              <li>Шифрование данных при передаче</li>
-              <li>Безопасное хранение в Firebase</li>
-              <li>Ограниченный доступ к данным</li>
-              <li>Регулярные проверки безопасности</li>
+              <li>{{ $t('privacy.dataSecurity.encryption') }}</li>
+              <li>{{ $t('privacy.dataSecurity.firebase') }}</li>
+              <li>{{ $t('privacy.dataSecurity.limitedAccess') }}</li>
+              <li>{{ $t('privacy.dataSecurity.securityChecks') }}</li>
             </ul>
           </div>
 
           <div class="privacy-section">
-            <h2>4. Google Calendar интеграция</h2>
-            <p>При подключении Google Calendar:</p>
+            <h2>{{ $t('privacy.googleCalendar.title') }}</h2>
+            <p>{{ $t('privacy.googleCalendar.description') }}</p>
             <ul>
-              <li>Мы создаем отдельный календарь "Календарь питания"</li>
-              <li>Сохраняем только анализы питания</li>
-              <li>Не имеем доступа к другим календарям</li>
-              <li>Можете отключить интеграцию в любое время</li>
+              <li><strong>{{ $t('privacy.googleCalendar.createEvents') }}</strong> - {{ $t('privacy.googleCalendar.createEventsDesc') }}</li>
+              <li>{{ $t('privacy.googleCalendar.separateCalendar') }}</li>
+              <li>{{ $t('privacy.googleCalendar.saveOnlyNutrition') }}</li>
+              <li><strong>{{ $t('privacy.googleCalendar.noAccessOther') }}</strong></li>
+              <li><strong>{{ $t('privacy.googleCalendar.noReadExisting') }}</strong></li>
+              <li>{{ $t('privacy.googleCalendar.canDisable') }}</li>
+            </ul>
+            <p><strong>{{ $t('privacy.googleCalendar.requestedPermissions') }}:</strong> {{ $t('privacy.googleCalendar.permissionsDesc') }}</p>
+          </div>
+
+          <div class="privacy-section">
+            <h2>{{ $t('privacy.sections.userRights.title') }}</h2>
+            <p>{{ $t('privacy.sections.userRights.content') }}</p>
+            <ul>
+              <li>{{ $t('privacy.userRights.getCopy') }}</li>
+              <li>{{ $t('privacy.userRights.correctInfo') }}</li>
+              <li>{{ $t('privacy.userRights.deleteData') }}</li>
+              <li>{{ $t('privacy.userRights.withdrawConsent') }}</li>
             </ul>
           </div>
 
           <div class="privacy-section">
-            <h2>5. Ваши права</h2>
-            <p>Вы имеете право:</p>
-            <ul>
-              <li>Получить копию ваших данных</li>
-              <li>Исправить неточную информацию</li>
-              <li>Удалить ваши данные</li>
-              <li>Отозвать согласие на обработку</li>
-            </ul>
-          </div>
-
-          <div class="privacy-section">
-            <h2>6. Контакты</h2>
-            <p>По вопросам конфиденциальности обращайтесь:</p>
+            <h2>{{ $t('privacy.sections.contact.title') }}</h2>
+            <p>{{ $t('privacy.sections.contact.content') }}</p>
             <ul>
               <li><strong>Email:</strong> abulkhanov.kamil@gmail.com</li>
               <li><strong>Telegram:</strong> @caloriesnote_bot</li>
@@ -78,9 +81,9 @@
           </div>
 
           <div class="privacy-section">
-            <h2>7. Изменения в политике</h2>
-            <p>Мы можем обновлять эту политику. О существенных изменениях мы уведомим через Telegram-бота.</p>
-            <p><strong>Последнее обновление:</strong> 26 сентября 2025</p>
+            <h2>{{ $t('privacy.sections.changes.title') }}</h2>
+            <p>{{ $t('privacy.sections.changes.content') }}</p>
+            <p><strong>{{ $t('privacy.lastUpdated') }}:</strong> 30 сентября 2025</p>
           </div>
         </div>
       </div>
@@ -90,12 +93,13 @@
 
 <script setup>
 // SEO мета-теги
+const { t } = useI18n()
 useSeoMeta({
-  title: 'Политика конфиденциальности | Calories Bot',
-  description: 'Политика конфиденциальности Calories Bot. Как мы защищаем ваши данные при анализе питания.',
-  keywords: 'политика конфиденциальности, защита данных, Calories Bot, анализ питания',
-  ogTitle: 'Политика конфиденциальности | Calories Bot',
-  ogDescription: 'Как мы защищаем ваши данные при анализе питания.',
+  title: () => `${t('privacy.title')} | Calories Bot`,
+  description: () => t('privacy.subtitle'),
+  keywords: 'privacy policy, data protection, Calories Bot, nutrition analysis',
+  ogTitle: () => `${t('privacy.title')} | Calories Bot`,
+  ogDescription: () => t('privacy.subtitle'),
   robots: 'index, follow'
 })
 </script>

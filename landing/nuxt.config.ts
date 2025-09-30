@@ -4,8 +4,29 @@ export default defineNuxtConfig({
   
   // Модули
   modules: [
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/i18n'
   ],
+
+  // i18n конфигурация
+  i18n: {
+    locales: [
+      { code: 'ru', name: 'Русский', file: 'ru.json' },
+      { code: 'en', name: 'English', file: 'en.json' }
+    ],
+    defaultLocale: 'ru',
+    langDir: 'locales/',
+    strategy: 'no_prefix',
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root'
+    },
+    lazy: false,
+    compilation: {
+      strictMessage: false
+    }
+  },
 
   // Tailwind CSS конфигурация
   tailwindcss: {
@@ -79,11 +100,25 @@ export default defineNuxtConfig({
 
   // CSS конфигурация
   css: ['~/assets/css/main.css'],
+  
+  // Vite конфигурация для правильной обработки CSS
+  vite: {
+    css: {
+      preprocessorOptions: {
+        css: {
+          charset: false
+        }
+      }
+    }
+  },
 
   // Рендеринг
   ssr: true,
   nitro: {
-    preset: 'static'
+    preset: 'static',
+    prerender: {
+      routes: ['/', '/privacy', '/terms', '/blog']
+    }
   },
 
   // Runtime конфигурация
@@ -92,5 +127,6 @@ export default defineNuxtConfig({
       siteUrl: 'https://calories.toxiguard.site',
       telegramBot: '@caloriesnote_bot'
     }
-  }
+  },
+
 })

@@ -2,181 +2,181 @@
   <section class="pricing" id="pricing">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Выберите свой тарифный план</h2>
-        <p class="section-subtitle">Начните с бесплатного Lite или получите все функции Pro</p>
+        <h2 class="section-title">{{ $t('pricing.title') }}</h2>
+        <p class="section-subtitle">{{ $t('pricing.subtitle') }}</p>
       </div>
 
       <div class="pricing-grid">
         <!-- Lite Plan -->
         <div class="pricing-card lite-card">
-          <div class="pricing-badge">Бесплатно</div>
+          <div class="pricing-badge">{{ $t('pricing.lite.badge') }}</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">Lite</h3>
+            <h3 class="plan-name">{{ $t('pricing.lite.name') }}</h3>
             <div class="plan-price">
-              <span class="price">0₽</span>
-              <span class="period">/навсегда</span>
+              <span class="price">{{ $t('pricing.lite.price') }}{{ getCurrencySymbol() }}</span>
+              <span class="period">{{ $t('pricing.lite.period') }}</span>
             </div>
-            <p class="plan-description">Для знакомства с ботом</p>
+            <p class="plan-description">{{ $t('pricing.lite.description') }}</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                5 фото в день
+                {{ $t('pricing.lite.features.photosPerDay') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Базовый анализ КБЖУ
+                {{ $t('pricing.lite.features.basicAnalysis') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Краткий дневной отчет
+                {{ $t('pricing.lite.features.dailyReport') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                История 7 дней
+                {{ $t('pricing.lite.features.history') }}
               </div>
               <div class="feature-item disabled">
                 <span class="feature-check">✗</span>
-                Мульти-тарелка
+                {{ $t('pricing.lite.features.multiPlate') }}
               </div>
               <div class="feature-item disabled">
                 <span class="feature-check">✗</span>
-                Экспорт и календарь
+                {{ $t('pricing.lite.features.export') }}
               </div>
             </div>
-            
-            <a 
-              href="https://t.me/caloriesnote_bot" 
-              class="cta-button lite-button"
-              @click="trackClick('lite')"
-            >
-              🚀 Попробовать бесплатно
-            </a>
           </div>
+          
+          <a 
+            href="https://t.me/caloriesnote_bot" 
+            class="cta-button lite-button"
+            @click="trackClick('lite')"
+          >
+            {{ $t('pricing.lite.button') }}
+          </a>
         </div>
 
         <!-- Pro Plan -->
         <div class="pricing-card pro-card">
-          <div class="pricing-badge pro-badge">Рекомендуем</div>
+          <div class="pricing-badge pro-badge">{{ $t('pricing.pro.badge') }}</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">Pro</h3>
+            <h3 class="plan-name">{{ $t('pricing.pro.name') }}</h3>
             <div class="plan-price">
-              <span class="price">399₽</span>
-              <span class="period">/месяц</span>
+              <span class="price">{{ getPrice('pro') }}{{ getCurrencySymbol() }}</span>
+              <span class="period">{{ $t('pricing.pro.period') }}</span>
             </div>
             <div class="plan-savings">
-              Первые 7 дней бесплатно
+              {{ $t('pricing.pro.savings') }}
             </div>
-            <p class="plan-description">Все возможности для серьезного контроля питания</p>
+            <p class="plan-description">{{ $t('pricing.pro.description') }}</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                До 200 фото в месяц
+                {{ $t('pricing.pro.features.photosPerMonth') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Мульти-тарелка (несколько блюд)
+                {{ $t('pricing.pro.features.multiPlate') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Детальные витамины и советы
+                {{ $t('pricing.pro.features.vitamins') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Полные отчеты за неделю
+                {{ $t('pricing.pro.features.reports') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Экспорт в PDF/CSV
+                {{ $t('pricing.pro.features.export') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Google Calendar интеграция
+                {{ $t('pricing.pro.features.calendar') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Приоритетная очередь
+                {{ $t('pricing.pro.features.priority') }}
               </div>
             </div>
-            
-            <a 
-              href="https://t.me/caloriesnote_bot?start=pro" 
-              class="cta-button pro-button"
-              @click="trackClick('pro')"
-            >
-              ⭐ Начать Pro-триал
-            </a>
           </div>
+          
+          <a 
+            href="https://t.me/caloriesnote_bot?start=pro" 
+            class="cta-button pro-button"
+            @click="trackClick('pro')"
+          >
+            {{ $t('pricing.pro.button') }}
+          </a>
         </div>
 
         <!-- Annual Plan -->
         <div class="pricing-card annual-card">
-          <div class="pricing-badge annual-badge">-50%</div>
+          <div class="pricing-badge annual-badge">{{ $t('pricing.annual.badge') }}</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">Pro Год</h3>
+            <h3 class="plan-name">{{ $t('pricing.annual.name') }}</h3>
             <div class="plan-price">
-              <span class="price">2990₽</span>
-              <span class="period">/год</span>
+              <span class="price">{{ $t('pricing.annual.price') }}{{ getCurrencySymbol() }}</span>
+              <span class="period">{{ $t('pricing.annual.period') }}</span>
             </div>
             <div class="plan-savings">
-              Вместо 4788₽ — экономия 1798₽!
+              {{ $t('pricing.annual.savings') }}
             </div>
-            <p class="plan-description">Максимальная выгода для постоянных пользователей</p>
+            <p class="plan-description">{{ $t('pricing.annual.description') }}</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Все функции Pro
+                {{ $t('pricing.annual.features.allPro') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                250₽ в месяц вместо 399₽
+                {{ $t('pricing.annual.features.monthlyPrice') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Приоритетная поддержка
+                {{ $t('pricing.annual.features.support') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Без автопродления
+                {{ $t('pricing.annual.features.noAutoRenewal') }}
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Ранний доступ к новинкам
+                {{ $t('pricing.annual.features.earlyAccess') }}
               </div>
             </div>
-            
-            <a 
-              href="https://t.me/caloriesnote_bot?start=pro_annual" 
-              class="cta-button annual-button"
-              @click="trackClick('annual')"
-            >
-              💎 Купить со скидкой
-            </a>
           </div>
+          
+          <a 
+            href="https://t.me/caloriesnote_bot?start=pro_annual" 
+            class="cta-button annual-button"
+            @click="trackClick('annual')"
+          >
+            {{ $t('pricing.annual.button') }}
+          </a>
         </div>
       </div>
 
       <!-- Additional Features -->
       <div class="additional-features">
-        <h3 class="features-title">⭐ Дополнительные покупки за Telegram Stars</h3>
+        <h3 class="features-title">{{ $t('pricing.additionalFeatures.title') }}</h3>
         <div class="stars-features">
           <div class="star-feature">
             <span class="star-icon">💫</span>
-            <span class="star-text">+10 анализов за 99⭐</span>
+            <span class="star-text">{{ $t('pricing.additionalFeatures.extraAnalyses') }}</span>
           </div>
           <div class="star-feature">
             <span class="star-icon">🍽️</span>
-            <span class="star-text">Мульти-тарелка 24ч за 149⭐</span>
+            <span class="star-text">{{ $t('pricing.additionalFeatures.multiPlate24h') }}</span>
           </div>
           <div class="star-feature">
             <span class="star-icon">📄</span>
-            <span class="star-text">PDF отчет за 199⭐</span>
+            <span class="star-text">{{ $t('pricing.additionalFeatures.pdfReport') }}</span>
           </div>
         </div>
         <p class="stars-note">
-          * Stars доступны в боте. Идеально для тех, кто не хочет подписку, но иногда нуждается в дополнительных функциях.
+          {{ $t('pricing.additionalFeatures.note') }}
         </p>
       </div>
     </div>
@@ -184,6 +184,10 @@
 </template>
 
 <script setup>
+import { useCurrency } from '~/composables/useCurrency'
+
+const { formatPrice, getPriceForLocale, currentCurrency } = useCurrency()
+
 const trackClick = (plan) => {
   // Отправка события в аналитику
   if (process.client && window.gtag) {
@@ -194,6 +198,28 @@ const trackClick = (plan) => {
     })
   }
   console.log(`Pricing button clicked: ${plan}`)
+}
+
+// Функции для работы с ценами
+const getPrice = (plan) => {
+  const { locale } = useI18n()
+  
+  if (plan === 'pro') {
+    return locale.value === 'en' ? '9' : '399'
+  } else if (plan === 'annual') {
+    return locale.value === 'en' ? '60' : '2990'
+  }
+  
+  return '0'
+}
+
+// Функция для получения символа валюты
+const getCurrencySymbol = () => {
+  return currentCurrency.value.symbol
+}
+
+const formatCurrency = (price) => {
+  return formatPrice(price)
 }
 
 // Анимация появления
@@ -250,9 +276,10 @@ onMounted(() => {
 }
 
 .pricing-card {
-  @apply relative bg-white rounded-2xl p-8 transition-all duration-200;
+  @apply relative bg-white rounded-2xl p-8 transition-all duration-200 flex flex-col;
   border: 2px solid #e5e7eb;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  height: 100%;
 }
 
 .pricing-card:hover {
@@ -285,7 +312,7 @@ onMounted(() => {
 }
 
 .pricing-plan {
-  @apply text-center;
+  @apply text-center flex-grow;
 }
 
 .plan-name {
@@ -355,6 +382,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: auto;
 }
 
 .lite-button {

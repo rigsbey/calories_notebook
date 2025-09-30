@@ -2,8 +2,8 @@
   <section class="how-it-works" id="how-it-works">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Как это работает</h2>
-        <p class="section-subtitle">Всего 3 простых шага до точного подсчета калорий</p>
+        <h2 class="section-title">{{ $t('howItWorks.title') }}</h2>
+        <p class="section-subtitle">{{ $t('howItWorks.subtitle') }}</p>
       </div>
 
       <div class="steps">
@@ -28,22 +28,24 @@
 </template>
 
 <script setup>
-const steps = ref([
+const { t } = useI18n()
+
+const steps = computed(() => [
   {
-    title: '📸 Сфотографируй еду',
-    description: 'Любое блюдо — от салата до пиццы. Просто отправь фото в Telegram.',
+    title: t('howItWorks.step1.title'),
+    description: t('howItWorks.step1.description'),
     demoText: '📸 Фото загружено',
     screenshot: '/images/step1-photo.jpg'
   },
   {
-    title: '⚡ Получи анализ',
-    description: 'Калории, БЖУ и витамины за 5 секунд. Никакого ручного ввода.',
+    title: t('howItWorks.step2.title'),
+    description: t('howItWorks.step2.description'),
     demoText: '⚡ Анализ готов',
     screenshot: '/images/step2-analysis.jpg'
   },
   {
-    title: '📅 Сохрани в календарь',
-    description: 'Результат автоматически попадает в Google Calendar.',
+    title: t('howItWorks.step3.title'),
+    description: t('howItWorks.step3.description'),
     demoText: '📅 Сохранено',
     screenshot: '/images/step3-calendar.jpg'
   }

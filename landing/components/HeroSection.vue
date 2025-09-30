@@ -3,23 +3,22 @@
     <div class="container">
       <!-- Badge -->
       <div class="badge">
-        🍽️ TELEGRAM-БОТ ДЛЯ ПОДСЧЕТА КАЛОРИЙ
+        {{ $t('hero.badge') }}
       </div>
       
       <!-- Main Title -->
-      <h1 class="hero-title">
-        Сфотографируй еду → получи точный расчет <span class="highlight">за 5 секунд</span>
+      <h1 class="hero-title" v-html="$t('hero.title')">
       </h1>
       
       <!-- Subtitle -->
       <p class="hero-subtitle">
-        Калории, БЖУ и витамины автоматически сохраняются в Google Calendar. Бесплатно и без ручного ввода.
+        {{ $t('hero.subtitle') }}
       </p>
       
       <!-- CTA Button -->
       <div class="cta-container">
         <a href="https://t.me/caloriesnote_bot" class="cta-button">
-          🚀 Запустить бота в Telegram
+          {{ $t('hero.ctaButton') }}
         </a>
       </div>
       
@@ -32,7 +31,7 @@
           <span class="star filled">★</span>
           <span class="star half-filled">★</span>
         </div>
-        <div class="proof-text">Используют <span class="user-count">{{ userCount }}+</span> человек для контроля питания</div>
+        <div class="proof-text">{{ $t('hero.socialProof', { count: userCount }) }}</div>
       </div>
     </div>
   </section>

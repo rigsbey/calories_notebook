@@ -3,10 +3,10 @@
     <div class="container">
       <div class="cta-content">
         <h2 id="cta-heading" class="cta-title">
-          Готов начать контролировать питание?
+          {{ $t('cta.title') }}
         </h2>
         <p class="cta-subtitle">
-          Запусти бота прямо сейчас и получи первый анализ за 5 секунд
+          {{ $t('cta.subtitle') }}
         </p>
         
         <div class="cta-buttons">
@@ -15,7 +15,7 @@
             class="cta-button primary"
             @click="trackClick('start_free')"
           >
-            🚀 Попробовать бесплатно
+            {{ $t('cta.tryFree') }}
           </a>
           
           <a 
@@ -23,23 +23,29 @@
             class="cta-button secondary"
             @click="trackClick('start_pro')"
           >
-            ⭐ 7 дней Pro бесплатно
+            {{ $t('cta.proTrial') }}
           </a>
         </div>
         
         <div class="cta-features">
           <div class="cta-feature">
             <span class="feature-icon">⚡</span>
-            <span class="feature-text">Результат за 5 секунд</span>
+            <span class="feature-text">{{ $t('cta.features.fast') }}</span>
           </div>
           <div class="cta-feature">
             <span class="feature-icon">📱</span>
-            <span class="feature-text">Работает в Telegram</span>
+            <span class="feature-text">{{ $t('cta.features.telegram') }}</span>
           </div>
           <div class="cta-feature">
             <span class="feature-icon">🔒</span>
-            <span class="feature-text">Безопасно и конфиденциально</span>
+            <span class="feature-text">{{ $t('cta.features.secure') }}</span>
           </div>
+        </div>
+        
+        <div class="cta-legal">
+          <p class="legal-text">
+            {{ $t('cta.legal') }}
+          </p>
         </div>
       </div>
     </div>
@@ -150,6 +156,18 @@ onMounted(() => {
 
 .feature-text {
   @apply text-gray-600 font-medium;
+}
+
+.cta-legal {
+  @apply mt-8 pt-6 border-t border-gray-200;
+}
+
+.legal-text {
+  @apply text-sm text-gray-500 leading-relaxed;
+}
+
+.legal-link {
+  @apply text-blue-600 hover:text-blue-800 underline transition-colors duration-200;
 }
 
 @media (max-width: 768px) {

@@ -6,8 +6,8 @@
     <!-- Terms Content -->
     <section class="terms-hero">
       <div class="container">
-        <h1 class="terms-title">Условия использования</h1>
-        <p class="terms-subtitle">Правила использования Calories Bot</p>
+        <h1 class="terms-title">{{ $t('terms.title') }}</h1>
+        <p class="terms-subtitle">{{ $t('terms.subtitle') }}</p>
       </div>
     </section>
 
@@ -15,72 +15,72 @@
       <div class="container">
         <div class="content-wrapper">
           <div class="terms-section">
-            <h2>1. Принятие условий</h2>
-            <p>Используя Calories Bot, вы соглашаетесь с данными условиями. Если вы не согласны с какими-либо условиями, пожалуйста, не используйте наш сервис.</p>
+            <h2>{{ $t('terms.sections.acceptance.title') }}</h2>
+            <p>{{ $t('terms.sections.acceptance.content') }}</p>
           </div>
 
           <div class="terms-section">
-            <h2>2. Описание сервиса</h2>
-            <p>Calories Bot - это Telegram-бот для анализа питания, который:</p>
+            <h2>{{ $t('terms.sections.service.title') }}</h2>
+            <p>{{ $t('terms.sections.service.content') }}</p>
             <ul>
-              <li>Анализирует фотографии еды с помощью ИИ</li>
-              <li>Предоставляет информацию о калориях и питательных веществах</li>
-              <li>Сохраняет анализы в Google Calendar (опционально)</li>
-              <li>Предоставляет статистику питания</li>
+              <li>{{ $t('terms.service.aiAnalysis') }}</li>
+              <li>{{ $t('terms.service.nutritionInfo') }}</li>
+              <li>{{ $t('terms.service.calendarSave') }}</li>
+              <li>{{ $t('terms.service.statistics') }}</li>
             </ul>
           </div>
 
           <div class="terms-section">
-            <h2>3. Права пользователя</h2>
-            <p>Вы имеете право:</p>
+            <h2>{{ $t('terms.userRights.title') }}</h2>
+            <p>{{ $t('terms.userRights.description') }}</p>
             <ul>
-              <li>Бесплатно использовать базовые функции бота</li>
-              <li>Получать точную информацию о питании</li>
-              <li>Управлять своими данными</li>
-              <li>Отключить интеграцию с Google Calendar</li>
+              <li>{{ $t('terms.userRights.freeUse') }}</li>
+              <li>{{ $t('terms.userRights.accurateInfo') }}</li>
+              <li>{{ $t('terms.userRights.manageData') }}</li>
+              <li>{{ $t('terms.userRights.disableCalendar') }}</li>
             </ul>
           </div>
 
           <div class="terms-section">
-            <h2>4. Обязанности пользователя</h2>
-            <p>При использовании сервиса вы обязуетесь:</p>
+            <h2>{{ $t('terms.sections.userObligations.title') }}</h2>
+            <p>{{ $t('terms.sections.userObligations.content') }}</p>
             <ul>
-              <li>Предоставлять корректную информацию</li>
-              <li>Не использовать бота для незаконных целей</li>
-              <li>Не нарушать права интеллектуальной собственности</li>
-              <li>Соблюдать правила Telegram</li>
+              <li>{{ $t('terms.userObligations.correctInfo') }}</li>
+              <li>{{ $t('terms.userObligations.noIllegalUse') }}</li>
+              <li>{{ $t('terms.userObligations.noViolateIP') }}</li>
+              <li>{{ $t('terms.userObligations.followTelegramRules') }}</li>
             </ul>
           </div>
 
           <div class="terms-section">
-            <h2>5. Ограничения ответственности</h2>
-            <p>Мы не несем ответственности за:</p>
+            <h2>{{ $t('terms.sections.limitation.title') }}</h2>
+            <p>{{ $t('terms.sections.limitation.content') }}</p>
             <ul>
-              <li>Точность анализа фотографий (результаты приблизительные)</li>
-              <li>Решения, принятые на основе анализа</li>
-              <li>Проблемы с интеграцией Google Calendar</li>
-              <li>Временные сбои в работе сервиса</li>
+              <li>{{ $t('terms.limitation.accuracy') }}</li>
+              <li>{{ $t('terms.limitation.decisions') }}</li>
+              <li>{{ $t('terms.limitation.calendarIssues') }}</li>
+              <li>{{ $t('terms.limitation.serviceOutages') }}</li>
             </ul>
           </div>
 
           <div class="terms-section">
-            <h2>6. Интеллектуальная собственность</h2>
-            <p>Все права на сервис принадлежат разработчику. Вы не можете:</p>
+            <h2>{{ $t('terms.sections.intellectualProperty.title') }}</h2>
+            <p>{{ $t('terms.sections.intellectualProperty.content') }}</p>
             <ul>
-              <li>Копировать или воспроизводить код</li>
-              <li>Создавать производные продукты</li>
-              <li>Использовать брендинг без разрешения</li>
+              <li>{{ $t('terms.intellectualProperty.noCopy') }}</li>
+              <li>{{ $t('terms.intellectualProperty.noDerivatives') }}</li>
+              <li>{{ $t('terms.intellectualProperty.noBranding') }}</li>
             </ul>
           </div>
 
           <div class="terms-section">
-            <h2>7. Изменения условий</h2>
-            <p>Мы можем изменять эти условия. О существенных изменениях мы уведомим через Telegram-бота.</p>
+            <h2>{{ $t('terms.sections.modifications.title') }}</h2>
+            <p>{{ $t('terms.sections.modifications.content') }}</p>
           </div>
 
           <div class="terms-section">
-            <h2>8. Контакты</h2>
-            <p>По вопросам условий использования:</p>
+            <h2>{{ $t('terms.sections.contact.title') }}</h2>
+            <p>{{ $t('terms.sections.contact.content') }}</p>
             <ul>
               <li><strong>Email:</strong> abulkhanov.kamil@gmail.com</li>
               <li><strong>Telegram:</strong> @caloriesnote_bot</li>
@@ -88,7 +88,7 @@
           </div>
 
           <div class="terms-section">
-            <p><strong>Последнее обновление:</strong> 26 сентября 2025</p>
+            <p><strong>{{ $t('terms.lastUpdated') }}:</strong> 26 сентября 2025</p>
           </div>
         </div>
       </div>
@@ -98,12 +98,13 @@
 
 <script setup>
 // SEO мета-теги
+const { t } = useI18n()
 useSeoMeta({
-  title: 'Условия использования | Calories Bot',
-  description: 'Условия использования Calories Bot. Правила и ограничения сервиса анализа питания.',
-  keywords: 'условия использования, правила, Calories Bot, анализ питания',
-  ogTitle: 'Условия использования | Calories Bot',
-  ogDescription: 'Правила и ограничения сервиса анализа питания.',
+  title: () => `${t('terms.title')} | Calories Bot`,
+  description: () => t('terms.subtitle'),
+  keywords: 'terms of use, rules, Calories Bot, nutrition analysis',
+  ogTitle: () => `${t('terms.title')} | Calories Bot`,
+  ogDescription: () => t('terms.subtitle'),
   robots: 'index, follow'
 })
 </script>

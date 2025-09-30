@@ -2,7 +2,7 @@
   <section class="faq" aria-labelledby="faq-heading">
     <div class="container">
       <h2 id="faq-heading" class="faq-title">
-        Часто задаваемые вопросы
+        {{ $t('faq.title') }}
       </h2>
       
       <div class="faq-container">
@@ -27,32 +27,33 @@
 </template>
 
 <script setup>
+const { t } = useI18n()
 const openFaq = ref(null)
 
-const faqs = ref([
+const faqs = computed(() => [
   {
-    question: 'Как работает бот?',
-    answer: 'Просто сфотографируй еду и отправь фото в Telegram. Бот за 5 секунд рассчитает калории, белки, жиры, углеводы и витамины.'
+    question: t('faq.questions.howItWorks.question'),
+    answer: t('faq.questions.howItWorks.answer')
   },
   {
-    question: 'Точно ли считает калории?',
-    answer: 'Точность 85-95% в зависимости от качества фото. Если что-то не так — просто напиши боту, и он исправит.'
+    question: t('faq.questions.accuracy.question'),
+    answer: t('faq.questions.accuracy.answer')
   },
   {
-    question: 'Сколько стоит?',
-    answer: 'Бесплатно навсегда! Никаких подписок и скрытых платежей. Просто запускай и пользуйся.'
+    question: t('faq.questions.price.question'),
+    answer: t('faq.questions.price.answer')
   },
   {
-    question: 'Сохраняет ли в календарь?',
-    answer: 'Да! Все результаты автоматически попадают в твой Google Calendar. Подключаешь один раз — и все работает.'
+    question: t('faq.questions.calendar.question'),
+    answer: t('faq.questions.calendar.answer')
   },
   {
-    question: 'Какие фото подходят?',
-    answer: 'Любые! От салата до пиццы. Главное — чтобы еда была хорошо видна на фото.'
+    question: t('faq.questions.photos.question'),
+    answer: t('faq.questions.photos.answer')
   },
   {
-    question: 'Можно ли исправить результат?',
-    answer: 'Конечно! Если бот ошибся — просто напиши ему, что не так, и он пересчитает.'
+    question: t('faq.questions.correction.question'),
+    answer: t('faq.questions.correction.answer')
   }
 ])
 

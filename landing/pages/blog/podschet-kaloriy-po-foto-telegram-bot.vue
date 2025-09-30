@@ -9,157 +9,148 @@
         <!-- Article Header -->
         <header class="article-header">
           <div class="article-meta">
-            <span class="article-date">26 сентября 2025</span>
-            <span class="article-category">Питание</span>
+            <span class="article-date">{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.date') }}</span>
+            <span class="article-category">{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.category') }}</span>
           </div>
           <h1 class="article-title">
-            Подсчет калорий по фото: как работает и зачем нужен Telegram-бот для анализа питания
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.title') }}
           </h1>
           <p class="article-excerpt">
-            Контроль питания - основа здорового образа жизни. Но подсчет калорий вручную - скучная рутина. 
-            Сегодня всё изменилось: появились Telegram-боты с искусственным интеллектом, которые умеют считать калории по фото.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.excerpt') }}
           </p>
         </header>
 
         <!-- Article Content -->
         <div class="article-content prose-content">
-          <h2>Вступление</h2>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.introduction.title') }}</h2>
           <p>
-            Контроль питания - основа здорового образа жизни. Но подсчет калорий вручную - скучная рутина: 
-            искать каждый продукт в приложении, вводить вес, сверяться с таблицами. В итоге многие бросают, 
-            хотя именно отслеживание калорийности и БЖУ помогает похудеть, набрать форму или просто правильно питаться.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.introduction.paragraph1') }}
           </p>
           <p>
-            Сегодня всё изменилось: появились Telegram-боты с искусственным интеллектом, которые умеют считать 
-            калории по фото. Достаточно сфотографировать тарелку - и через несколько секунд вы знаете точное 
-            количество калорий, белков, жиров, углеводов и даже витаминов.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.introduction.paragraph2') }}
           </p>
           <p>
-            В этой статье разберём, как это работает, кому нужно и почему это будущее фитнеса и питания.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.introduction.paragraph3') }}
           </p>
 
-          <h2>📌 Почему важно считать калории и БЖУ</h2>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.title') }}</h2>
           
-          <h3>Контроль веса</h3>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.weightControl.title') }}</h3>
           <p>
-            Чтобы худеть - нужен дефицит калорий, чтобы набирать мышечную массу - профицит. 
-            Без точного подсчета легко ошибиться.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.weightControl.content') }}
           </p>
 
-          <h3>Баланс макронутриентов</h3>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.macroBalance.title') }}</h3>
           <p>
-            Даже при одинаковой калорийности еда может быть полезной или «пустой». 
-            Белки нужны для мышц, жиры для гормонов, углеводы для энергии.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.macroBalance.content') }}
           </p>
 
-          <h3>Отслеживание витаминов и микроэлементов</h3>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.vitamins.title') }}</h3>
           <p>
-            Дефицит железа, витамина D или B12 отражается на самочувствии. 
-            Автоматический подсчет помогает следить за этим без лишних усилий.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.vitamins.content') }}
           </p>
 
-          <h2>🔴 С какими трудностями сталкиваются при ручном подсчете</h2>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.title') }}</h2>
           <ul>
-            <li>Постоянный поиск в приложениях (MyFitnessPal, FatSecret)</li>
-            <li>Неточные данные: домашние блюда сложно ввести корректно</li>
-            <li>Теряется много времени: 10-15 минут на один приём пищи</li>
-            <li>Быстро надоедает → люди бросают через 1-2 недели</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.item1') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.item2') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.item3') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.item4') }}</li>
           </ul>
 
-          <h2>🤖 Как работает подсчет калорий по фото</h2>
-          <p>Современные алгоритмы компьютерного зрения умеют:</p>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.title') }}</h2>
+          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.description') }}</p>
           <ul>
-            <li>Распознавать продукты на фото (например, курица, рис, овощи)</li>
-            <li>Определять примерный вес порции</li>
-            <li>Сверяться с базой данных по калорийности</li>
-            <li>Составлять отчёт: калории, белки, жиры, углеводы, витамины</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.item1') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.item2') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.item3') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.item4') }}</li>
           </ul>
 
           <div class="article-image">
-            <img src="/blog/podschet-kaloriy-po-foto.jpg" alt="Пример анализа питания от Calories Bot" />
-            <p class="image-caption">Пример анализа: бот определяет продукты и рассчитывает КБЖУ за секунды</p>
+            <img src="/blog/podschet-kaloriy-po-foto.jpg" :alt="$t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.image.alt')" />
+            <p class="image-caption">{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.image.caption') }}</p>
           </div>
 
-          <h3>📲 В случае с Calories Bot всё ещё проще:</h3>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.title') }}</h3>
           <ol>
-            <li>Сфотографировал еду</li>
-            <li>Отправил фото боту в Telegram</li>
-            <li>Через 5-30 секунд получил готовый анализ</li>
-            <li>Данные автоматически сохранились в Google Calendar</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.step1') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.step2') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.step3') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.step4') }}</li>
           </ol>
 
-          <h2>✅ Преимущества бота по сравнению с приложениями</h2>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.title') }}</h2>
           <ul>
-            <li><strong>Быстро:</strong> результат за несколько секунд</li>
-            <li><strong>Удобно:</strong> всё в Telegram, без лишних установок</li>
-            <li><strong>Точно:</strong> алгоритмы обучены на тысячах блюд</li>
-            <li><strong>Автоматически:</strong> сохранение в календарь и отчёты по неделе</li>
-            <li><strong>Гибко:</strong> можно поправить анализ ("это не рукола, а шпинат")</li>
+            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.fast.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.fast.content') }}</li>
+            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.convenient.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.convenient.content') }}</li>
+            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.accurate.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.accurate.content') }}</li>
+            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.automatic.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.automatic.content') }}</li>
+            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.flexible.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.flexible.content') }}</li>
           </ul>
 
-          <h2>🧑‍🤝‍🧑 Кому особенно полезен такой бот</h2>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.title') }}</h2>
           <ul>
-            <li>Людям, которые хотят похудеть</li>
-            <li>Тем, кто занимается спортом и следит за набором массы</li>
-            <li>Всем, кто заботится о здоровье, но не хочет тратить время</li>
-            <li>Родителям, контролирующим питание детей</li>
-            <li>Занятым людям, у которых нет времени на ручной ввод</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item1') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item2') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item3') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item4') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item5') }}</li>
           </ul>
 
-          <h2>📅 Как бот помогает в долгосрочной перспективе</h2>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.title') }}</h2>
           
-          <h3>Дневник питания без усилий</h3>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.diary.title') }}</h3>
           <p>
-            В отличие от бумажных записей и приложений, бот сам сохраняет данные.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.diary.content') }}
           </p>
 
-          <h3>Google Calendar интеграция</h3>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.calendar.title') }}</h3>
           <p>
-            Можно видеть свой рацион в календаре вместе с тренировками и делами.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.calendar.content') }}
           </p>
 
-          <h3>Отчёты и прогресс</h3>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.reports.title') }}</h3>
           <p>
-            Еженедельные отчёты показывают, где перебор с углеводами или нехватка белка.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.reports.content') }}
           </p>
 
-          <h2>🔬 Научное обоснование</h2>
-          <p>Многочисленные исследования подтверждают:</p>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.title') }}</h2>
+          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.description') }}</p>
           <ul>
-            <li>Люди, которые ведут дневник питания, худеют на 2-3 раза эффективнее</li>
-            <li>Контроль калорийности снижает риск переедания и метаболических заболеваний</li>
-            <li>Автоматизация подсчета увеличивает вероятность, что человек будет этим заниматься регулярно</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.item1') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.item2') }}</li>
+            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.item3') }}</li>
           </ul>
 
-          <h2>❓ Часто задаваемые вопросы</h2>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.title') }}</h2>
           
-          <h3>1. Насколько точен подсчет по фото?</h3>
-          <p>Алгоритмы достигают точности до 95%. Для большей точности можно уточнять вес блюда вручную.</p>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q1.title') }}</h3>
+          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q1.answer') }}</p>
 
-          <h3>2. Можно ли использовать бот для похудения?</h3>
-          <p>Да, бот помогает держать калории в дефиците и следить за балансом БЖУ.</p>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q2.title') }}</h3>
+          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q2.answer') }}</p>
 
-          <h3>3. Сохраняются ли данные?</h3>
-          <p>Да, все данные автоматически сохраняются в Google Calendar и доступны для анализа.</p>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q3.title') }}</h3>
+          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q3.answer') }}</p>
 
-          <h3>4. Сколько стоит?</h3>
-          <p>Базовый функционал - бесплатно.</p>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q4.title') }}</h3>
+          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q4.answer') }}</p>
 
-          <h2>🔗 Заключение</h2>
+          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.conclusion.title') }}</h2>
           <p>
-            Подсчет калорий по фото - это будущее контроля питания. Если раньше нужно было тратить время 
-            на ручной ввод, то теперь достаточно сфотографировать тарелку. 
-            <a href="https://t.me/caloriesnote_bot" class="cta-link">Попробуйте Calories Bot в Telegram</a> 
-            и начните следить за своим рационом проще и эффективнее.
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.conclusion.text') }}
+            <a href="https://t.me/caloriesnote_bot" class="cta-link">{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.conclusion.link') }}</a> 
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.conclusion.ending') }}
           </p>
         </div>
 
         <!-- CTA Section -->
         <div class="article-cta">
-          <h3>Готовы начать контролировать питание?</h3>
-          <p>Попробуйте Calories Bot прямо сейчас - это займет всего несколько секунд</p>
+          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.cta.title') }}</h3>
+          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.cta.description') }}</p>
           <a href="https://t.me/caloriesnote_bot" class="cta-button">
-            🚀 Запустить бота в Telegram
+            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.cta.button') }}
           </a>
         </div>
       </div>

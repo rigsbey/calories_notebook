@@ -2,8 +2,8 @@
   <section class="features" id="features">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title">Что умеет бот</h2>
-        <p class="section-subtitle">Все необходимое для контроля питания в одном Telegram-боте</p>
+        <h2 class="section-title">{{ $t('features.title') }}</h2>
+        <p class="section-subtitle">{{ $t('features.subtitle') }}</p>
       </div>
 
       <div class="features-grid">
@@ -29,59 +29,61 @@
 </template>
 
 <script setup>
-const features = ref([
+const { t } = useI18n()
+
+const features = computed(() => [
   {
     icon: '🤖',
-    title: 'ИИ определяет продукты по фото',
-    description: 'Любое блюдо — от салата до пиццы. Просто сфотографируй и отправь.',
+    title: t('features.aiRecognition.title'),
+    description: t('features.aiRecognition.description'),
     available: 'all'
   },
   {
     icon: '⚡',
-    title: 'Результат за 5 секунд',
-    description: 'Калории, БЖУ и витамины мгновенно. Никакого ручного ввода.',
+    title: t('features.fastResult.title'),
+    description: t('features.fastResult.description'),
     available: 'all'
   },
   {
     icon: '📊',
-    title: 'Базовый анализ КБЖУ',
-    description: 'Калории, белки, жиры и углеводы для каждого блюда.',
+    title: t('features.basicAnalysis.title'),
+    description: t('features.basicAnalysis.description'),
     available: 'lite'
   },
   {
     icon: '🍽️',
-    title: 'Мульти-тарелка',
-    description: 'Анализ нескольких блюд на одном фото. Только в Pro.',
+    title: t('features.multiPlate.title'),
+    description: t('features.multiPlate.description'),
     available: 'pro'
   },
   {
     icon: '🧬',
-    title: 'Детальные витамины + советы',
-    description: 'Микронутриенты, дефициты и умные рекомендации. Только в Pro.',
+    title: t('features.vitamins.title'),
+    description: t('features.vitamins.description'),
     available: 'pro'
   },
   {
     icon: '📅',
-    title: 'Синхронизация с Google Calendar',
-    description: 'Автосохранение всех анализов в календарь. Только в Pro.',
+    title: t('features.calendar.title'),
+    description: t('features.calendar.description'),
     available: 'pro'
   },
   {
     icon: '📈',
-    title: 'Полные отчеты за неделю',
-    description: 'Детальная аналитика и трекинг прогресса. Только в Pro.',
+    title: t('features.reports.title'),
+    description: t('features.reports.description'),
     available: 'pro'
   },
   {
     icon: '📄',
-    title: 'Экспорт в PDF/CSV',
-    description: 'Скачивай данные для дальнейшего анализа. Только в Pro.',
+    title: t('features.export.title'),
+    description: t('features.export.description'),
     available: 'pro'
   },
   {
     icon: '✏️',
-    title: 'Исправление результатов',
-    description: 'Если что-то не так — просто напиши боту, и он исправит.',
+    title: t('features.correction.title'),
+    description: t('features.correction.description'),
     available: 'all'
   }
 ])
