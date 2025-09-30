@@ -2,7 +2,7 @@
   <section class="faq" aria-labelledby="faq-heading">
     <div class="container">
       <h2 id="faq-heading" class="faq-title">
-        Правильный текст
+        Часто задаваемые вопросы
       </h2>
       
       <div class="faq-container">
@@ -27,35 +27,34 @@
 </template>
 
 <script setup>
-const { t } = useI18n()
 const openFaq = ref(null)
 
-const faqs = computed(() => [
+const faqs = [
   {
-    question: t('faq.questions.howItWorks.question'),
-    answer: t('faq.questions.howItWorks.answer')
+    question: 'Как работает бот?',
+    answer: 'Просто отправьте фото еды в Telegram. ИИ определит продукты, рассчитает калории и БЖУ за 5 секунд. Результат автоматически сохранится в Google Calendar (если подключен).'
   },
   {
-    question: t('faq.questions.accuracy.question'),
-    answer: t('faq.questions.accuracy.answer')
+    question: 'Насколько точный анализ?',
+    answer: 'Точность составляет 85-90% для большинства блюд. Бот использует Google Gemini AI, который обучен на миллионах изображений еды. Для лучших результатов фотографируйте еду сверху при хорошем освещении.'
   },
   {
-    question: t('faq.questions.price.question'),
-    answer: t('faq.questions.price.answer')
+    question: 'Сколько стоит использование?',
+    answer: 'Lite план бесплатный навсегда (5 фото в день). Pro план стоит 399₽/месяц с 7-дневным бесплатным периодом. Годовая подписка - 2999₽ (экономия 1798₽).'
   },
   {
-    question: t('faq.questions.calendar.question'),
-    answer: t('faq.questions.calendar.answer')
+    question: 'Как подключить Google Calendar?',
+    answer: 'В боте нажмите "Настройки" → "Подключить календарь". Выполните OAuth авторизацию с минимальными разрешениями. Все анализы будут автоматически сохраняться в календарь.'
   },
   {
-    question: t('faq.questions.photos.question'),
-    answer: t('faq.questions.photos.answer')
+    question: 'Сколько фото можно отправить?',
+    answer: 'Lite: 5 фото в день. Pro: до 200 фото в месяц. Можно докупать дополнительные анализы за Telegram Stars (99⭐ за 10 анализов).'
   },
   {
-    question: t('faq.questions.correction.question'),
-    answer: t('faq.questions.correction.answer')
+    question: 'Можно ли исправить результат?',
+    answer: 'Да! Если бот ошибся, просто напишите ему "исправь" и опишите, что не так. Он пересчитает анализ с учетом ваших правок.'
   }
-])
+]
 
 const toggleFaq = (index) => {
   openFaq.value = openFaq.value === index ? null : index

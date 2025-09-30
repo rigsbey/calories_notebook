@@ -6,8 +6,8 @@
     <!-- Blog Hero -->
     <section class="blog-hero">
       <div class="container">
-        <h1 class="blog-title">{{ $t('blog.title') }}</h1>
-        <p class="blog-subtitle">{{ $t('blog.subtitle') }}</p>
+        <h1 class="blog-title">Блог о питании и здоровье</h1>
+        <p class="blog-subtitle">Полезные статьи о правильном питании, подсчете калорий и здоровом образе жизни</p>
       </div>
     </section>
 
@@ -17,20 +17,20 @@
         <div class="posts-grid">
           <article class="post-card" v-for="post in posts" :key="post.slug">
             <div class="post-image">
-              <img :src="post.image" :alt="$t(`blog.posts.${post.slug}.title`)" />
+              <img :src="post.image" :alt="post.title" />
             </div>
             <div class="post-content">
               <div class="post-meta">
-                <span class="post-date">{{ $t('blog.publishedOn') }} {{ post.date }}</span>
-                <span class="post-category">{{ $t(`blog.posts.${post.slug}.category`) }}</span>
+                <span class="post-date">Опубликовано {{ post.date }}</span>
+                <span class="post-category">{{ post.category }}</span>
               </div>
               <h2 class="post-title">
-                <NuxtLink :to="`/blog/${post.slug}`">{{ $t(`blog.posts.${post.slug}.title`) }}</NuxtLink>
+                <NuxtLink :to="`/blog/${post.slug}`">{{ post.title }}</NuxtLink>
               </h2>
-              <p class="post-excerpt">{{ $t(`blog.posts.${post.slug}.excerpt`) }}</p>
+              <p class="post-excerpt">{{ post.excerpt }}</p>
               <div class="post-footer">
                 <NuxtLink :to="`/blog/${post.slug}`" class="read-more">
-                  {{ $t('blog.readMore') }} →
+                  Читать далее →
                 </NuxtLink>
               </div>
             </div>
@@ -43,13 +43,12 @@
 
 <script setup>
 // SEO мета-теги для блога
-const { t } = useI18n()
 useSeoMeta({
-  title: () => `${t('blog.title')} | Calories Bot`,
-  description: () => t('blog.subtitle'),
+  title: 'Блог о питании и здоровье | Calories Bot',
+  description: 'Полезные статьи о правильном питании, подсчете калорий и здоровом образе жизни',
   keywords: 'nutrition blog, calorie counting, healthy eating, food analysis, macros, nutrition diary, Telegram bot',
-  ogTitle: () => `${t('blog.title')} | Calories Bot`,
-  ogDescription: () => t('blog.subtitle'),
+  ogTitle: 'Блог о питании и здоровье | Calories Bot',
+  ogDescription: 'Полезные статьи о правильном питании, подсчете калорий и здоровом образе жизни',
   ogImage: 'https://calories.toxiguard.site/blog-og.jpg'
 })
 
@@ -61,8 +60,8 @@ useHead({
       innerHTML: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Blog",
-        "name": t('blog.title'),
-        "description": t('blog.subtitle'),
+        "name": "Блог о питании и здоровье",
+        "description": "Полезные статьи о правильном питании, подсчете калорий и здоровом образе жизни",
         "url": "https://calories.toxiguard.site/blog",
         "publisher": {
           "@type": "Organization",
@@ -78,21 +77,33 @@ useHead({
 const posts = ref([
   {
     slug: 'podschet-kaloriy-po-foto-telegram-bot',
+    title: 'Подсчет калорий по фото: как Telegram-бот меняет правила игры',
+    excerpt: 'Узнайте, как ИИ-анализ фотографий еды помогает точно считать калории и контролировать питание',
+    category: 'Питание',
     date: '26 сентября 2025',
     image: '/blog/podschet-kaloriy-po-foto.jpg'
   },
   {
     slug: 'avtomaticheskiy-dnevnik-pitaniya',
+    title: 'Автоматический дневник питания: будущее уже здесь',
+    excerpt: 'Как технологии упрощают ведение дневника питания и помогают достичь целей в здоровье',
+    category: 'Технологии',
     date: '28 сентября 2025',
     image: '/blog/avtomaticheskiy-dnevnik-pitaniya.jpg'
   },
   {
     slug: 'ii-v-pitanii-kak-iskusstvennyy-intellekt-menyaet-zdorove',
+    title: 'ИИ в питании: как искусственный интеллект меняет здоровье',
+    excerpt: 'Революция в области питания: как машинное обучение помогает принимать правильные решения',
+    category: 'ИИ и здоровье',
     date: '28 сентября 2025',
     image: '/blog/ii-v-pitanii.jpg'
   },
   {
     slug: 'pochemu-vazhno-sledit-za-kaloriyami-nauka-zdorove-prakticheskie-vyvody',
+    title: 'Почему важно следить за калориями: наука, здоровье, практические выводы',
+    excerpt: 'Научные исследования о важности подсчета калорий и практические советы для здорового питания',
+    category: 'Наука',
     date: '28 сентября 2025',
     image: '/blog/pochemu-vazhno-sledit-za-kaloriyami.jpg'
   }

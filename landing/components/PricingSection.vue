@@ -9,39 +9,39 @@
       <div class="pricing-grid">
         <!-- Lite Plan -->
         <div class="pricing-card lite-card">
-          <div class="pricing-badge">Правильный текст</div>
+          <div class="pricing-badge">Бесплатно</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">Правильный текст</h3>
+            <h3 class="plan-name">Lite</h3>
             <div class="plan-price">
-              <span class="price">Правильный текст</span>
-              <span class="period">Правильный текст</span>
+              <span class="price">0₽</span>
+              <span class="period">/навсегда</span>
             </div>
-            <p class="plan-description">Правильный текст</p>
+            <p class="plan-description">Для знакомства с ботом</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                5 фото в день
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Базовый анализ КБЖУ
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Краткий дневной отчет
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                История 7 дней
               </div>
               <div class="feature-item disabled">
                 <span class="feature-check">✗</span>
-                Правильный текст
+                Мульти-тарелка
               </div>
               <div class="feature-item disabled">
                 <span class="feature-check">✗</span>
-                Правильный текст
+                Экспорт и календарь
               </div>
             </div>
           </div>
@@ -51,52 +51,52 @@
             class="cta-button lite-button"
             @click="trackClick('lite')"
           >
-            Правильный текст
+            🚀 Попробовать бесплатно
           </a>
         </div>
 
         <!-- Pro Plan -->
         <div class="pricing-card pro-card">
-          <div class="pricing-badge pro-badge">Правильный текст</div>
+          <div class="pricing-badge pro-badge">Популярный</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">Правильный текст</h3>
+            <h3 class="plan-name">Pro</h3>
             <div class="plan-price">
-              <span class="price">{{ getPrice('pro') }}{{ getCurrencySymbol() }}</span>
-              <span class="period">Правильный текст</span>
+              <span class="price">399₽</span>
+              <span class="period">/месяц</span>
             </div>
             <div class="plan-savings">
-              Правильный текст
+              Экономия 50% при годовой оплате
             </div>
-            <p class="plan-description">Правильный текст</p>
+            <p class="plan-description">Для активного контроля питания</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Безлимитные фото
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Полный анализ КБЖУ + витамины
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Мульти-тарелка
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Экспорт в Google Calendar
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Детальные отчеты
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                История без ограничений
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Приоритетная поддержка
               </div>
             </div>
           </div>
@@ -106,44 +106,44 @@
             class="cta-button pro-button"
             @click="trackClick('pro')"
           >
-            Правильный текст
+            ⭐ 7 дней Pro бесплатно
           </a>
         </div>
 
         <!-- Annual Plan -->
         <div class="pricing-card annual-card">
-          <div class="pricing-badge annual-badge">Правильный текст</div>
+          <div class="pricing-badge annual-badge">Выгодно</div>
           <div class="pricing-plan">
-            <h3 class="plan-name">Правильный текст</h3>
+            <h3 class="plan-name">Pro Год</h3>
             <div class="plan-price">
-              <span class="price">Правильный текст</span>
-              <span class="period">Правильный текст</span>
+              <span class="price">2990₽</span>
+              <span class="period">/год</span>
             </div>
             <div class="plan-savings">
-              Правильный текст
+              Экономия 50% (249₽/месяц)
             </div>
-            <p class="plan-description">Правильный текст</p>
+            <p class="plan-description">Лучшее предложение для долгосрочного использования</p>
             
             <div class="plan-features">
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Все функции Pro
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Экономия 1200₽ в год
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Приоритетная поддержка
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Ранний доступ к новым функциям
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Правильный текст
+                Персональные рекомендации
               </div>
             </div>
           </div>
@@ -153,30 +153,30 @@
             class="cta-button annual-button"
             @click="trackClick('annual')"
           >
-            Правильный текст
+            💰 Сэкономить 1200₽
           </a>
         </div>
       </div>
 
       <!-- Additional Features -->
       <div class="additional-features">
-        <h3 class="features-title">Правильный текст</h3>
+        <h3 class="features-title">Дополнительные возможности</h3>
         <div class="stars-features">
           <div class="star-feature">
             <span class="star-icon">💫</span>
-            <span class="star-text">Правильный текст</span>
+            <span class="star-text">ИИ-анализ с точностью 95%</span>
           </div>
           <div class="star-feature">
             <span class="star-icon">🍽️</span>
-            <span class="star-text">Правильный текст</span>
+            <span class="star-text">База из 50,000+ блюд</span>
           </div>
           <div class="star-feature">
             <span class="star-icon">📄</span>
-            <span class="star-text">Правильный текст</span>
+            <span class="star-text">Детальные отчеты и статистика</span>
           </div>
         </div>
         <p class="stars-note">
-          Правильный текст
+          Все функции работают в реальном времени и синхронизируются с вашим Google Calendar
         </p>
       </div>
     </div>
@@ -184,10 +184,6 @@
 </template>
 
 <script setup>
-import { useCurrency } from '~/composables/useCurrency'
-
-const { formatPrice, getPriceForLocale, currentCurrency } = useCurrency()
-
 const trackClick = (plan) => {
   // Отправка события в аналитику
   if (process.client && window.gtag) {
@@ -198,28 +194,6 @@ const trackClick = (plan) => {
     })
   }
   console.log(`Pricing button clicked: ${plan}`)
-}
-
-// Функции для работы с ценами
-const getPrice = (plan) => {
-  const { locale } = useI18n()
-  
-  if (plan === 'pro') {
-    return locale.value === 'en' ? '9' : '399'
-  } else if (plan === 'annual') {
-    return locale.value === 'en' ? '60' : '2990'
-  }
-  
-  return '0'
-}
-
-// Функция для получения символа валюты
-const getCurrencySymbol = () => {
-  return currentCurrency.value.symbol
-}
-
-const formatCurrency = (price) => {
-  return formatPrice(price)
 }
 
 // Анимация появления

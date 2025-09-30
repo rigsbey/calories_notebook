@@ -15,7 +15,6 @@
     "nuxt": "^4.1.2"
   },
   "dependencies": {
-    "@intlify/unplugin-vue-i18n": "^11.0.1",
     "@nuxt/image": "^1.0.0",
     "@nuxtjs/tailwindcss": "^6.12.1"
   }

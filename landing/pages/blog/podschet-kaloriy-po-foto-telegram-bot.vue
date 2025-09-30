@@ -9,149 +9,91 @@
         <!-- Article Header -->
         <header class="article-header">
           <div class="article-meta">
-            <span class="article-date">{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.date') }}</span>
-            <span class="article-category">{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.category') }}</span>
+            <span class="article-date">26 сентября 2025</span>
+            <span class="article-category">Питание</span>
           </div>
           <h1 class="article-title">
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.title') }}
+            Подсчет калорий по фото: как Telegram-бот меняет правила игры
           </h1>
           <p class="article-excerpt">
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.excerpt') }}
+            Узнайте, как ИИ-анализ фотографий еды помогает точно считать калории и контролировать питание
           </p>
         </header>
 
         <!-- Article Content -->
         <div class="article-content prose-content">
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.introduction.title') }}</h2>
+          <h2>Введение</h2>
           <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.introduction.paragraph1') }}
+            В современном мире, где время становится все более ценным ресурсом, традиционные методы подсчета калорий и ведения дневника питания кажутся устаревшими. Ручной ввод данных о каждом приеме пищи требует много времени и часто приводит к ошибкам.
           </p>
           <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.introduction.paragraph2') }}
-          </p>
-          <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.introduction.paragraph3') }}
+            Telegram-бот для анализа питания решает эти проблемы, используя возможности искусственного интеллекта для автоматического распознавания и анализа еды по фотографиям. Это революционный подход к контролю питания, который делает здоровый образ жизни более доступным и удобным.
           </p>
 
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.title') }}</h2>
+          <h2>Почему это важно</h2>
           
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.weightControl.title') }}</h3>
+          <h3>Контроль веса</h3>
           <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.weightControl.content') }}
+            Точный подсчет калорий является основой для контроля веса. Исследования показывают, что люди, которые ведут дневник питания, теряют в два раза больше веса, чем те, кто этого не делает.
           </p>
 
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.macroBalance.title') }}</h3>
+          <h3>Баланс макронутриентов</h3>
           <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.macroBalance.content') }}
+            Правильное соотношение белков, жиров и углеводов критически важно для здоровья. ИИ-анализ помогает определить не только калорийность, но и состав блюда.
           </p>
 
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.vitamins.title') }}</h3>
+          <h3>Витамины и микроэлементы</h3>
           <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.whyImportant.vitamins.content') }}
+            Современные системы анализа могут определить содержание витаминов и микроэлементов в блюде, что помогает поддерживать сбалансированное питание.
           </p>
 
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.title') }}</h2>
+          <h2>Традиционные трудности</h2>
           <ul>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.item1') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.item2') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.item3') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.difficulties.item4') }}</li>
+            <li>Ручной ввод данных занимает много времени</li>
+            <li>Сложно точно определить размер порции</li>
+            <li>Ошибки в подсчете калорий</li>
+            <li>Забывчивость при ведении дневника</li>
           </ul>
 
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.title') }}</h2>
-          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.description') }}</p>
-          <ul>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.item1') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.item2') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.item3') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.howItWorks.item4') }}</li>
-          </ul>
-
-          <div class="article-image">
-            <img src="/blog/podschet-kaloriy-po-foto.jpg" :alt="$t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.image.alt')" />
-            <p class="image-caption">{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.image.caption') }}</p>
-          </div>
-
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.title') }}</h3>
+          <h2>Как работает Telegram-бот</h2>
+          <p>Процесс анализа еды по фото состоит из нескольких этапов:</p>
           <ol>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.step1') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.step2') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.step3') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.caloriesBot.step4') }}</li>
+            <li>Отправляете фото еды в бот</li>
+            <li>ИИ анализирует изображение</li>
+            <li>Определяет продукты и их количество</li>
+            <li>Рассчитывает калории и макронутриенты</li>
           </ol>
 
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.title') }}</h2>
+          <div class="article-image">
+            <img src="/blog/podschet-kaloriy-po-foto.jpg" alt="Анализ еды по фото" />
+            <p class="image-caption">ИИ-анализ фотографии еды для определения калорий и состава</p>
+          </div>
+
+          <h2>Преимущества</h2>
           <ul>
-            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.fast.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.fast.content') }}</li>
-            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.convenient.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.convenient.content') }}</li>
-            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.accurate.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.accurate.content') }}</li>
-            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.automatic.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.automatic.content') }}</li>
-            <li><strong>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.flexible.title') }}:</strong> {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.advantages.flexible.content') }}</li>
+            <li><strong>Скорость:</strong> Анализ занимает всего несколько секунд</li>
+            <li><strong>Удобство:</strong> Все происходит прямо в Telegram</li>
+            <li><strong>Точность:</strong> Современные ИИ показывают точность до 95%</li>
+            <li><strong>Автоматизация:</strong> Данные сохраняются в Google Calendar</li>
+            <li><strong>Гибкость:</strong> Работает с любыми блюдами и кухнями</li>
           </ul>
 
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.title') }}</h2>
+          <h2>Целевая аудитория</h2>
           <ul>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item1') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item2') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item3') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item4') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.targetAudience.item5') }}</li>
+            <li>Люди, следящие за весом</li>
+            <li>Спортсмены и фитнес-энтузиасты</li>
+            <li>Люди с диабетом и другими заболеваниями</li>
+            <li>Все, кто хочет питаться правильно</li>
+            <li>Занятые люди, ценящие время</li>
           </ul>
 
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.title') }}</h2>
-          
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.diary.title') }}</h3>
+          <h2>Заключение</h2>
           <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.diary.content') }}
+            Telegram-бот для анализа питания представляет собой революционное решение для контроля питания. Он сочетает в себе точность ИИ-анализа с удобством использования мессенджера.
           </p>
-
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.calendar.title') }}</h3>
           <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.calendar.content') }}
+            Эта технология делает здоровое питание более доступным и помогает людям легче достигать своих целей в области здоровья и фитнеса.
           </p>
-
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.reports.title') }}</h3>
-          <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.longTerm.reports.content') }}
-          </p>
-
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.title') }}</h2>
-          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.description') }}</p>
-          <ul>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.item1') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.item2') }}</li>
-            <li>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.scientific.item3') }}</li>
-          </ul>
-
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.title') }}</h2>
-          
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q1.title') }}</h3>
-          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q1.answer') }}</p>
-
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q2.title') }}</h3>
-          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q2.answer') }}</p>
-
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q3.title') }}</h3>
-          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q3.answer') }}</p>
-
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q4.title') }}</h3>
-          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.faq.q4.answer') }}</p>
-
-          <h2>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.conclusion.title') }}</h2>
-          <p>
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.conclusion.text') }}
-            <a href="https://t.me/caloriesnote_bot" class="cta-link">{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.conclusion.link') }}</a> 
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.conclusion.ending') }}
-          </p>
-        </div>
-
-        <!-- CTA Section -->
-        <div class="article-cta">
-          <h3>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.cta.title') }}</h3>
-          <p>{{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.cta.description') }}</p>
-          <a href="https://t.me/caloriesnote_bot" class="cta-button">
-            {{ $t('blog.posts.podschet-kaloriy-po-foto-telegram-bot.content.cta.button') }}
-          </a>
         </div>
       </div>
     </article>
@@ -161,15 +103,13 @@
 <script setup>
 // SEO мета-теги для статьи
 useSeoMeta({
-  title: 'Подсчет калорий по фото: как работает Telegram-бот для анализа питания | Calories Bot',
-  description: 'Узнайте, как работает подсчет калорий по фото в Telegram-боте. Преимущества автоматического анализа питания, точность ИИ и интеграция с Google Calendar.',
-  keywords: 'подсчет калорий по фото, Telegram бот анализ питания, КБЖУ по фото, дневник питания, анализ еды, похудение, здоровое питание, ИИ анализ еды',
-  ogTitle: 'Подсчет калорий по фото: как работает Telegram-бот для анализа питания',
-  ogDescription: 'Узнайте, как работает подсчет калорий по фото в Telegram-боте. Преимущества автоматического анализа питания.',
+  title: 'Подсчет калорий по фото: как Telegram-бот меняет правила игры | Calories Bot',
+  description: 'Узнайте, как ИИ-анализ фотографий еды помогает точно считать калории и контролировать питание',
+  keywords: 'подсчет калорий, анализ еды по фото, Telegram бот, ИИ питание, дневник питания, калории',
+  ogTitle: 'Подсчет калорий по фото: как Telegram-бот меняет правила игры',
+  ogDescription: 'Узнайте, как ИИ-анализ фотографий еды помогает точно считать калории и контролировать питание',
   ogImage: 'https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto.jpg',
-  twitterCard: 'summary_large_image',
-  twitterTitle: 'Подсчет калорий по фото: как работает Telegram-бот для анализа питания',
-  twitterDescription: 'Узнайте, как работает подсчет калорий по фото в Telegram-боте. Преимущества автоматического анализа питания.'
+  robots: 'index, follow'
 })
 
 // JSON-LD для статьи
@@ -180,8 +120,8 @@ useHead({
       innerHTML: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": "Подсчет калорий по фото: как работает и зачем нужен Telegram-бот для анализа питания",
-        "description": "Узнайте, как работает подсчет калорий по фото в Telegram-боте. Преимущества автоматического анализа питания, точность ИИ и интеграция с Google Calendar.",
+        "headline": "Подсчет калорий по фото: как Telegram-бот меняет правила игры",
+        "description": "Узнайте, как ИИ-анализ фотографий еды помогает точно считать калории и контролировать питание",
         "image": "https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto.jpg",
         "author": {
           "@type": "Organization",
@@ -193,11 +133,7 @@ useHead({
           "url": "https://calories.toxiguard.site"
         },
         "datePublished": "2025-09-26",
-        "dateModified": "2025-09-26",
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": "https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto-telegram-bot"
-        }
+        "dateModified": "2025-09-26"
       })
     }
   ]
@@ -206,7 +142,7 @@ useHead({
 
 <style scoped>
 .article {
-  @apply bg-white py-16;
+  @apply bg-white;
 }
 
 .container {
@@ -214,7 +150,8 @@ useHead({
 }
 
 .article-header {
-  @apply mb-12 text-center;
+  @apply py-16 text-center;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
 }
 
 .article-meta {
@@ -222,96 +159,75 @@ useHead({
 }
 
 .article-date {
-  @apply text-gray-500;
+  @apply text-sm text-gray-600;
 }
 
 .article-category {
-  @apply px-3 py-1 rounded-full text-sm font-medium;
-  background: #ecfdf5;
-  color: #10b981;
+  @apply text-sm text-blue-600 font-medium px-3 py-1 rounded-full;
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .article-title {
-  @apply text-4xl font-bold text-gray-900 mb-6 leading-tight;
+  @apply text-4xl font-bold text-gray-900 mb-6;
   font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.2;
 }
 
 .article-excerpt {
-  @apply text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto;
+  @apply text-xl text-gray-600 max-w-3xl mx-auto;
+  line-height: 1.6;
 }
 
 .article-content {
+  @apply py-16;
+}
+
+.prose-content {
   @apply max-w-none;
 }
 
-.article-content h2 {
+.prose-content h2 {
   @apply text-3xl font-bold text-gray-900 mt-12 mb-6;
 }
 
-.article-content h3 {
-  @apply text-2xl font-semibold text-gray-900 mt-8 mb-4;
+.prose-content h3 {
+  @apply text-2xl font-semibold text-gray-800 mt-8 mb-4;
 }
 
-.article-image {
-  @apply my-8 text-center;
+.prose-content p {
+  @apply text-gray-700 mb-6 leading-relaxed;
+  font-size: 1.1rem;
+  line-height: 1.7;
 }
 
-.article-image img {
-  @apply rounded-lg shadow-lg max-w-full h-auto;
-  border: 1px solid #e5e7eb;
+.prose-content ul, .prose-content ol {
+  @apply mb-6 space-y-2;
 }
 
-.image-caption {
-  @apply text-sm text-gray-600 mt-3 italic;
+.prose-content li {
+  @apply text-gray-700 leading-relaxed;
+  font-size: 1.1rem;
+  line-height: 1.7;
 }
 
-.article-content p {
-  @apply text-gray-700 leading-relaxed mb-6;
-}
-
-.article-content ul,
-.article-content ol {
-  @apply mb-6 pl-6;
-}
-
-.article-content li {
-  @apply text-gray-700 leading-relaxed mb-2;
-}
-
-.article-content strong {
+.prose-content strong {
   @apply font-semibold text-gray-900;
 }
 
-.cta-link {
-  @apply text-emerald-600 font-medium hover:text-emerald-700 transition-colors duration-200;
+.article-image {
+  @apply my-12 text-center;
 }
 
-.article-cta {
-  @apply bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-8 mt-16 text-center;
-  border: 1px solid #a7f3d0;
+.article-image img {
+  @apply w-full max-w-2xl mx-auto rounded-lg shadow-lg;
 }
 
-.article-cta h3 {
-  @apply text-2xl font-bold text-gray-900 mb-4;
-}
-
-.article-cta p {
-  @apply text-gray-600 mb-6;
-}
-
-.cta-button {
-  @apply inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white rounded-lg transition-all duration-200;
-  background: #10b981;
-  border: none;
-}
-
-.cta-button:hover {
-  background: #059669;
-  transform: translateY(-1px);
+.image-caption {
+  @apply text-sm text-gray-500 mt-4 italic;
 }
 
 @media (max-width: 768px) {
-  .article {
+  .article-header {
     @apply py-12;
   }
   
@@ -323,12 +239,17 @@ useHead({
     @apply text-lg;
   }
   
-  .article-content h2 {
+  .prose-content h2 {
     @apply text-2xl;
   }
   
-  .article-content h3 {
+  .prose-content h3 {
     @apply text-xl;
+  }
+  
+  .prose-content p,
+  .prose-content li {
+    @apply text-base;
   }
 }
 </style>

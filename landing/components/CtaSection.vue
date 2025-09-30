@@ -3,10 +3,10 @@
     <div class="container">
       <div class="cta-content">
         <h2 id="cta-heading" class="cta-title">
-          Правильный текст
+          Готов начать контролировать питание?
         </h2>
         <p class="cta-subtitle">
-          Правильный текст
+          Запусти бота прямо сейчас и получи первый анализ за 5 секунд
         </p>
         
         <div class="cta-buttons">
@@ -15,7 +15,7 @@
             class="cta-button primary"
             @click="trackClick('start_free')"
           >
-            Правильный текст
+            🚀 Попробовать бесплатно
           </a>
           
           <a 
@@ -23,28 +23,28 @@
             class="cta-button secondary"
             @click="trackClick('start_pro')"
           >
-            Правильный текст
+            ⭐ 7 дней Pro бесплатно
           </a>
         </div>
         
         <div class="cta-features">
           <div class="cta-feature">
             <span class="feature-icon">⚡</span>
-            <span class="feature-text">Правильный текст</span>
+            <span class="feature-text">Результат за 5 секунд</span>
           </div>
           <div class="cta-feature">
             <span class="feature-icon">📱</span>
-            <span class="feature-text">Правильный текст</span>
+            <span class="feature-text">Работает в Telegram</span>
           </div>
           <div class="cta-feature">
             <span class="feature-icon">🔒</span>
-            <span class="feature-text">Правильный текст</span>
+            <span class="feature-text">Безопасно и конфиденциально</span>
           </div>
         </div>
         
         <div class="cta-legal">
           <p class="legal-text">
-            Правильный текст
+            Используя сервис, вы соглашаетесь с нашими условиями использования и политикой конфиденциальности
           </p>
         </div>
       </div>
