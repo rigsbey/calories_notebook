@@ -4,29 +4,8 @@ export default defineNuxtConfig({
   
   // Модули
   modules: [
-    '@nuxtjs/tailwindcss',
-    '@nuxtjs/i18n'
+    '@nuxtjs/tailwindcss'
   ],
-
-  // i18n конфигурация
-  i18n: {
-    locales: [
-      { code: 'ru', name: 'Русский', file: 'ru.json' },
-      { code: 'en', name: 'English', file: 'en.json' }
-    ],
-    defaultLocale: 'ru',
-    langDir: 'locales/',
-    strategy: 'no_prefix',
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_redirected',
-      redirectOn: 'root'
-    },
-    lazy: false,
-    compilation: {
-      strictMessage: false
-    }
-  },
 
   // Tailwind CSS конфигурация
   tailwindcss: {

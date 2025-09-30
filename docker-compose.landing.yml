@@ -49,6 +49,8 @@ services:
       - ./manifest.json:/usr/share/nginx/html/manifest.json:ro
       - ./browserconfig.xml:/usr/share/nginx/html/browserconfig.xml:ro
       - ./logo.jpg:/usr/share/nginx/html/logo.jpg:ro
+      - ./en:/usr/share/nginx/html/en:ro
+      - ./_i18n:/usr/share/nginx/html/_i18n:ro
       - ./nginx-simple.conf:/etc/nginx/nginx.conf:ro
       - ./ssl:/etc/nginx/ssl:ro
     logging:

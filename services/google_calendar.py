@@ -32,7 +32,7 @@ def _credentials_to_dict(credentials: Credentials) -> Dict:
 
 
 class GoogleCalendarService:
-    SCOPES = ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/calendar']
+    SCOPES = ['https://www.googleapis.com/auth/calendar.events']
     CALENDAR_NAME = 'Календарь питания'
 
     def __init__(self):
