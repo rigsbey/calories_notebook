@@ -15,9 +15,9 @@ class PaymentService:
         
         # Конфигурация платежных провайдеров
         # Для Telegram Stars используем специальный провайдер
-        self.PAYMENT_PROVIDER_TOKEN = "284685063:TEST:ZjEzNGM0NTUtMTgwOC00OTcwLTg3MzAtNzYwMDc5MzAwOWZi"  # Тестовый токен для обычных платежей
+        self.PAYMENT_PROVIDER_TOKEN = ""  # Для Stars не нужен provider_token
         
-        # Для продакшена нужно будет получить реальный токен от платежного провайдера
+        # Для обычных платежей (если понадобятся в будущем)
         # self.PAYMENT_PROVIDER_TOKEN = os.getenv("PAYMENT_PROVIDER_TOKEN")
 
     async def create_subscription_payment(self, user_id: int, plan: str, duration: int) -> Dict:
@@ -199,11 +199,6 @@ class PaymentService:
     async def create_stars_payment_invoice(self, user_id: int, product: str, stars_amount: int) -> Dict:
         """Создает счет за Telegram Stars"""
         try:
-            # Временно отключаем Stars платежи из-за проблем с провайдером
-            return {
-                "success": False,
-                "error": "Stars платежи временно недоступны. Используйте обычные платежи через /pro"
-            }
             
             product_names = {
                 "extra_10_analyses": "💫 +10 дополнительных анализов",
@@ -251,8 +246,16 @@ class PaymentService:
             }
             
         except Exception as e:
-            logger.error(f"Ошибка создания Stars счета: {e}")
-            return {"success": False, "error": str(e)}
+            logger.error(f"Ошибка создания Stars счета: {e}", exc_info=True)
+            error_msg = str(e)
+            
+            # Специальная обработка для ошибки провайдера
+            if "PAYMENT_PROVIDER_INVALID" in error_msg:
+                error_msg = "Провайдер платежей не настроен. Обратитесь к администратору для настройки Stars платежей в BotFather."
+            elif "Bad Request" in error_msg:
+                error_msg = f"Ошибка запроса к Telegram: {error_msg}"
+            
+            return {"success": False, "error": error_msg}
 
     async def create_stars_payment(self, user_id: int, product: str) -> InlineKeyboardMarkup:
         """Создает кнопку для покупки за Stars"""
