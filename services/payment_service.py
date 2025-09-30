@@ -221,7 +221,6 @@ class PaymentService:
                 title=title,
                 description=description,
                 payload=payload,
-                provider_token="",  # Для Stars не нужен provider_token
                 currency="XTR",  # XTR = Telegram Stars
                 prices=prices,
                 max_tip_amount=0,
