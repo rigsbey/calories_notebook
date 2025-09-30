@@ -110,7 +110,7 @@ async def start_handler(message: Message):
 
 Используйте кнопки ниже для быстрого доступа к функциям!
     """
-    await message.answer(welcome_text, reply_markup=get_main_keyboard())
+    await message.answer(welcome_text, reply_markup=get_main_keyboard(), parse_mode='Markdown')
 
 @router.message(F.photo)
 @error_handler
