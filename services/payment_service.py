@@ -14,8 +14,8 @@ class PaymentService:
         self.subscription_service = SubscriptionService()
         
         # Конфигурация платежных провайдеров
-        # Для тестирования используем тестовый токен
-        self.PAYMENT_PROVIDER_TOKEN = "284685063:TEST:ZjEzNGM0NTUtMTgwOC00OTcwLTg3MzAtNzYwMDc5MzAwOWZi"  # Тестовый токен
+        # Для Telegram Stars используем специальный провайдер
+        self.PAYMENT_PROVIDER_TOKEN = "284685063:TEST:ZjEzNGM0NTUtMTgwOC00OTcwLTg3MzAtNzYwMDc5MzAwOWZi"  # Тестовый токен для обычных платежей
         
         # Для продакшена нужно будет получить реальный токен от платежного провайдера
         # self.PAYMENT_PROVIDER_TOKEN = os.getenv("PAYMENT_PROVIDER_TOKEN")
@@ -199,6 +199,12 @@ class PaymentService:
     async def create_stars_payment_invoice(self, user_id: int, product: str, stars_amount: int) -> Dict:
         """Создает счет за Telegram Stars"""
         try:
+            # Временно отключаем Stars платежи из-за проблем с провайдером
+            return {
+                "success": False,
+                "error": "Stars платежи временно недоступны. Используйте обычные платежи через /pro"
+            }
+            
             product_names = {
                 "extra_10_analyses": "💫 +10 дополнительных анализов",
                 "multi_dish_24h": "🍽️ Мульти-тарелка на 24 часа",  

@@ -243,10 +243,11 @@ async def buy_stars_handler(callback: CallbackQuery):
             parse_mode="Markdown"
         )
     else:
+        error_message = result.get("error", "Неизвестная ошибка")
         await callback.message.edit_text(
             f"❌ **Ошибка создания счета**\n\n"
-            f"Не удалось создать счет для покупки {product_name}.\n\n"
-            f"💳 Попробуйте обычную подписку Pro:",
+            f"**Причина:** {error_message}\n\n"
+            f"💡 **Альтернатива:** Используйте обычную подписку Pro через команду /pro",
             parse_mode="Markdown",
             reply_markup=payment_service.get_subscription_keyboard("lite")
         )
