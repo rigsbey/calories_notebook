@@ -2,6 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Dict, List
 from services.firebase_service import FirebaseService
+from services.personal_goals_service import PersonalGoalsService
 from utils import format_nutrition_info
 
 logger = logging.getLogger(__name__)
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 class ReportService:
     def __init__(self):
         self.firebase = FirebaseService()
+        self.personal_goals = PersonalGoalsService()
     
     async def generate_daily_report(self, user_id: int, date: str = None) -> str:
         """Генерирует дневной отчет"""
@@ -30,7 +32,7 @@ class ReportService:
             total_nutrition = await self.firebase.aggregate_daily_nutrition(analyses)
             
             # Формируем отчет
-            report = self._format_daily_report(date, total_nutrition, len(analyses), user_display)
+            report = await self._format_daily_report(user_id, date, total_nutrition, len(analyses), user_display)
             return report
             
         except Exception as e:
@@ -59,7 +61,7 @@ class ReportService:
             total_nutrition = await self.firebase.aggregate_daily_nutrition(analyses)
             
             # Формируем отчет
-            report = self._format_weekly_report(start_date, total_nutrition, len(analyses), user_display)
+            report = await self._format_weekly_report(user_id, start_date, total_nutrition, len(analyses), user_display)
             return report
             
         except Exception as e:
@@ -82,33 +84,55 @@ class ReportService:
         else:
             return f"ID: {user_id}"
     
-    def _format_daily_report(self, date: str, nutrition: Dict, analysis_count: int, user_display: str = None) -> str:
+    async def _format_daily_report(self, user_id: int, date: str, nutrition: Dict, analysis_count: int, user_display: str = None) -> str:
         """Форматирует дневной отчет"""
-        # Нормы для взрослого человека (примерные)
-        daily_norms = {
-            'calories': 2200,
-            'proteins': 120,
-            'fats': 75,
-            'carbs': 250
-        }
+        # Получаем персональную цель пользователя
+        goal = await self.personal_goals.get_user_goal(user_id)
+        
+        if goal:
+            # Используем персональные нормы
+            daily_calories = goal.get('daily_calories', 2200)
+            goal_type_names = {
+                "weight_loss": "📉 Похудение",
+                "weight_gain": "📈 Набор веса", 
+                "maintenance": "⚖️ Поддержание веса",
+                "muscle_gain": "💪 Набор мышц",
+                "health_improvement": "🏥 Улучшение здоровья"
+            }
+            goal_name = goal_type_names.get(goal['goal_type'], goal['goal_type'])
+        else:
+            # Стандартные нормы
+            daily_calories = 2200
+            goal_name = None
+        
+        # Рассчитываем нормы БЖУ
+        protein_ratio = 0.25 if not goal else 0.25  # Можно настроить под цель
+        fat_ratio = 0.30 if not goal else 0.30
+        carb_ratio = 0.45 if not goal else 0.45
+        
+        daily_proteins = daily_calories * protein_ratio / 4  # 4 ккал/г белка
+        daily_fats = daily_calories * fat_ratio / 9  # 9 ккал/г жира
+        daily_carbs = daily_calories * carb_ratio / 4  # 4 ккал/г углеводов
         
         report = f"📅 Итоги дня ({date})\n"
         if user_display:
             report += f"👤 {user_display}\n"
+        if goal_name:
+            report += f"🎯 Цель: {goal_name}\n"
         report += f"📊 Проанализировано приемов пищи: {analysis_count}\n\n"
         
-        # КБЖУ
+        # КБЖУ с персональными нормами
         report += "🔥 Калории: "
-        report += f"{nutrition['calories']} ккал (из {daily_norms['calories']})\n"
+        report += f"{nutrition['calories']} ккал (из {daily_calories})\n"
         
         report += "🥩 Белки: "
-        report += f"{nutrition['proteins']:.1f} г / {daily_norms['proteins']} г\n"
+        report += f"{nutrition['proteins']:.1f} г / {daily_proteins:.1f} г\n"
         
         report += "🥑 Жиры: "
-        report += f"{nutrition['fats']:.1f} г / {daily_norms['fats']} г\n"
+        report += f"{nutrition['fats']:.1f} г / {daily_fats:.1f} г\n"
         
         report += "🌾 Углеводы: "
-        report += f"{nutrition['carbs']:.1f} г / {daily_norms['carbs']} г\n\n"
+        report += f"{nutrition['carbs']:.1f} г / {daily_carbs:.1f} г\n\n"
         
         # Витамины
         if nutrition['vitamins']:
@@ -118,35 +142,71 @@ class ReportService:
         else:
             report += "💊 Витамины: не указаны\n"
         
+        # Добавляем персональные рекомендации для Pro пользователей
+        try:
+            from services.subscription_service import SubscriptionService
+            subscription_service = SubscriptionService()
+            subscription = await subscription_service.get_user_subscription(user_id)
+            
+            if subscription.get('type') in ['pro', 'trial'] and goal:
+                recommendations = await self.personal_goals.generate_smart_recommendations(user_id, nutrition)
+                if recommendations and "Ошибка" not in recommendations:
+                    report += f"\n{recommendations}"
+        except Exception as e:
+            logger.warning(f"Не удалось добавить рекомендации в отчет: {e}")
+        
         return report
     
-    def _format_weekly_report(self, start_date: str, nutrition: Dict, analysis_count: int, user_display: str = None) -> str:
+    async def _format_weekly_report(self, user_id: int, start_date: str, nutrition: Dict, analysis_count: int, user_display: str = None) -> str:
         """Форматирует недельный отчет"""
-        # Нормы для недели (умножаем на 7)
-        weekly_norms = {
-            'calories': 2200 * 7,
-            'proteins': 120 * 7,
-            'fats': 75 * 7,
-            'carbs': 250 * 7
-        }
+        # Получаем персональную цель пользователя
+        goal = await self.personal_goals.get_user_goal(user_id)
+        
+        if goal:
+            # Используем персональные нормы
+            daily_calories = goal.get('daily_calories', 2200)
+            weekly_calories = daily_calories * 7
+            goal_type_names = {
+                "weight_loss": "📉 Похудение",
+                "weight_gain": "📈 Набор веса", 
+                "maintenance": "⚖️ Поддержание веса",
+                "muscle_gain": "💪 Набор мышц",
+                "health_improvement": "🏥 Улучшение здоровья"
+            }
+            goal_name = goal_type_names.get(goal['goal_type'], goal['goal_type'])
+        else:
+            # Стандартные нормы
+            weekly_calories = 2200 * 7
+            goal_name = None
+        
+        # Рассчитываем нормы БЖУ для недели
+        protein_ratio = 0.25 if not goal else 0.25
+        fat_ratio = 0.30 if not goal else 0.30
+        carb_ratio = 0.45 if not goal else 0.45
+        
+        weekly_proteins = weekly_calories * protein_ratio / 4
+        weekly_fats = weekly_calories * fat_ratio / 9
+        weekly_carbs = weekly_calories * carb_ratio / 4
         
         report = f"📅 Итоги недели ({start_date})\n"
         if user_display:
             report += f"👤 {user_display}\n"
+        if goal_name:
+            report += f"🎯 Цель: {goal_name}\n"
         report += f"📊 Проанализировано приемов пищи: {analysis_count}\n\n"
         
-        # КБЖУ
+        # КБЖУ с персональными нормами
         report += "🔥 Калории: "
-        report += f"{nutrition['calories']} ккал (из {weekly_norms['calories']})\n"
+        report += f"{nutrition['calories']} ккал (из {weekly_calories})\n"
         
         report += "🥩 Белки: "
-        report += f"{nutrition['proteins']:.1f} г / {weekly_norms['proteins']} г\n"
+        report += f"{nutrition['proteins']:.1f} г / {weekly_proteins:.1f} г\n"
         
         report += "🥑 Жиры: "
-        report += f"{nutrition['fats']:.1f} г / {weekly_norms['fats']} г\n"
+        report += f"{nutrition['fats']:.1f} г / {weekly_fats:.1f} г\n"
         
         report += "🌾 Углеводы: "
-        report += f"{nutrition['carbs']:.1f} г / {weekly_norms['carbs']} г\n\n"
+        report += f"{nutrition['carbs']:.1f} г / {weekly_carbs:.1f} г\n\n"
         
         # Витамины
         if nutrition['vitamins']:
@@ -155,6 +215,32 @@ class ReportService:
                 report += f"• {vitamin}: {percentage}%\n"
         else:
             report += "💊 Витамины: не указаны\n"
+        
+        # Добавляем персональные рекомендации для Pro пользователей
+        try:
+            from services.subscription_service import SubscriptionService
+            subscription_service = SubscriptionService()
+            subscription = await subscription_service.get_user_subscription(user_id)
+            
+            if subscription.get('type') in ['pro', 'trial'] and goal:
+                # Для недельного отчета показываем прогресс
+                progress = await self.personal_goals.get_goal_progress(user_id, 7)
+                if progress and 'error' not in progress:
+                    avg_calories = progress.get('avg_calories', 0)
+                    calorie_accuracy = progress.get('calorie_accuracy', 0)
+                    
+                    report += f"\n📊 **Прогресс за неделю:**\n"
+                    report += f"• Средне калорий в день: {avg_calories:.0f}\n"
+                    report += f"• Точность по калориям: {calorie_accuracy:.1f}%\n"
+                    
+                    if calorie_accuracy < 80:
+                        report += f"💡 **Совет:** Старайтесь придерживаться дневной нормы калорий\n"
+                    elif calorie_accuracy > 120:
+                        report += f"💡 **Совет:** Следите за превышением калорий\n"
+                    else:
+                        report += f"✅ **Отлично!** Вы придерживаетесь нормы калорий\n"
+        except Exception as e:
+            logger.warning(f"Не удалось добавить прогресс в недельный отчет: {e}")
         
         return report
     

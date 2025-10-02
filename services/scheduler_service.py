@@ -3,6 +3,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from services.report_service import ReportService
 from services.timezone_service import TimezoneService
+from services.reminder_service import ReminderService, ReminderType
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +13,7 @@ class SchedulerService:
         self.scheduler = AsyncIOScheduler()
         self.report_service = ReportService()
         self.timezone_service = TimezoneService()
+        self.reminder_service = ReminderService()
     
     async def start_scheduler(self):
         """Запускает планировщик с учетом часовых поясов"""
@@ -47,6 +49,9 @@ class SchedulerService:
                     replace_existing=True
                 )
                 logger.info("Добавлена fallback задача отправки отчетов в 20:00 UTC")
+            
+            # Добавляем задачи для напоминаний
+            await self._add_reminder_jobs()
             
             self.scheduler.start()
             logger.info(f"Планировщик запущен. Добавлено {job_count} задач отправки отчетов")
@@ -98,6 +103,119 @@ class SchedulerService:
             logger.info("Тестовая задача удалена")
         except Exception as e:
             logger.error(f"Ошибка удаления тестовой задачи: {e}")
+
+    async def _add_reminder_jobs(self):
+        """Добавляет задачи для напоминаний"""
+        try:
+            # Напоминания о воде (каждый час с 9 до 21)
+            for hour in range(9, 22):
+                self.scheduler.add_job(
+                    self._send_water_reminders,
+                    CronTrigger(hour=hour, minute=0),
+                    id=f'water_reminders_{hour}',
+                    name=f'Напоминания о воде в {hour:02d}:00',
+                    replace_existing=True
+                )
+            
+            # Напоминания о еде (8:00, 13:00, 19:00)
+            meal_times = [(8, 0), (13, 0), (19, 0)]
+            for hour, minute in meal_times:
+                self.scheduler.add_job(
+                    self._send_meal_reminders,
+                    CronTrigger(hour=hour, minute=minute),
+                    id=f'meal_reminders_{hour}_{minute}',
+                    name=f'Напоминания о еде в {hour:02d}:{minute:02d}',
+                    replace_existing=True
+                )
+            
+            # Напоминания о лимите калорий (20:00)
+            self.scheduler.add_job(
+                self._send_calorie_reminders,
+                CronTrigger(hour=20, minute=0),
+                id='calorie_reminders_20_00',
+                name='Напоминания о лимите калорий в 20:00',
+                replace_existing=True
+            )
+            
+            # Мотивационные сообщения (7:00, 19:00)
+            motivation_times = [(7, 0), (19, 0)]
+            for hour, minute in motivation_times:
+                self.scheduler.add_job(
+                    self._send_motivation_reminders,
+                    CronTrigger(hour=hour, minute=minute),
+                    id=f'motivation_reminders_{hour}_{minute}',
+                    name=f'Мотивационные сообщения в {hour:02d}:{minute:02d}',
+                    replace_existing=True
+                )
+            
+            logger.info("Задачи напоминаний добавлены")
+            
+        except Exception as e:
+            logger.error(f"Ошибка добавления задач напоминаний: {e}")
+
+    async def _send_water_reminders(self):
+        """Отправляет напоминания о воде"""
+        try:
+            from datetime import datetime
+            current_hour = datetime.now().hour
+            users = await self.reminder_service.get_users_for_reminder(ReminderType.WATER, current_hour)
+            
+            for user_id in users:
+                await self.reminder_service.send_reminder(self.bot, user_id, ReminderType.WATER)
+            
+            if users:
+                logger.info(f"Напоминания о воде отправлены {len(users)} пользователям")
+                
+        except Exception as e:
+            logger.error(f"Ошибка отправки напоминаний о воде: {e}")
+
+    async def _send_meal_reminders(self):
+        """Отправляет напоминания о еде"""
+        try:
+            from datetime import datetime
+            current_hour = datetime.now().hour
+            users = await self.reminder_service.get_users_for_reminder(ReminderType.MEAL, current_hour)
+            
+            for user_id in users:
+                await self.reminder_service.send_reminder(self.bot, user_id, ReminderType.MEAL)
+            
+            if users:
+                logger.info(f"Напоминания о еде отправлены {len(users)} пользователям")
+                
+        except Exception as e:
+            logger.error(f"Ошибка отправки напоминаний о еде: {e}")
+
+    async def _send_calorie_reminders(self):
+        """Отправляет напоминания о лимите калорий"""
+        try:
+            from datetime import datetime
+            current_hour = datetime.now().hour
+            users = await self.reminder_service.get_users_for_reminder(ReminderType.CALORIE_LIMIT, current_hour)
+            
+            for user_id in users:
+                await self.reminder_service.send_reminder(self.bot, user_id, ReminderType.CALORIE_LIMIT)
+            
+            if users:
+                logger.info(f"Напоминания о калориях отправлены {len(users)} пользователям")
+                
+        except Exception as e:
+            logger.error(f"Ошибка отправки напоминаний о калориях: {e}")
+
+    async def _send_motivation_reminders(self):
+        """Отправляет мотивационные сообщения"""
+        try:
+            from datetime import datetime
+            current_hour = datetime.now().hour
+            users = await self.reminder_service.get_users_for_reminder(ReminderType.MOTIVATION, current_hour)
+            
+            for user_id in users:
+                await self.reminder_service.send_motivational_message(self.bot, user_id)
+            
+            if users:
+                logger.info(f"Мотивационные сообщения отправлены {len(users)} пользователям")
+                
+        except Exception as e:
+            logger.error(f"Ошибка отправки мотивационных сообщений: {e}")
 
 
 

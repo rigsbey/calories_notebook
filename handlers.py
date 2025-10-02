@@ -11,6 +11,8 @@ from services.google_calendar import GoogleCalendarService
 from services.analysis_storage import analysis_storage
 from services.firebase_service import FirebaseService
 from services.subscription_service import SubscriptionService
+from services.personal_goals_service import PersonalGoalsService
+from services.export_service import ExportService
 from config import TEMP_DIR
 from utils import error_handler, format_nutrition_info, extract_meal_title
 
@@ -20,6 +22,13 @@ logger = logging.getLogger(__name__)
 class FoodAnalysisStates(StatesGroup):
     waiting_for_weight = State()
 
+class PersonalGoalStates(StatesGroup):
+    waiting_for_goal_type = State()
+    waiting_for_weight = State()
+    waiting_for_height = State()
+    waiting_for_age = State()
+    waiting_for_activity = State()
+
 # Создаем клавиатуру с кнопками
 def get_main_keyboard():
     """Создает основную клавиатуру с кнопками"""
@@ -27,8 +36,8 @@ def get_main_keyboard():
         keyboard=[
             [KeyboardButton(text="📊 Итоги дня"), KeyboardButton(text="📈 Итоги недели")],
             [KeyboardButton(text="📸 Анализ еды"), KeyboardButton(text="📅 Календарь")],
-            [KeyboardButton(text="⭐ Pro"), KeyboardButton(text="📊 Статус")],
-            [KeyboardButton(text="ℹ️ Помощь")]
+            [KeyboardButton(text="🎯 Цели"), KeyboardButton(text="⭐ Pro")],
+            [KeyboardButton(text="📊 Статус"), KeyboardButton(text="ℹ️ Помощь")]
         ],
         resize_keyboard=True,
         one_time_keyboard=False
@@ -52,6 +61,8 @@ gemini_service = GeminiService()
 calendar_service = GoogleCalendarService()
 firebase_service = FirebaseService()
 subscription_service = SubscriptionService()
+personal_goals_service = PersonalGoalsService()
+export_service = ExportService()
 
 # Создаем роутер
 router = Router()
@@ -529,7 +540,7 @@ async def weight_handler(message: Message, state: FSMContext):
             connected = await calendar_service.ensure_connected(message.from_user.id)
             if connected:
                 calendar_status = "\n✅ **Анализ сохранен в Google Calendar!**"
-                # Адаптивное сообщение в зависимости от подписки
+                    # Адаптивное сообщение в зависимости от подписки
                 if subscription_type == "lite":
                     # Показываем счетчик и рекламу Pro
                     daily_count = subscription['daily_photo_count']
@@ -545,6 +556,10 @@ async def weight_handler(message: Message, state: FSMContext):
                         pro_teaser = "\n\n✨ **Понравился анализ?**\n" \
                                    "🌟 В Pro: детальные витамины, экспорт, календарь\n" \
                                    "🚀 Первые 7 дней бесплатно: /pro"
+                    elif daily_count == 0:
+                        # Мотивация для первого анализа
+                        pro_teaser = "\n\n🎯 **Начните путь к здоровому питанию!**\n" \
+                                   "📸 Анализируйте еду и следите за прогрессом"
                     
                     await message.answer(
                         f"✅ Анализ завершен!{calendar_status}{pro_teaser}\n\n"
@@ -820,20 +835,24 @@ async def help_button(message: Message):
 /week - Итоги недели (Pro)
 /summary - Итоги дня
 /summary week - Итоги недели (Pro)
+/goals - Персональные цели (Pro)
+/recommendations - Умные рекомендации (Pro)
 📅 - Подключить Google Calendar (Pro)
 /gstatus - Статус Google Calendar
 /gdisconnect - Отключить Google Calendar
 
 **Тарифные планы:**
 📊 **Lite (бесплатно)**: 5 фото в день, базовый анализ КБЖУ
-⭐ **Pro (399₽/мес)**: 200 фото в месяц, мульти-тарелка, витамины, экспорт
+⭐ **Pro (399₽/мес)**: 200 фото в месяц, мульти-тарелка, витамины, экспорт, персональные цели
 💎 **Pro Год (2990₽)**: Все функции Pro со скидкой 50%
 
 **Как использовать:**
 1. 📸 Отправьте фото еды
 2. 🔢 Укажите вес в граммах
 3. 📊 Получите анализ КБЖУ
-4. 📅 Информация сохранится в календаре (Pro)
+4. 🎯 Установите персональную цель (Pro)
+5. 🤖 Получайте умные рекомендации (Pro)
+6. 📅 Информация сохранится в календаре (Pro)
 
 **Поддерживаемые форматы:**
 • Фото в формате JPG, PNG
@@ -845,10 +864,444 @@ async def help_button(message: Message):
 • Калории и КБЖУ
 • Витамины и полезные вещества (Pro)
 • Пищевую ценность
+• Персональные рекомендации (Pro)
 
 Если возникли проблемы, попробуйте отправить фото заново.
     """
     await message.answer(help_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
+
+@router.message(F.text == "🎯 Цели")
+@error_handler
+async def goals_button(message: Message):
+    """Обработчик кнопки 'Цели'"""
+    await goals_handler(message)
+
+@router.message(Command("goals"))
+@error_handler
+async def goals_handler(message: Message):
+    """Обработчик команды /goals - персональные цели"""
+    user_id = message.from_user.id
+    
+    # Проверяем доступность функции
+    can_use, message_text = await personal_goals_service.can_use_personal_goals(user_id)
+    if not can_use:
+        from handlers_payments import show_paywall
+        await show_paywall(
+            message,
+            title="🎯 Персональные цели в Pro",
+            description="Установите цель и получайте умные рекомендации!\n\n🌟 **Pro** добавляет:",
+            features=[
+                "• Персональные цели (похудение, набор массы, поддержание)",
+                "• Расчет дневной нормы калорий",
+                "• Умные рекомендации ИИ",
+                "• Отслеживание прогресса",
+                "• Советы по БЖУ под вашу цель"
+            ]
+        )
+        return
+    
+    # Получаем текущую цель
+    goal = await personal_goals_service.get_user_goal(user_id)
+    
+    if goal:
+        # Показываем текущую цель
+        goal_type_names = {
+            "weight_loss": "📉 Похудение",
+            "weight_gain": "📈 Набор веса", 
+            "maintenance": "⚖️ Поддержание веса",
+            "muscle_gain": "💪 Набор мышц",
+            "health_improvement": "🏥 Улучшение здоровья"
+        }
+        
+        goal_name = goal_type_names.get(goal['goal_type'], goal['goal_type'])
+        daily_calories = goal.get('daily_calories', 2000)
+        
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="📊 Мой прогресс", callback_data="show_goal_progress")],
+            [InlineKeyboardButton(text="🤖 Получить рекомендации", callback_data="get_recommendations")],
+            [InlineKeyboardButton(text="✏️ Изменить цель", callback_data="change_goal")],
+            [InlineKeyboardButton(text="❌ Удалить цель", callback_data="delete_goal")]
+        ])
+        
+        await message.answer(
+            f"🎯 **Ваша персональная цель**\n\n"
+            f"**Тип цели:** {goal_name}\n"
+            f"**Дневная норма калорий:** {daily_calories} ккал\n"
+            f"**Текущий вес:** {goal.get('current_weight', 'не указан')} кг\n"
+            f"**Целевой вес:** {goal.get('target_weight', 'не указан')} кг\n"
+            f"**Установлена:** {goal.get('goal_set_at', {}).strftime('%d.%m.%Y') if goal.get('goal_set_at') else 'неизвестно'}\n\n"
+            f"💡 Используйте кнопки ниже для управления целью!",
+            parse_mode="Markdown",
+            reply_markup=keyboard
+        )
+    else:
+        # Предлагаем установить цель
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="📉 Похудение", callback_data="set_goal_weight_loss")],
+            [InlineKeyboardButton(text="📈 Набор веса", callback_data="set_goal_weight_gain")],
+            [InlineKeyboardButton(text="⚖️ Поддержание", callback_data="set_goal_maintenance")],
+            [InlineKeyboardButton(text="💪 Набор мышц", callback_data="set_goal_muscle_gain")],
+            [InlineKeyboardButton(text="🏥 Улучшение здоровья", callback_data="set_goal_health_improvement")]
+        ])
+        
+        await message.answer(
+            "🎯 **Персональные цели**\n\n"
+            "Установите персональную цель для получения умных рекомендаций!\n\n"
+            "**Что вы получите:**\n"
+            "• Расчет дневной нормы калорий\n"
+            "• Персональные рекомендации ИИ\n"
+            "• Советы по БЖУ под вашу цель\n"
+            "• Отслеживание прогресса\n\n"
+            "Выберите вашу цель:",
+            parse_mode="Markdown",
+            reply_markup=keyboard
+        )
+
+@router.callback_query(F.data.startswith("set_goal_"))
+@error_handler
+async def set_goal_handler(callback: CallbackQuery, state: FSMContext):
+    """Обработчик установки цели"""
+    await callback.answer()
+    
+    goal_type = callback.data.replace("set_goal_", "")
+    
+    # Сохраняем тип цели в состоянии
+    await state.update_data(goal_type=goal_type)
+    await state.set_state(PersonalGoalStates.waiting_for_weight)
+    
+    await callback.message.edit_text(
+        "🎯 **Установка персональной цели**\n\n"
+        f"**Выбранная цель:** {goal_type}\n\n"
+        "Теперь укажите ваш текущий вес в килограммах (например: 70):",
+        parse_mode="Markdown"
+    )
+
+@router.message(PersonalGoalStates.waiting_for_weight)
+@error_handler
+async def goal_weight_handler(message: Message, state: FSMContext):
+    """Обработчик веса для цели"""
+    try:
+        weight = float(message.text.strip())
+        if weight <= 0 or weight > 300:
+            await message.answer("❌ Пожалуйста, введите корректный вес от 1 до 300 кг")
+            return
+        
+        await state.update_data(current_weight=weight)
+        await state.set_state(PersonalGoalStates.waiting_for_height)
+        
+        await message.answer(
+            "✅ Вес сохранен!\n\n"
+            "Теперь укажите ваш рост в сантиметрах (например: 175):"
+        )
+        
+    except ValueError:
+        await message.answer("❌ Пожалуйста, введите вес числом (например: 70)")
+
+@router.message(PersonalGoalStates.waiting_for_height)
+@error_handler
+async def goal_height_handler(message: Message, state: FSMContext):
+    """Обработчик роста для цели"""
+    try:
+        height = float(message.text.strip())
+        if height <= 0 or height > 250:
+            await message.answer("❌ Пожалуйста, введите корректный рост от 1 до 250 см")
+            return
+        
+        await state.update_data(height=height)
+        await state.set_state(PersonalGoalStates.waiting_for_age)
+        
+        await message.answer(
+            "✅ Рост сохранен!\n\n"
+            "Теперь укажите ваш возраст в годах (например: 25):"
+        )
+        
+    except ValueError:
+        await message.answer("❌ Пожалуйста, введите рост числом (например: 175)")
+
+@router.message(PersonalGoalStates.waiting_for_age)
+@error_handler
+async def goal_age_handler(message: Message, state: FSMContext):
+    """Обработчик возраста для цели"""
+    try:
+        age = int(message.text.strip())
+        if age <= 0 or age > 120:
+            await message.answer("❌ Пожалуйста, введите корректный возраст от 1 до 120 лет")
+            return
+        
+        await state.update_data(age=age)
+        await state.set_state(PersonalGoalStates.waiting_for_activity)
+        
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="🛋️ Малоподвижный", callback_data="activity_sedentary")],
+            [InlineKeyboardButton(text="🚶 Легкая активность", callback_data="activity_light")],
+            [InlineKeyboardButton(text="🏃 Умеренная активность", callback_data="activity_moderate")],
+            [InlineKeyboardButton(text="💪 Высокая активность", callback_data="activity_active")],
+            [InlineKeyboardButton(text="🔥 Очень высокая", callback_data="activity_very_active")]
+        ])
+        
+        await message.answer(
+            "✅ Возраст сохранен!\n\n"
+            "Выберите ваш уровень физической активности:",
+            reply_markup=keyboard
+        )
+        
+    except ValueError:
+        await message.answer("❌ Пожалуйста, введите возраст числом (например: 25)")
+
+@router.callback_query(F.data.startswith("activity_"))
+@error_handler
+async def goal_activity_handler(callback: CallbackQuery, state: FSMContext):
+    """Обработчик уровня активности"""
+    await callback.answer()
+    
+    activity_map = {
+        "activity_sedentary": "sedentary",
+        "activity_light": "light", 
+        "activity_moderate": "moderate",
+        "activity_active": "active",
+        "activity_very_active": "very_active"
+    }
+    
+    activity_level = activity_map[callback.data]
+    
+    # Получаем все данные из состояния
+    data = await state.get_data()
+    
+    # Устанавливаем цель
+    success = await personal_goals_service.set_user_goal(
+        user_id=callback.from_user.id,
+        goal_type=data['goal_type'],
+        current_weight=data['current_weight'],
+        height=data['height'],
+        age=data['age'],
+        activity_level=activity_level
+    )
+    
+    if success:
+        goal = await personal_goals_service.get_user_goal(callback.from_user.id)
+        daily_calories = goal.get('daily_calories', 2000)
+        
+        await callback.message.edit_text(
+            f"🎉 **Цель установлена!**\n\n"
+            f"✅ Персональная цель настроена\n"
+            f"📊 Дневная норма калорий: {daily_calories} ккал\n\n"
+            f"🤖 Теперь вы будете получать умные рекомендации!\n"
+            f"📸 Анализируйте еду и следите за прогрессом!",
+            parse_mode="Markdown"
+        )
+    else:
+        await callback.message.edit_text(
+            "❌ **Ошибка установки цели**\n\n"
+            "Попробуйте установить цель заново через команду /goals"
+        )
+    
+    await state.clear()
+
+@router.message(Command("recommendations"))
+@error_handler
+async def recommendations_handler(message: Message):
+    """Обработчик команды /recommendations - умные рекомендации"""
+    user_id = message.from_user.id
+    
+    # Проверяем доступность функции
+    can_use, message_text = await personal_goals_service.can_use_personal_goals(user_id)
+    if not can_use:
+        from handlers_payments import show_paywall
+        await show_paywall(
+            message,
+            title="🤖 Умные рекомендации в Pro",
+            description="Получайте персональные советы по питанию!\n\n🌟 **Pro** включает:",
+            features=[
+                "• Анализ вашего питания",
+                "• Рекомендации под вашу цель",
+                "• Советы по БЖУ",
+                "• Мотивационные сообщения"
+            ]
+        )
+        return
+    
+    # Получаем дневное питание
+    today = datetime.now().strftime('%Y-%m-%d')
+    analyses = await firebase_service.get_daily_analyses(user_id, today)
+    
+    if not analyses:
+        await message.answer(
+            "📊 **Нет данных за сегодня**\n\n"
+            "Проанализируйте хотя бы одно блюдо, чтобы получить рекомендации!",
+            parse_mode="Markdown"
+        )
+        return
+    
+    # Агрегируем питание за день
+    daily_nutrition = await firebase_service.aggregate_daily_nutrition(analyses)
+    
+    # Генерируем рекомендации
+    await message.answer("🤖 Генерирую персональные рекомендации...")
+    recommendations = await personal_goals_service.generate_smart_recommendations(
+        user_id, daily_nutrition
+    )
+    
+    await message.answer(recommendations, parse_mode="Markdown")
+
+@router.message(Command("export"))
+@error_handler
+async def export_handler(message: Message):
+    """Обработчик команды /export - экспорт отчетов"""
+    user_id = message.from_user.id
+    
+    # Проверяем доступность функции
+    can_export, message_text = await export_service.can_use_export(user_id)
+    if not can_export:
+        from handlers_payments import show_paywall
+        await show_paywall(
+            message,
+            title="📊 Экспорт отчетов в Pro",
+            description="Сохраняйте и делитесь отчетами!\n\n🌟 **Pro** включает:",
+            features=[
+                "• Экспорт в CSV (таблица данных)",
+                "• Красивые PDF отчеты",
+                "• Ссылки для шаринга с врачом/тренером",
+                "• Отчеты за любой период"
+            ]
+        )
+        return
+    
+    # Получаем варианты экспорта
+    export_options = await export_service.get_export_options(user_id)
+    
+    if not export_options["available"]:
+        await message.answer(f"❌ {export_options['message']}")
+        return
+    
+    # Создаем клавиатуру с вариантами экспорта
+    keyboard_buttons = []
+    for option in export_options["options"]:
+        keyboard_buttons.append([
+            InlineKeyboardButton(
+                text=f"{option['icon']} {option['name']}",
+                callback_data=f"export_{option['type']}"
+            )
+        ])
+    
+    keyboard_buttons.append([
+        InlineKeyboardButton(text="❌ Отмена", callback_data="cancel_export")
+    ])
+    
+    keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
+    
+    await message.answer(
+        "📊 **Экспорт отчетов**\n\n"
+        "Выберите формат экспорта:\n\n"
+        "📊 **CSV** - таблица с данными для Excel\n"
+        "📄 **PDF** - красивый отчет с графиками\n"
+        "🔗 **Поделиться** - ссылка для отправки врачу/тренеру",
+        parse_mode="Markdown",
+        reply_markup=keyboard
+    )
+
+@router.callback_query(F.data.startswith("export_"))
+@error_handler
+async def export_callback_handler(callback: CallbackQuery):
+    """Обработчик экспорта через callback"""
+    await callback.answer()
+    
+    export_type = callback.data.replace("export_", "")
+    user_id = callback.from_user.id
+    
+    if export_type == "csv":
+        await callback.message.edit_text("📊 Генерирую CSV файл...")
+        
+        csv_data = await export_service.generate_csv_report(user_id, 7)
+        
+        if csv_data:
+            # Отправляем CSV файл
+            from aiogram.types import BufferedInputFile
+            
+            csv_content = csv_data.getvalue()
+            csv_file = BufferedInputFile(
+                csv_content.encode('utf-8'),
+                filename=f"nutrition_report_{datetime.now().strftime('%Y%m%d')}.csv"
+            )
+            
+            await callback.message.answer_document(
+                document=csv_file,
+                caption="📊 **CSV отчет готов!**\n\n"
+                       "Файл содержит все ваши анализы за последние 7 дней.\n"
+                       "Можете открыть в Excel или Google Sheets.",
+                parse_mode="Markdown"
+            )
+        else:
+            await callback.message.edit_text(
+                "❌ **Ошибка генерации CSV**\n\n"
+                "Не удалось создать отчет. Попробуйте позже."
+            )
+    
+    elif export_type == "pdf":
+        await callback.message.edit_text("📄 Генерирую PDF отчет...")
+        
+        pdf_data = await export_service.generate_pdf_report(user_id, 7)
+        
+        if pdf_data:
+            # Отправляем PDF файл
+            from aiogram.types import BufferedInputFile
+            
+            pdf_file = BufferedInputFile(
+                pdf_data,
+                filename=f"nutrition_report_{datetime.now().strftime('%Y%m%d')}.html"
+            )
+            
+            await callback.message.answer_document(
+                document=pdf_file,
+                caption="📄 **PDF отчет готов!**\n\n"
+                       "Красивый отчет с вашими данными за последние 7 дней.\n"
+                       "Можете сохранить или отправить врачу/тренеру.",
+                parse_mode="Markdown"
+            )
+        else:
+            await callback.message.edit_text(
+                "❌ **Ошибка генерации PDF**\n\n"
+                "Не удалось создать отчет. Попробуйте позже."
+            )
+    
+    elif export_type == "share":
+        await callback.message.edit_text("🔗 Создаю ссылку для шаринга...")
+        
+        share_link = await export_service.generate_shareable_link(user_id, "weekly")
+        
+        if share_link:
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔗 Открыть отчет", url=share_link)],
+                [InlineKeyboardButton(text="📤 Поделиться", callback_data="share_report")]
+            ])
+            
+            await callback.message.edit_text(
+                f"🔗 **Ссылка для шаринга готова!**\n\n"
+                f"**Ссылка:** {share_link}\n\n"
+                f"📤 Можете отправить эту ссылку:\n"
+                f"• Врачу для консультации\n"
+                f"• Тренеру для анализа питания\n"
+                f"• Нутрициологу для рекомендаций\n\n"
+                f"💡 Ссылка действительна 30 дней",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+            )
+        else:
+            await callback.message.edit_text(
+                "❌ **Ошибка создания ссылки**\n\n"
+                "Не удалось создать ссылку для шаринга. Попробуйте позже."
+            )
+
+@router.callback_query(F.data == "cancel_export")
+@error_handler
+async def cancel_export_handler(callback: CallbackQuery):
+    """Отмена экспорта"""
+    await callback.answer()
+    
+    await callback.message.edit_text(
+        "❌ **Экспорт отменен**\n\n"
+        "Можете вернуться к экспорту через команду /export",
+        parse_mode="Markdown"
+    )
 
 @router.message(Command("status"))
 @error_handler

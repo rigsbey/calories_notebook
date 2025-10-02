@@ -4,6 +4,7 @@ from aiogram.types import Message, CallbackQuery, PreCheckoutQuery, InlineKeyboa
 from aiogram.filters import Command
 from services.subscription_service import SubscriptionService
 from services.payment_service import PaymentService
+from services.conversion_optimization_service import ConversionOptimizationService
 from utils import error_handler
 
 logger = logging.getLogger(__name__)
@@ -14,6 +15,7 @@ payments_router = Router()
 # Инициализируем сервисы
 subscription_service = SubscriptionService()
 payment_service = PaymentService()
+conversion_service = ConversionOptimizationService()
 
 @payments_router.message(Command("pro"))
 @error_handler
@@ -91,7 +93,29 @@ async def generic_paywall_handler(callback: CallbackQuery):
 
 async def show_paywall(message_or_callback, title: str, description: str, features: list):
     """Универсальная функция показа пейволла"""
-    subscription = await subscription_service.get_user_subscription(message_or_callback.from_user.id)
+    user_id = message_or_callback.from_user.id
+    
+    # Пытаемся получить персонализированный пейволл
+    try:
+        personalized_paywall = await conversion_service.generate_personalized_paywall(user_id)
+        
+        if personalized_paywall:
+            # Используем персонализированный пейволл
+            title = personalized_paywall["title"]
+            description = personalized_paywall["description"]
+            features = personalized_paywall["features"]
+            
+            # Отслеживаем показ персонализированного пейволла
+            await conversion_service.track_conversion_event(
+                user_id, "personalized_paywall_shown", {
+                    "trigger": personalized_paywall["context"]["best_trigger"],
+                    "urgency": personalized_paywall["urgency"]
+                }
+            )
+    except Exception as e:
+        logger.warning(f"Не удалось получить персонализированный пейволл: {e}")
+    
+    subscription = await subscription_service.get_user_subscription(user_id)
     current_plan = subscription['type']
     
     # Формируем сообщение
@@ -122,6 +146,11 @@ async def start_trial_handler(callback: CallbackQuery):
     success = await subscription_service.start_trial(callback.from_user.id)
     
     if success:
+        # Отслеживаем успешный старт триала
+        await conversion_service.track_conversion_event(
+            callback.from_user.id, "trial_started", {"source": "paywall"}
+        )
+        
         await callback.message.edit_text(
             "🎉 **Триал активирован!**\n\n"
             "✅ **7 дней Pro бесплатно**\n"
