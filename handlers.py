@@ -67,10 +67,101 @@ export_service = ExportService()
 # Создаем роутер
 router = Router()
 
+# Обработчики команд с высоким приоритетом (должны быть ПЕРЕД FSM обработчиками)
+@router.message(Command("cancel"))
+@error_handler
+async def cancel_handler(message: Message, state: FSMContext):
+    """Отмена текущей операции и сброс состояния FSM"""
+    await state.clear()
+    await message.answer(
+        "❌ Операция отменена.\n\n"
+        "Вы можете начать заново или использовать команды бота.",
+        reply_markup=get_main_keyboard()
+    )
+
+@router.message(Command("gdisconnect"))
+@error_handler
+async def gdisconnect_handler(message: Message, state: FSMContext):
+    """Отключение Google Calendar от аккаунта"""
+    # Сбрасываем любое активное состояние FSM
+    await state.clear()
+    
+    try:
+        # Проверяем, подключен ли календарь
+        connected = await calendar_service.ensure_connected(message.from_user.id)
+        
+        if not connected:
+            keyboard = await get_calendar_connect_keyboard(message.from_user.id)
+            await message.answer(
+                "❌ Google Calendar не подключен.\n\n"
+                "Подключите календарь для автоматической записи событий питания:",
+                reply_markup=keyboard
+            )
+            return
+        
+        # Отключаем календарь
+        await calendar_service.disconnect_user(message.from_user.id)
+        await message.answer(
+            "✅ Google Calendar отключен.\n\n"
+            "События питания больше не будут записываться в ваш календарь.",
+            reply_markup=get_main_keyboard()
+        )
+        
+    except Exception as e:
+        logger.error(f"Ошибка отключения календаря: {e}")
+        await message.answer("❌ Не удалось отключить календарь. Попробуйте позже.")
+
+@router.message(Command("help"))
+@error_handler
+async def help_handler(message: Message, state: FSMContext):
+    """Обработчик команды /help - помощь по использованию"""
+    # Сбрасываем любое активное состояние FSM
+    await state.clear()
+    
+    help_text = """
+🤖 **Календарь калорий - умный бот для анализа питания**
+
+**📸 Основные функции:**
+• Отправьте фото еды для анализа КБЖУ
+• Получите информацию о витаминах и минералах
+• Автоматическая запись в Google Calendar
+
+**📊 Команды:**
+• `/start` - запустить бота
+• `/status` - статус подписки
+• `/day` - итоги дня
+• `/week` - итоги недели (Pro)
+• `/summary` - сводка питания
+• `/goals` - персональные цели (Pro)
+• `/recommendations` - умные рекомендации (Pro)
+• `/export` - экспорт отчетов (Pro)
+• `/cancel` - отменить текущую операцию
+
+**📅 Календарь:**
+• `/gconnect` - подключить Google Calendar
+• `/gstatus` - статус календаря
+• `/gdisconnect` - отключить календарь
+
+**⭐ Pro функции:**
+• Неограниченные фото
+• Персональные цели
+• Умные рекомендации ИИ
+• Экспорт отчетов
+• История и аналитика
+
+**🆘 Поддержка:**
+Если возникли проблемы, используйте команду `/cancel` для сброса состояния.
+    """
+    
+    await message.answer(help_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
+
 @router.message(Command("start"))
 @error_handler
-async def start_handler(message: Message):
+async def start_handler(message: Message, state: FSMContext):
     """Обработчик команды /start"""
+    # Сбрасываем любое активное состояние FSM
+    await state.clear()
+    
     # Сохраняем/обновляем информацию о пользователе
     user_id = message.from_user.id
     username = message.from_user.username
@@ -87,6 +178,30 @@ async def start_handler(message: Message):
     # Получаем информацию о подписке пользователя
     user_subscription = await subscription_service.get_user_subscription(user_id)
     subscription_type = user_subscription.get('type', 'lite') if user_subscription else 'lite'
+
+    # Формируем приветственное сообщение
+    welcome_text = f"""
+🤖 **Добро пожаловать в Календарь калорий!**
+
+Привет, {first_name}! 👋
+
+Я умный бот для анализа питания, который поможет вам:
+• 📸 Анализировать еду по фото
+• 📊 Считать калории, белки, жиры, углеводы
+• 💊 Показывать витамины и минералы
+• 📅 Записывать приемы пищи в Google Calendar
+
+**Ваш статус:** {subscription_type.upper()}
+
+**🚀 Как начать:**
+1. Отправьте фото еды
+2. Укажите примерный вес
+3. Получите подробный анализ!
+
+**💡 Совет:** Используйте команду `/help` для получения полного списка функций.
+    """
+    
+    await message.answer(welcome_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
     
     # Определяем лимиты и возможности
     if subscription_type == 'lite':
@@ -1620,44 +1735,6 @@ async def gstatus_handler(message: Message):
     except Exception as e:
         logger.error(f"Ошибка статуса авторизации: {e}")
         await message.answer("❌ Не удалось получить статус. Попробуйте позже.")
-
-@router.message(Command("gdisconnect"))
-@error_handler
-async def gdisconnect_handler(message: Message):
-    """Отключение Google Calendar от аккаунта"""
-    try:
-        # Проверяем, подключен ли календарь
-        connected = await calendar_service.ensure_connected(message.from_user.id)
-        
-        if not connected:
-            keyboard = await get_calendar_connect_keyboard(message.from_user.id)
-            await message.answer(
-                "ℹ️ **Google Calendar не подключен**\n\n"
-                "🔗 Если хотите подключить календарь, нажмите кнопку ниже:",
-                parse_mode="Markdown",
-                reply_markup=keyboard
-            )
-            return
-        
-        # Отключаем календарь
-        success = await calendar_service.disconnect_calendar(message.from_user.id)
-        
-        if success:
-            keyboard = await get_calendar_connect_keyboard(message.from_user.id)
-            await message.answer(
-                "✅ **Google Calendar отключен!**\n\n"
-                "📅 Календарь больше не будет синхронизироваться с вашими анализами еды.\n"
-                "🔗 Если захотите подключить снова, нажмите кнопку ниже:",
-                parse_mode="Markdown",
-                reply_markup=keyboard
-            )
-        else:
-            await message.answer(
-                "❌ Не удалось отключить Google Calendar. Попробуйте позже."
-            )
-    except Exception as e:
-        logger.error(f"Ошибка отключения календаря: {e}")
-        await message.answer("❌ Произошла ошибка при отключении календаря. Попробуйте позже.")
 
 @router.message(F.text)
 @error_handler

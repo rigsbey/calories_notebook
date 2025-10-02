@@ -146,8 +146,8 @@ def format_vitamins_section(text: str) -> str:
             if vitamin_lines:
                 formatted_lines.append("```")
                 for emoji, name, bar, percent in vitamin_lines:
-                    # Оставляем эмодзи-бары, но используем моноширинный шрифт для выравнивания
-                    formatted_lines.append(f"{emoji} {name:<15} {bar} {percent:>3}%")
+                    # Форматируем витамины в одну строку для мобильных устройств
+                    formatted_lines.append(f"{emoji} {name}: {bar} {percent}%")
                 formatted_lines.append("```")
                 formatted_lines.append("")
                 vitamin_lines = []
@@ -160,8 +160,8 @@ def format_vitamins_section(text: str) -> str:
     if vitamin_lines:
         formatted_lines.append("```")
         for emoji, name, bar, percent in vitamin_lines:
-            # Оставляем эмодзи-бары в моноширинном блоке
-            formatted_lines.append(f"{emoji} {name:<15} {bar} {percent:>3}%")
+            # Форматируем витамины в одну строку для мобильных устройств
+            formatted_lines.append(f"{emoji} {name}: {bar} {percent}%")
         formatted_lines.append("```")
     
     return '\n'.join(formatted_lines)
