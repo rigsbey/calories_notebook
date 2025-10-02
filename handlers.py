@@ -809,6 +809,58 @@ async def status_button(message: Message):
     # Используем тот же обработчик, что и для команды /status
     await status_handler(message)
 
+@router.message(F.text == "🌍 Часовой пояс")
+@error_handler
+async def timezone_handler(message: Message, state: FSMContext):
+    """Обработчик настройки часового пояса"""
+    timezones = timezone_service.get_common_timezones()
+    
+    # Создаем клавиатуру с часовыми поясами
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[])
+    
+    # Добавляем по 2 часовых пояса в ряд
+    for i in range(0, len(timezones), 2):
+        row = []
+        for j in range(2):
+            if i + j < len(timezones):
+                tz = timezones[i + j]
+                tz_name = timezone_service.format_timezone_name(tz)
+                row.append(InlineKeyboardButton(
+                    text=tz_name,
+                    callback_data=f"timezone_{tz}"
+                ))
+        keyboard.inline_keyboard.append(row)
+    
+    await message.answer(
+        "🌍 Выберите ваш часовой пояс:\n\n"
+        "Это поможет боту отправлять вам уведомления в 20:00 по вашему местному времени.",
+        reply_markup=keyboard
+    )
+    await state.set_state(TimezoneStates.waiting_for_timezone)
+
+@router.callback_query(F.data.startswith("timezone_"))
+@error_handler
+async def timezone_callback(callback: CallbackQuery, state: FSMContext):
+    """Обработчик выбора часового пояса"""
+    timezone = callback.data.replace("timezone_", "")
+    user_id = callback.from_user.id
+    
+    # Сохраняем часовой пояс пользователя
+    await firebase_service.create_or_update_user(
+        user_id=user_id,
+        username=callback.from_user.username,
+        first_name=callback.from_user.first_name,
+        last_name=callback.from_user.last_name,
+        timezone=timezone
+    )
+    
+    tz_name = timezone_service.format_timezone_name(timezone)
+    await callback.message.edit_text(
+        f"✅ Часовой пояс установлен: {tz_name}\n\n"
+        f"Теперь вы будете получать уведомления в 20:00 по вашему местному времени."
+    )
+    await state.clear()
+
 @router.message(F.text == "ℹ️ Помощь")
 @error_handler
 async def help_button(message: Message):
@@ -1304,59 +1356,6 @@ async def text_handler(message: Message):
         "• \"Добавь туда морковь\"",
         reply_markup=keyboard
     )
-
-
-@router.message(F.text == "🌍 Часовой пояс")
-@error_handler
-async def timezone_handler(message: Message, state: FSMContext):
-    """Обработчик настройки часового пояса"""
-    timezones = timezone_service.get_common_timezones()
-    
-    # Создаем клавиатуру с часовыми поясами
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[])
-    
-    # Добавляем по 2 часовых пояса в ряд
-    for i in range(0, len(timezones), 2):
-        row = []
-        for j in range(2):
-            if i + j < len(timezones):
-                tz = timezones[i + j]
-                tz_name = timezone_service.format_timezone_name(tz)
-                row.append(InlineKeyboardButton(
-                    text=tz_name,
-                    callback_data=f"timezone_{tz}"
-                ))
-        keyboard.inline_keyboard.append(row)
-    
-    await message.answer(
-        "🌍 Выберите ваш часовой пояс:\n\n"
-        "Это поможет боту отправлять вам уведомления в 20:00 по вашему местному времени.",
-        reply_markup=keyboard
-    )
-    await state.set_state(TimezoneStates.waiting_for_timezone)
-
-@router.callback_query(F.data.startswith("timezone_"))
-@error_handler
-async def timezone_callback(callback: CallbackQuery, state: FSMContext):
-    """Обработчик выбора часового пояса"""
-    timezone = callback.data.replace("timezone_", "")
-    user_id = callback.from_user.id
-    
-    # Сохраняем часовой пояс пользователя
-    await firebase_service.create_or_update_user(
-        user_id=user_id,
-        username=callback.from_user.username,
-        first_name=callback.from_user.first_name,
-        last_name=callback.from_user.last_name,
-        timezone=timezone
-    )
-    
-    tz_name = timezone_service.format_timezone_name(timezone)
-    await callback.message.edit_text(
-        f"✅ Часовой пояс установлен: {tz_name}\n\n"
-        f"Теперь вы будете получать уведомления в 20:00 по вашему местному времени."
-    )
-    await state.clear()
 
 def register_handlers(dp):
     """Регистрирует все обработчики"""
