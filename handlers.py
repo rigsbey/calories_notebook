@@ -122,12 +122,16 @@ async def photo_handler(message: Message, state: FSMContext):
         # Проверяем лимиты подписки
         can_analyze, limit_message = await subscription_service.can_analyze_photo(user_id)
         if not can_analyze:
-            # Показываем пейволл
+            # Получаем информацию о текущем использовании
+            subscription = await subscription_service.get_user_subscription(user_id)
+            daily_count = subscription.get('daily_photo_count', 0)
+            
+            # Показываем пейволл с более дружелюбным сообщением
             from handlers_payments import show_paywall
             await show_paywall(
                 message,
-                title="📸 Лимит анализов достигнут",
-                description=f"❌ {limit_message}\n\n🌟 **Pro** снимет все ограничения:",
+                title="📸 Дневной лимит исчерпан",
+                description=f"😊 Вы уже проанализировали {daily_count} фото сегодня!\n\n⏰ Лимит сбросится завтра в 00:00\n\n🌟 **Pro** снимет все ограничения:",
                 features=[
                     "• До 200 фото в месяц",
                     "• Мульти-тарелка (несколько блюд)",
@@ -1269,7 +1273,10 @@ async def text_handler(message: Message):
         # Получаем количество использованных анализов за день
         daily_count = await subscription_service.get_daily_photo_count(user_id)
         remaining = 5 - daily_count
-        limit_info = f"📊 **Lite**: Осталось {remaining} анализов сегодня (из 5)"
+        if remaining > 0:
+            limit_info = f"📊 **Lite**: Осталось {remaining} анализов сегодня (из 5)"
+        else:
+            limit_info = f"📊 **Lite**: Лимит исчерпан ({daily_count}/5 фото)\n⏰ Сбросится завтра в 00:00"
     elif subscription_type in ['trial', 'pro']:
         # Получаем количество использованных анализов за месяц
         monthly_count = await subscription_service.get_monthly_photo_count(user_id)
@@ -1278,13 +1285,24 @@ async def text_handler(message: Message):
     else:
         limit_info = "📊 **Lite**: 5 фото в день бесплатно"
     
+    # Создаем клавиатуру если лимит исчерпан
+    keyboard = None
+    if subscription_type == 'lite':
+        daily_count = await subscription_service.get_daily_photo_count(user_id)
+        if daily_count >= 5:
+            from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🌟 Обновиться до Pro", callback_data="show_paywall")]
+            ])
+    
     await message.answer(
         f"📸 Пожалуйста, отправьте фото еды для анализа!\n\n"
         f"{limit_info}\n\n"
         "💡 После анализа вы сможете исправить результат текстовыми сообщениями:\n"
         "• \"На фото не руккола, а шпинат\"\n"
         "• \"Вес не 300г, а 250г\"\n"
-        "• \"Добавь туда морковь\""
+        "• \"Добавь туда морковь\"",
+        reply_markup=keyboard
     )
 
 

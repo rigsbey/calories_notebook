@@ -101,6 +101,9 @@ async def show_paywall(message_or_callback, title: str, description: str, featur
     daily_count = subscription['daily_photo_count']
     text += f"\n\n📊 **Сегодня использовано:** {daily_count}/5 фото"
     
+    # Добавляем дружелюбное сообщение о времени сброса
+    text += f"\n\n⏰ **Лимит сбросится:** завтра в 00:00"
+    
     # Получаем клавиатуру с вариантами оплаты
     keyboard = payment_service.get_subscription_keyboard(current_plan)
     
