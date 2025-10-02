@@ -42,7 +42,7 @@ class PaymentService:
                 return {"success": False, "error": "Неизвестный план подписки"}
             
             # Создаем список цен для Telegram Stars
-            prices = [LabeledPrice(label=title, amount=amount)]  # В Stars (не копейках!)
+            prices = [LabeledPrice(label=title, amount=amount * 100)]  # В сотых долях XTR (299 Stars = 29900)
             
             payload = f"stars_subscription_{plan}_{duration}_{user_id}_{datetime.now().timestamp()}"
             
@@ -100,7 +100,7 @@ class PaymentService:
                     plan = parts[2]
                     duration = int(parts[3])
                     user_id = int(parts[4])
-                    stars_amount = total_amount  # Для Stars amount уже в правильном формате
+                    stars_amount = total_amount // 100  # Из сотых долей в Stars
                     
                     # Сохраняем информацию о Stars платеже
                     payment_data = {
@@ -150,7 +150,7 @@ class PaymentService:
                     # Обработка обычных Stars покупок (не подписок)
                     product = parts[1]
                     user_id = int(parts[2])
-                    stars_amount = total_amount  # Для Stars amount уже в правильном формате
+                    stars_amount = total_amount // 100  # Из сотых долей в Stars
                     
                     # Сохраняем информацию о Stars платеже
                     payment_data = {
@@ -263,7 +263,7 @@ class PaymentService:
             description = f"Покупка за {stars_amount} Telegram Stars"
             
             # Создаем список цен для Telegram Stars
-            prices = [LabeledPrice(label=product_name, amount=stars_amount)]  # В Stars (не копейках!)
+            prices = [LabeledPrice(label=product_name, amount=stars_amount * 100)]  # В сотых долях XTR
             
             payload = f"stars_{product}_{user_id}_{datetime.now().timestamp()}"
             
