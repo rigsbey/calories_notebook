@@ -77,6 +77,9 @@ class SubscriptionService:
             "extra_10_analyses": 99,  # +10 анализов
             "multi_dish_24h": 149,   # Мульти-тарелка на 24ч  
             "pdf_report": 199,       # PDF отчет за неделю
+            "pro_monthly": 299,      # Pro подписка месяц
+            "pro_quarterly": 799,    # Pro подписка 3 месяца
+            "pro_yearly": 2499,      # Pro подписка год
         }
 
     async def get_user_subscription(self, user_id: int) -> Dict:

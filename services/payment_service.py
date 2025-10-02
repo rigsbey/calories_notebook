@@ -21,39 +21,38 @@ class PaymentService:
         # self.PAYMENT_PROVIDER_TOKEN = os.getenv("PAYMENT_PROVIDER_TOKEN")
 
     async def create_subscription_payment(self, user_id: int, plan: str, duration: int) -> Dict:
-        """Создает счет для оплаты подписки"""
+        """Создает счет для оплаты подписки через Telegram Stars"""
         try:
             pricing = self.subscription_service.get_pricing_info()
             
-            # Определяем цену и описание
+            # Определяем цену и описание для Stars
             if plan == "pro" and duration == 1:
-                amount = pricing["subscriptions"]["pro_monthly"]
+                amount = pricing["stars"]["pro_monthly"]
                 title = "🌟 Pro подписка - месяц"
                 description = "200 фото/мес, мульти-тарелка, витамины, экспорт, календарь"
             elif plan == "pro" and duration == 3:
-                amount = pricing["subscriptions"]["pro_quarterly"]
+                amount = pricing["stars"]["pro_quarterly"]
                 title = "🌟 Pro подписка - 3 месяца"
                 description = "200 фото/мес, все функции Pro. Выгода 33%!"
             elif plan == "pro" and duration == 12:
-                amount = pricing["subscriptions"]["pro_yearly"]
+                amount = pricing["stars"]["pro_yearly"]
                 title = "🌟 Pro подписка - год"
                 description = "200 фото/мес, все функции Pro. Выгода 50%!"
             else:
                 return {"success": False, "error": "Неизвестный план подписки"}
             
-            # Создаем список цен для Telegram Payments
-            prices = [LabeledPrice(label=title, amount=amount * 100)]  # В копейках
+            # Создаем список цен для Telegram Stars
+            prices = [LabeledPrice(label=title, amount=amount)]  # В Stars (не копейках!)
             
-            payload = f"subscription_{plan}_{duration}_{user_id}_{datetime.now().timestamp()}"
+            payload = f"stars_subscription_{plan}_{duration}_{user_id}_{datetime.now().timestamp()}"
             
-            # Отправляем счет
+            # Отправляем счет за Stars (валюта XTR = Telegram Stars)
             await self.bot.send_invoice(
                 chat_id=user_id,
                 title=title,
                 description=description,
                 payload=payload,
-                provider_token=self.PAYMENT_PROVIDER_TOKEN,
-                currency="RUB",
+                currency="XTR",  # XTR = Telegram Stars
                 prices=prices,
                 max_tip_amount=0,
                 suggested_tip_amounts=[],
@@ -96,46 +95,99 @@ class PaymentService:
             
             # Обработка Stars платежей
             if payment_type == "stars":
-                product = parts[1]
-                user_id = int(parts[2])
-                stars_amount = total_amount  # Для Stars amount уже в правильном формате
-                
-                # Сохраняем информацию о Stars платеже
-                payment_data = {
-                    'user_id': user_id,
-                    'payment_type': 'stars',
-                    'product': product,
-                    'stars_amount': stars_amount,
-                    'currency': 'XTR',  # Telegram Stars
-                    'status': 'completed',
-                    'telegram_payment_charge_id': payment_info.get('telegram_payment_charge_id'),
-                    'provider_payment_charge_id': payment_info.get('provider_payment_charge_id'),
-                    'created_at': datetime.now()
-                }
-                
-                await self.subscription_service.save_payment(payment_data)
-                
-                # Активируем покупку
-                success = await self.process_stars_payment(user_id, product, stars_amount)
-                
-                if success:
-                    await self.bot.send_message(
-                        user_id,
-                        f"🎉 **Покупка завершена!**\n\n"
-                        f"⭐ Потрачено: {stars_amount} Stars\n"
-                        f"✅ Товар активирован!\n\n"
-                        f"📸 Можете использовать новые возможности!",
-                        parse_mode="Markdown"
-                    )
-                    return True
+                if len(parts) >= 4 and parts[1] == "subscription":
+                    # Обработка Stars подписок
+                    plan = parts[2]
+                    duration = int(parts[3])
+                    user_id = int(parts[4])
+                    stars_amount = total_amount  # Для Stars amount уже в правильном формате
+                    
+                    # Сохраняем информацию о Stars платеже
+                    payment_data = {
+                        'user_id': user_id,
+                        'payment_type': 'stars_subscription',
+                        'plan': plan,
+                        'duration': duration,
+                        'stars_amount': stars_amount,
+                        'currency': 'XTR',  # Telegram Stars
+                        'status': 'completed',
+                        'telegram_payment_charge_id': payment_info.get('telegram_payment_charge_id'),
+                        'provider_payment_charge_id': payment_info.get('provider_payment_charge_id'),
+                        'created_at': datetime.now()
+                    }
+                    
+                    await self.subscription_service.save_payment(payment_data)
+                    
+                    # Активируем подписку
+                    success = await self.subscription_service.activate_pro_subscription(user_id, duration)
+                    
+                    if success:
+                        await self.bot.send_message(
+                            user_id,
+                            "🎉 **Поздравляем!**\n\n"
+                            f"✅ Pro подписка активирована на {duration} мес.\n"
+                            f"⭐ Потрачено: {stars_amount} Stars\n\n"
+                            "🌟 **Теперь доступны:**\n"
+                            "• До 200 фото в месяц\n"
+                            "• Мульти-тарелка (несколько блюд на фото)\n"
+                            "• Детальная информация о витаминах\n"
+                            "• Экспорт в PDF/CSV\n"
+                            "• Синхронизация с Google Calendar\n"
+                            "• Приоритетная очередь\n\n"
+                            "📸 Отправьте фото еды для анализа!",
+                            parse_mode="Markdown"
+                        )
+                        return True
+                    else:
+                        logger.error(f"Не удалось активировать подписку для пользователя {user_id}")
+                        await self.bot.send_message(
+                            user_id,
+                            "❌ Произошла ошибка при активации подписки. "
+                            "Обратитесь в поддержку."
+                        )
+                        return False
                 else:
-                    logger.error(f"Не удалось активировать Stars покупку для пользователя {user_id}")
-                    await self.bot.send_message(
-                        user_id,
-                        "❌ Произошла ошибка при активации покупки. "
-                        "Обратитесь в поддержку."
-                    )
-                    return False
+                    # Обработка обычных Stars покупок (не подписок)
+                    product = parts[1]
+                    user_id = int(parts[2])
+                    stars_amount = total_amount  # Для Stars amount уже в правильном формате
+                    
+                    # Сохраняем информацию о Stars платеже
+                    payment_data = {
+                        'user_id': user_id,
+                        'payment_type': 'stars',
+                        'product': product,
+                        'stars_amount': stars_amount,
+                        'currency': 'XTR',  # Telegram Stars
+                        'status': 'completed',
+                        'telegram_payment_charge_id': payment_info.get('telegram_payment_charge_id'),
+                        'provider_payment_charge_id': payment_info.get('provider_payment_charge_id'),
+                        'created_at': datetime.now()
+                    }
+                    
+                    await self.subscription_service.save_payment(payment_data)
+                    
+                    # Активируем покупку
+                    success = await self.process_stars_payment(user_id, product, stars_amount)
+                    
+                    if success:
+                        await self.bot.send_message(
+                            user_id,
+                            f"🎉 **Покупка завершена!**\n\n"
+                            f"⭐ Потрачено: {stars_amount} Stars\n"
+                            f"✅ Товар активирован!\n\n"
+                            f"📸 Можете использовать новые возможности!",
+                            parse_mode="Markdown"
+                        )
+                        return True
+                    else:
+                        logger.error(f"Не удалось активировать Stars покупку для пользователя {user_id}")
+                        await self.bot.send_message(
+                            user_id,
+                            "❌ Произошла ошибка при активации покупки. "
+                            "Обратитесь в поддержку."
+                        )
+                        return False
             
             # Обработка обычных подписок (RUB)
             elif payment_type == "subscription":
@@ -248,11 +300,13 @@ class PaymentService:
             logger.error(f"Ошибка создания Stars счета: {e}", exc_info=True)
             error_msg = str(e)
             
-            # Специальная обработка для ошибки провайдера
+            # Специальная обработка для ошибок Stars платежей
             if "PAYMENT_PROVIDER_INVALID" in error_msg:
-                error_msg = "Провайдер платежей не настроен. Обратитесь к администратору для настройки Stars платежей в BotFather."
+                error_msg = "Stars платежи не настроены в BotFather. Нужно включить Stars в настройках бота."
             elif "Bad Request" in error_msg:
                 error_msg = f"Ошибка запроса к Telegram: {error_msg}"
+            elif "currency" in error_msg.lower():
+                error_msg = "Ошибка валюты. Проверьте настройки Stars в BotFather."
             
             return {"success": False, "error": error_msg}
 
@@ -372,25 +426,21 @@ class PaymentService:
         pricing = self.subscription_service.get_pricing_info()
         keyboard_buttons.extend([
             [InlineKeyboardButton(
-                text=f"💳 Pro месяц - {pricing['subscriptions']['pro_monthly']}₽",
+                text=f"⭐ Pro месяц - {pricing['stars']['pro_monthly']} Stars",
                 callback_data="buy_pro_1"
             )],
             [InlineKeyboardButton(
-                text=f"💳 Pro 3 мес - {pricing['subscriptions']['pro_quarterly']}₽ (-33%)",
+                text=f"⭐ Pro 3 мес - {pricing['stars']['pro_quarterly']} Stars (-33%)",
                 callback_data="buy_pro_3"
             )],
             [InlineKeyboardButton(
-                text=f"💳 Pro год - {pricing['subscriptions']['pro_yearly']}₽ (-50%)",
+                text=f"⭐ Pro год - {pricing['stars']['pro_yearly']} Stars (-50%)",
                 callback_data="buy_pro_12"
             )]
         ])
         
-        # Stars опции
+        # Кнопка отмены
         keyboard_buttons.extend([
-            [InlineKeyboardButton(
-                text="⭐ Или купить за Stars",
-                callback_data="stars_options"
-            )],
             [InlineKeyboardButton(
                 text="❌ Отмена",
                 callback_data="cancel_payment"
