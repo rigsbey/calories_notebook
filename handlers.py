@@ -10,7 +10,6 @@ from services.gemini_service import GeminiService
 from services.google_calendar import GoogleCalendarService
 from services.analysis_storage import analysis_storage
 from services.firebase_service import FirebaseService
-from services.timezone_service import TimezoneService
 from services.subscription_service import SubscriptionService
 from config import TEMP_DIR
 from utils import error_handler, format_nutrition_info, extract_meal_title
@@ -21,9 +20,6 @@ logger = logging.getLogger(__name__)
 class FoodAnalysisStates(StatesGroup):
     waiting_for_weight = State()
 
-class TimezoneStates(StatesGroup):
-    waiting_for_timezone = State()
-
 # Создаем клавиатуру с кнопками
 def get_main_keyboard():
     """Создает основную клавиатуру с кнопками"""
@@ -32,7 +28,7 @@ def get_main_keyboard():
             [KeyboardButton(text="📊 Итоги дня"), KeyboardButton(text="📈 Итоги недели")],
             [KeyboardButton(text="📸 Анализ еды"), KeyboardButton(text="📅 Календарь")],
             [KeyboardButton(text="⭐ Pro"), KeyboardButton(text="📊 Статус")],
-            [KeyboardButton(text="ℹ️ Помощь"), KeyboardButton(text="🌍 Часовой пояс")]
+            [KeyboardButton(text="ℹ️ Помощь")]
         ],
         resize_keyboard=True,
         one_time_keyboard=False
@@ -55,7 +51,6 @@ async def get_calendar_connect_keyboard(user_id: int):
 gemini_service = GeminiService()
 calendar_service = GoogleCalendarService()
 firebase_service = FirebaseService()
-timezone_service = TimezoneService()
 subscription_service = SubscriptionService()
 
 # Создаем роутер
@@ -808,58 +803,6 @@ async def status_button(message: Message):
     """Обработчик кнопки 'Статус'"""
     # Используем тот же обработчик, что и для команды /status
     await status_handler(message)
-
-@router.message(F.text == "🌍 Часовой пояс")
-@error_handler
-async def timezone_handler(message: Message, state: FSMContext):
-    """Обработчик настройки часового пояса"""
-    timezones = timezone_service.get_common_timezones()
-    
-    # Создаем клавиатуру с часовыми поясами
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[])
-    
-    # Добавляем по 2 часовых пояса в ряд
-    for i in range(0, len(timezones), 2):
-        row = []
-        for j in range(2):
-            if i + j < len(timezones):
-                tz = timezones[i + j]
-                tz_name = timezone_service.format_timezone_name(tz)
-                row.append(InlineKeyboardButton(
-                    text=tz_name,
-                    callback_data=f"timezone_{tz}"
-                ))
-        keyboard.inline_keyboard.append(row)
-    
-    await message.answer(
-        "🌍 Выберите ваш часовой пояс:\n\n"
-        "Это поможет боту отправлять вам уведомления в 20:00 по вашему местному времени.",
-        reply_markup=keyboard
-    )
-    await state.set_state(TimezoneStates.waiting_for_timezone)
-
-@router.callback_query(F.data.startswith("timezone_"))
-@error_handler
-async def timezone_callback(callback: CallbackQuery, state: FSMContext):
-    """Обработчик выбора часового пояса"""
-    timezone = callback.data.replace("timezone_", "")
-    user_id = callback.from_user.id
-    
-    # Сохраняем часовой пояс пользователя
-    await firebase_service.create_or_update_user(
-        user_id=user_id,
-        username=callback.from_user.username,
-        first_name=callback.from_user.first_name,
-        last_name=callback.from_user.last_name,
-        timezone=timezone
-    )
-    
-    tz_name = timezone_service.format_timezone_name(timezone)
-    await callback.message.edit_text(
-        f"✅ Часовой пояс установлен: {tz_name}\n\n"
-        f"Теперь вы будете получать уведомления в 20:00 по вашему местному времени."
-    )
-    await state.clear()
 
 @router.message(F.text == "ℹ️ Помощь")
 @error_handler

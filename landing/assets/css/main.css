@@ -1,230 +1,265 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-
 /* Custom CSS для дополнительной оптимизации */
-@layer base {
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  html {
-    scroll-behavior: smooth;
-  }
+html {
+  scroll-behavior: smooth;
+}
 
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    line-height: 1.5;
-    color: #1a1a1a;
-    background: #ffffff;
-    min-height: 100vh;
-    font-weight: 400;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  color: #1a1a1a;
+  background: #ffffff;
+  min-height: 100vh;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  /* Оптимизация для Core Web Vitals */
-  img {
-    max-width: 100%;
-    height: auto;
-    loading: lazy;
-  }
+/* Оптимизация для Core Web Vitals */
+img {
+  max-width: 100%;
+  height: auto;
+  loading: lazy;
+}
 
-  /* Улучшение читаемости */
-  h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-    font-weight: 700;
-  }
+/* Улучшение читаемости */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  font-weight: 700;
+}
 
-  /* Анимации для лучшего UX */
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-in-out;
-  }
+/* Анимации для лучшего UX */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
 
-  .animate-slide-up {
-    animation: slideUp 0.6s ease-out;
-  }
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Оптимизация для мобильных устройств */
-  @media (max-width: 768px) {
-    body {
-      font-size: 16px;
-    }
-  }
-
-  /* Улучшение доступности */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  /* Фокус для клавиатурной навигации */
-  a:focus,
-  button:focus {
-    outline: 2px solid #667eea;
-    outline-offset: 2px;
-  }
-
-  /* Улучшение производительности */
-  .will-change-transform {
-    will-change: transform;
-  }
-
-  .will-change-opacity {
-    will-change: opacity;
+  to {
+    opacity: 1;
   }
 }
 
-@layer components {
-  /* Компоненты для переиспользования */
-  .container {
-    @apply max-w-6xl mx-auto px-5;
-  }
-
-  .section-padding {
-    @apply py-16 px-5;
-  }
-
-  .card {
-    @apply bg-white rounded-2xl shadow-xl p-8;
-  }
-
-  .gradient-text {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .gradient-text-tydal {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .gradient-bg-tydal {
-    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  }
-
-  .gradient-bg-hero-tydal {
-    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-  }
-
-  .gradient-bg-green {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  }
-
-  .tydal-green {
-    color: #10b981;
-  }
-
-  .bg-tydal-green {
-    background-color: #10b981;
-  }
-
-  .border-tydal-green {
-    border-color: #10b981;
-  }
-
-  .btn-primary {
-    @apply text-white px-6 py-3 rounded-lg font-medium transition-all duration-200;
-    background: #10b981;
-    border: none;
-    font-size: 16px;
-    line-height: 1.5;
-  }
-
-  .btn-primary:hover {
-    background: #059669;
-    transform: translateY(-1px);
-  }
-
-  .btn-secondary {
-    @apply text-gray-600 px-6 py-3 rounded-lg font-medium transition-all duration-200 border border-gray-200;
-    background: #ffffff;
-    font-size: 16px;
-    line-height: 1.5;
-  }
-
-  .btn-secondary:hover {
-    background: #f9fafb;
-    border-color: #d1d5db;
-    transform: translateY(-1px);
-  }
-
-  .btn-tydal-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white transition-all duration-200 rounded-lg;
-    background: #10b981;
-    border: none;
-  }
-
-  .btn-tydal-primary:hover {
-    background: #059669;
-    transform: translateY(-1px);
-  }
-
-  .btn-tydal-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 text-base font-medium text-gray-700 transition-all duration-200 border border-gray-300 rounded-lg;
-    background: #ffffff;
-  }
-
-  .btn-tydal-secondary:hover {
-    background: #f9fafb;
-    border-color: #d1d5db;
-  }
-}
-
-@layer utilities {
-  /* Утилиты для производительности */
-  .gpu-accelerated {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-  }
-
-  .smooth-scroll {
-    scroll-behavior: smooth;
-  }
-
-  /* Утилиты для анимаций */
-  .animate-on-scroll {
+@keyframes slideUp {
+  from {
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
   }
-
-  .animate-on-scroll.visible {
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
+/* Оптимизация для мобильных устройств */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Улучшение доступности */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Фокус для клавиатурной навигации */
+a:focus,
+button:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* Улучшение производительности */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Компоненты для переиспользования */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-padding {
+  padding: 64px 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 32px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-tydal {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-bg-tydal {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.gradient-bg-hero-tydal {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.gradient-bg-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.tydal-green {
+  color: #10b981;
+}
+
+.bg-tydal-green {
+  background-color: #10b981;
+}
+
+.border-tydal-green {
+  border-color: #10b981;
+}
+
+.btn-primary {
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+  background: #10b981;
+  border: none;
+  font-size: 16px;
+  line-height: 1.5;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  color: #6b7280;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 16px;
+  line-height: 1.5;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.btn-tydal-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  transition: all 0.2s;
+  border-radius: 8px;
+  background: #10b981;
+  border: none;
+  text-decoration: none;
+}
+
+.btn-tydal-primary:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-tydal-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  text-decoration: none;
+}
+
+.btn-tydal-secondary:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* Утилиты для производительности */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Утилиты для анимаций */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Дополнительные утилиты */
+.w-full { width: 100%; }
+.h-auto { height: auto; }
+.h-48 { height: 192px; }
+.object-cover { object-fit: cover; }
+.rounded-lg { border-radius: 8px; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }

@@ -17,7 +17,12 @@
         <div class="posts-grid">
           <article class="post-card" v-for="post in posts" :key="post.slug">
             <div class="post-image">
-              <img :src="post.image" :alt="post.title" />
+              <img 
+                :src="post.image" 
+                :alt="post.title" 
+                loading="lazy"
+                class="w-full h-48 object-cover rounded-lg"
+              />
             </div>
             <div class="post-content">
               <div class="post-meta">
@@ -45,15 +50,20 @@
 // SEO мета-теги для блога
 useSeoMeta({
   title: 'Блог о питании и здоровье | Calories Bot',
-  description: 'Полезные статьи о правильном питании, подсчете калорий и здоровом образе жизни',
-  keywords: 'nutrition blog, calorie counting, healthy eating, food analysis, macros, nutrition diary, Telegram bot',
+  description: 'Полезные статьи о правильном питании, подсчете калорий и здоровом образе жизни. ИИ-анализ еды и автоматический дневник питания.',
   ogTitle: 'Блог о питании и здоровье | Calories Bot',
   ogDescription: 'Полезные статьи о правильном питании, подсчете калорий и здоровом образе жизни',
-  ogImage: 'https://calories.toxiguard.site/blog-og.jpg'
+  ogImage: 'https://calories.toxiguard.site/blog-og.jpg',
+  ogUrl: 'https://calories.toxiguard.site/blog',
+  robots: 'index, follow',
+  author: 'Calories Bot'
 })
 
-// JSON-LD для блога
+// Canonical URL и JSON-LD для блога
 useHead({
+  link: [
+    { rel: 'canonical', href: 'https://calories.toxiguard.site/blog' }
+  ],
   script: [
     {
       type: 'application/ld+json',

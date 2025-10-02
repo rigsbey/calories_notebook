@@ -10,7 +10,12 @@
       <div class="container">
         <div class="footer-content">
           <div class="footer-brand">
-            <img src="/logo.jpg" alt="Calories Bot" class="brand-icon" />
+            <img 
+              src="/logo.jpg" 
+              alt="Calories Bot" 
+              class="brand-icon"
+              loading="eager"
+            />
             <span class="brand-text">Calories Notebook Bot</span>
           </div>
           <div class="footer-links">

@@ -1,0 +1,1 @@
+{"version":3,"file":"virtual_public-CEu87jeG.js","sources":["../../../../virtual:public?%2Flogo.jpg"],"sourcesContent":["import { publicAssetsURL } from '#internal/nuxt/paths';export default publicAssetsURL(\"/logo.jpg\")"],"names":[],"mappings":";AAAuD,MAAA,aAAe,gBAAgB,WAAW;"}

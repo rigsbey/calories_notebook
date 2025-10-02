@@ -41,7 +41,7 @@
               </div>
               <div class="feature-item disabled">
                 <span class="feature-check">✗</span>
-                Экспорт и календарь
+                Экспорт данных
               </div>
             </div>
           </div>
@@ -84,7 +84,7 @@
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
-                Экспорт в Google Calendar
+                Экспорт в PDF/CSV
               </div>
               <div class="feature-item">
                 <span class="feature-check">✓</span>
@@ -176,7 +176,7 @@
           </div>
         </div>
         <p class="stars-note">
-          Все функции работают в реальном времени и синхронизируются с вашим Google Calendar
+          Все функции работают в реальном времени и сохраняют данные локально
         </p>
       </div>
     </div>

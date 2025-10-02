@@ -3,7 +3,12 @@
     <div class="header-container">
       <div class="header-left">
         <div class="logo">
-          <img src="/logo.jpg" alt="Calories Bot" class="logo-icon" />
+          <img 
+            src="/logo.jpg" 
+            alt="Calories Bot" 
+            class="logo-icon"
+            loading="eager"
+          />
           <span class="logo-text">Calories Bot</span>
         </div>
       </div>

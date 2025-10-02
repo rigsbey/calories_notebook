@@ -4,24 +4,19 @@ export default defineNuxtConfig({
   
   // Модули
   modules: [
-    '@nuxtjs/tailwindcss'
   ],
 
-  // Tailwind CSS конфигурация
-  tailwindcss: {
-    cssPath: '~/assets/css/main.css',
-    configPath: 'tailwind.config.js'
-  },
+
 
   // App конфигурация
   app: {
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'Telegram-бот для анализа питания | Подсчет калорий по фото | @caloriesnote_bot',
+      title: 'Telegram-бот для подсчета калорий по фото | Calories Bot',
       meta: [
-        { name: 'description', content: '🤖 Telegram-бот для анализа питания. Отправь фото еды - получи точный расчет КБЖУ, калорий и витаминов за 5 секунд. Автоматическое сохранение в Google Calendar. Бесплатно!' },
-        { name: 'keywords', content: 'telegram бот, анализ питания, подсчет калорий, КБЖУ, фото еды, диета, похудение, здоровое питание, калории, белки, жиры, углеводы, витамины' },
+        { name: 'description', content: 'Telegram-бот для анализа питания. Отправь фото еды - получи расчет КБЖУ и калорий за 5 секунд. Автоматическое сохранение данных. Бесплатно!' },
+        { name: 'keywords', content: 'telegram бот подсчет калорий, анализ питания по фото, КБЖУ калькулятор' },
         { name: 'author', content: 'Calories Notebook Bot' },
         { name: 'robots', content: 'index, follow' },
         { name: 'googlebot', content: 'index, follow' },
@@ -30,8 +25,6 @@ export default defineNuxtConfig({
         { name: 'msapplication-TileColor', content: '#667eea' }
       ],
           link: [
-            { rel: 'canonical', href: 'https://calories.toxiguard.site/' },
-            
             // Favicons
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
             { rel: 'icon', type: 'image/png', href: '/favicon.png' },
@@ -100,7 +93,7 @@ export default defineNuxtConfig({
   // CSS конфигурация
   css: ['~/assets/css/main.css'],
   
-  // Vite конфигурация для правильной обработки CSS
+  // Vite конфигурация для оптимизации производительности
   vite: {
     css: {
       preprocessorOptions: {
@@ -108,15 +101,32 @@ export default defineNuxtConfig({
           charset: false
         }
       }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['vue', 'vue-router']
+          }
+        }
+      }
+    },
+    optimizeDeps: {
+      include: ['vue', 'vue-router']
     }
   },
 
-  // Рендеринг
+  // Рендеринг и оптимизация
   ssr: true,
   nitro: {
     preset: 'static',
     prerender: {
       routes: ['/', '/privacy', '/terms', '/blog']
+    },
+    compressPublicAssets: true,
+    minify: true,
+    experimental: {
+      wasm: true
     }
   },
 

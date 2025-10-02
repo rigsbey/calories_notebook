@@ -1,0 +1,346 @@
+import { _ as __nuxt_component_0 } from "./HeaderSection-Bskbvj7i.js";
+import { ref, mergeProps, useSSRContext, unref } from "vue";
+import { ssrRenderAttrs, ssrRenderList, ssrInterpolate, ssrRenderAttr, ssrRenderClass, ssrRenderComponent } from "vue/server-renderer";
+import "/Users/kamil/PycharmProjects/calories_notebook/landing/node_modules/hookable/dist/index.mjs";
+import { _ as _export_sfc } from "../server.mjs";
+import { a as useSeoMeta, u as useHead } from "./v3-D915_2dV.js";
+import "./virtual_public-CEu87jeG.js";
+import "#internal/nuxt/paths";
+import "ofetch";
+import "/Users/kamil/PycharmProjects/calories_notebook/landing/node_modules/unctx/dist/index.mjs";
+import "/Users/kamil/PycharmProjects/calories_notebook/landing/node_modules/h3/dist/index.mjs";
+import "vue-router";
+import "/Users/kamil/PycharmProjects/calories_notebook/landing/node_modules/radix3/dist/index.mjs";
+import "/Users/kamil/PycharmProjects/calories_notebook/landing/node_modules/defu/dist/defu.mjs";
+import "/Users/kamil/PycharmProjects/calories_notebook/landing/node_modules/ufo/dist/index.mjs";
+import "/Users/kamil/PycharmProjects/calories_notebook/landing/node_modules/@unhead/vue/dist/index.mjs";
+const _sfc_main$6 = {
+  __name: "HeroSection",
+  __ssrInlineRender: true,
+  setup(__props) {
+    ref(325);
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<section${ssrRenderAttrs(mergeProps({ class: "hero" }, _attrs))} data-v-3aa2d8c2><div class="container" data-v-3aa2d8c2><div class="badge" data-v-3aa2d8c2> 🍽️ TELEGRAM-БОТ ДЛЯ ПОДСЧЕТА КАЛОРИЙ </div><h1 class="hero-title" data-v-3aa2d8c2> Сфотографируй еду → получи точный расчет за 5 секунд </h1><p class="hero-subtitle" data-v-3aa2d8c2> Калории, БЖУ и витамины автоматически сохраняются в Google Calendar. Бесплатно и без ручного ввода. </p><div class="cta-container" data-v-3aa2d8c2><a href="https://t.me/caloriesnote_bot" class="cta-button" data-v-3aa2d8c2> 🚀 Запустить бота в Telegram </a></div><div class="social-proof" data-v-3aa2d8c2><div class="stars" data-v-3aa2d8c2><span class="star filled" data-v-3aa2d8c2>★</span><span class="star filled" data-v-3aa2d8c2>★</span><span class="star filled" data-v-3aa2d8c2>★</span><span class="star filled" data-v-3aa2d8c2>★</span><span class="star half-filled" data-v-3aa2d8c2>★</span></div><div class="proof-text" data-v-3aa2d8c2>Используют 1000+ человек для контроля питания</div></div></div></section>`);
+    };
+  }
+};
+const _sfc_setup$6 = _sfc_main$6.setup;
+_sfc_main$6.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/HeroSection.vue");
+  return _sfc_setup$6 ? _sfc_setup$6(props, ctx) : void 0;
+};
+const __nuxt_component_1 = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-3aa2d8c2"]]);
+const _sfc_main$5 = {
+  __name: "HowItWorksSection",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const steps = [
+      {
+        title: "📸 Сфотографируй еду",
+        description: "Любое блюдо — от салата до пиццы. Просто отправь фото в Telegram.",
+        demoText: "📸 Фото загружено",
+        screenshot: "/images/step1-photo.jpg"
+      },
+      {
+        title: "⚡ Получи анализ",
+        description: "Калории, БЖУ и витамины за 5 секунд. Никакого ручного ввода.",
+        demoText: "⚡ Анализ готов",
+        screenshot: "/images/step2-analysis.jpg"
+      },
+      {
+        title: "📅 Сохрани в календарь",
+        description: "Результат автоматически попадает в Google Calendar.",
+        demoText: "📅 Сохранено",
+        screenshot: "/images/step3-calendar.jpg"
+      }
+    ];
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<section${ssrRenderAttrs(mergeProps({
+        class: "how-it-works",
+        id: "how-it-works"
+      }, _attrs))} data-v-4976400f><div class="container" data-v-4976400f><div class="section-header" data-v-4976400f><h2 class="section-title" data-v-4976400f>Как это работает</h2><p class="section-subtitle" data-v-4976400f>Всего 3 простых шага до точного подсчета калорий</p></div><div class="steps" data-v-4976400f><!--[-->`);
+      ssrRenderList(steps, (step, index) => {
+        _push(`<div class="step" data-v-4976400f><div class="step-number" data-v-4976400f>${ssrInterpolate(index + 1)}</div><div class="step-content" data-v-4976400f><h3 class="step-title" data-v-4976400f>${ssrInterpolate(step.title)}</h3><p class="step-description" data-v-4976400f>${ssrInterpolate(step.description)}</p><div class="step-demo" data-v-4976400f>`);
+        if (step.screenshot) {
+          _push(`<div class="demo-screenshot" data-v-4976400f><img${ssrRenderAttr("src", step.screenshot)}${ssrRenderAttr("alt", step.title)} class="screenshot-image" loading="lazy" data-v-4976400f></div>`);
+        } else {
+          _push(`<div class="demo-placeholder" data-v-4976400f>${ssrInterpolate(step.demoText)}</div>`);
+        }
+        _push(`</div></div></div>`);
+      });
+      _push(`<!--]--></div></div></section>`);
+    };
+  }
+};
+const _sfc_setup$5 = _sfc_main$5.setup;
+_sfc_main$5.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/HowItWorksSection.vue");
+  return _sfc_setup$5 ? _sfc_setup$5(props, ctx) : void 0;
+};
+const __nuxt_component_2 = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-4976400f"]]);
+const _sfc_main$4 = {
+  __name: "FeaturesSection",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const features = [
+      {
+        icon: "🤖",
+        title: "ИИ определяет продукты по фото",
+        description: "Любое блюдо — от салата до пиццы. Просто сфотографируй и отправь.",
+        available: "all"
+      },
+      {
+        icon: "⚡",
+        title: "Результат за 5 секунд",
+        description: "Калории, БЖУ и витамины мгновенно. Никакого ручного ввода.",
+        available: "all"
+      },
+      {
+        icon: "📊",
+        title: "Базовый анализ КБЖУ",
+        description: "Калории, белки, жиры и углеводы для каждого блюда.",
+        available: "lite"
+      },
+      {
+        icon: "🍽️",
+        title: "Мульти-тарелка",
+        description: "Анализ нескольких блюд на одном фото. Только в Pro.",
+        available: "pro"
+      },
+      {
+        icon: "🧬",
+        title: "Детальные витамины + советы",
+        description: "Микронутриенты, дефициты и умные рекомендации. Только в Pro.",
+        available: "pro"
+      },
+      {
+        icon: "📅",
+        title: "Синхронизация с Google Calendar",
+        description: "Автосохранение всех анализов в календарь. Безопасный OAuth с минимальными разрешениями. Только в Pro.",
+        available: "pro"
+      },
+      {
+        icon: "📈",
+        title: "Полные отчеты за неделю",
+        description: "Детальная аналитика и трекинг прогресса. Только в Pro.",
+        available: "pro"
+      },
+      {
+        icon: "📄",
+        title: "Экспорт в PDF/CSV",
+        description: "Скачивай данные для дальнейшего анализа. Только в Pro.",
+        available: "pro"
+      },
+      {
+        icon: "✏️",
+        title: "Исправление результатов",
+        description: "Если что-то не так — просто напиши боту, и он исправит.",
+        available: "all"
+      }
+    ];
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<section${ssrRenderAttrs(mergeProps({
+        class: "features",
+        id: "features"
+      }, _attrs))} data-v-2d245531><div class="container" data-v-2d245531><div class="section-header" data-v-2d245531><h2 class="section-title" data-v-2d245531>Что умеет бот</h2><p class="section-subtitle" data-v-2d245531>Все необходимое для контроля питания в одном Telegram-боте</p></div><div class="features-grid" data-v-2d245531><!--[-->`);
+      ssrRenderList(features, (feature, index) => {
+        _push(`<div class="${ssrRenderClass([{
+          "pro-feature": feature.available === "pro",
+          "lite-feature": feature.available === "lite",
+          "all-feature": feature.available === "all"
+        }, "feature-card"])}" data-v-2d245531><div class="feature-icon" data-v-2d245531>${ssrInterpolate(feature.icon)}</div><h3 class="feature-title" data-v-2d245531>${ssrInterpolate(feature.title)}</h3><p class="feature-description" data-v-2d245531>${ssrInterpolate(feature.description)}</p>`);
+        if (feature.available === "pro") {
+          _push(`<div class="feature-badge" data-v-2d245531>Pro</div>`);
+        } else {
+          _push(`<!---->`);
+        }
+        if (feature.available === "lite") {
+          _push(`<div class="feature-badge lite-badge" data-v-2d245531>Lite</div>`);
+        } else {
+          _push(`<!---->`);
+        }
+        _push(`</div>`);
+      });
+      _push(`<!--]--></div></div></section>`);
+    };
+  }
+};
+const _sfc_setup$4 = _sfc_main$4.setup;
+_sfc_main$4.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/FeaturesSection.vue");
+  return _sfc_setup$4 ? _sfc_setup$4(props, ctx) : void 0;
+};
+const __nuxt_component_3 = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-2d245531"]]);
+const _sfc_main$3 = {
+  __name: "PricingSection",
+  __ssrInlineRender: true,
+  setup(__props) {
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<section${ssrRenderAttrs(mergeProps({
+        class: "pricing",
+        id: "pricing"
+      }, _attrs))} data-v-031fd903><div class="container" data-v-031fd903><div class="section-header" data-v-031fd903><h2 class="section-title" data-v-031fd903>Выберите свой тарифный план</h2><p class="section-subtitle" data-v-031fd903>Начните с бесплатного Lite или получите все функции Pro</p></div><div class="pricing-grid" data-v-031fd903><div class="pricing-card lite-card" data-v-031fd903><div class="pricing-badge" data-v-031fd903>Бесплатно</div><div class="pricing-plan" data-v-031fd903><h3 class="plan-name" data-v-031fd903>Lite</h3><div class="plan-price" data-v-031fd903><span class="price" data-v-031fd903>0₽</span><span class="period" data-v-031fd903>/навсегда</span></div><p class="plan-description" data-v-031fd903>Для знакомства с ботом</p><div class="plan-features" data-v-031fd903><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> 5 фото в день </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Базовый анализ КБЖУ </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Краткий дневной отчет </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> История 7 дней </div><div class="feature-item disabled" data-v-031fd903><span class="feature-check" data-v-031fd903>✗</span> Мульти-тарелка </div><div class="feature-item disabled" data-v-031fd903><span class="feature-check" data-v-031fd903>✗</span> Экспорт и календарь </div></div></div><a href="https://t.me/caloriesnote_bot" class="cta-button lite-button" data-v-031fd903> 🚀 Попробовать бесплатно </a></div><div class="pricing-card pro-card" data-v-031fd903><div class="pricing-badge pro-badge" data-v-031fd903>Популярный</div><div class="pricing-plan" data-v-031fd903><h3 class="plan-name" data-v-031fd903>Pro</h3><div class="plan-price" data-v-031fd903><span class="price" data-v-031fd903>399₽</span><span class="period" data-v-031fd903>/месяц</span></div><div class="plan-savings" data-v-031fd903> Экономия 50% при годовой оплате </div><p class="plan-description" data-v-031fd903>Для активного контроля питания</p><div class="plan-features" data-v-031fd903><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Безлимитные фото </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Полный анализ КБЖУ + витамины </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Мульти-тарелка </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Экспорт в Google Calendar </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Детальные отчеты </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> История без ограничений </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Приоритетная поддержка </div></div></div><a href="https://t.me/caloriesnote_bot?start=pro" class="cta-button pro-button" data-v-031fd903> ⭐ 7 дней Pro бесплатно </a></div><div class="pricing-card annual-card" data-v-031fd903><div class="pricing-badge annual-badge" data-v-031fd903>Выгодно</div><div class="pricing-plan" data-v-031fd903><h3 class="plan-name" data-v-031fd903>Pro Год</h3><div class="plan-price" data-v-031fd903><span class="price" data-v-031fd903>2990₽</span><span class="period" data-v-031fd903>/год</span></div><div class="plan-savings" data-v-031fd903> Экономия 50% (249₽/месяц) </div><p class="plan-description" data-v-031fd903>Лучшее предложение для долгосрочного использования</p><div class="plan-features" data-v-031fd903><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Все функции Pro </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Экономия 1200₽ в год </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Приоритетная поддержка </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Ранний доступ к новым функциям </div><div class="feature-item" data-v-031fd903><span class="feature-check" data-v-031fd903>✓</span> Персональные рекомендации </div></div></div><a href="https://t.me/caloriesnote_bot?start=pro_annual" class="cta-button annual-button" data-v-031fd903> 💰 Сэкономить 1200₽ </a></div></div><div class="additional-features" data-v-031fd903><h3 class="features-title" data-v-031fd903>Дополнительные возможности</h3><div class="stars-features" data-v-031fd903><div class="star-feature" data-v-031fd903><span class="star-icon" data-v-031fd903>💫</span><span class="star-text" data-v-031fd903>ИИ-анализ с точностью 95%</span></div><div class="star-feature" data-v-031fd903><span class="star-icon" data-v-031fd903>🍽️</span><span class="star-text" data-v-031fd903>База из 50,000+ блюд</span></div><div class="star-feature" data-v-031fd903><span class="star-icon" data-v-031fd903>📄</span><span class="star-text" data-v-031fd903>Детальные отчеты и статистика</span></div></div><p class="stars-note" data-v-031fd903> Все функции работают в реальном времени и синхронизируются с вашим Google Calendar </p></div></div></section>`);
+    };
+  }
+};
+const _sfc_setup$3 = _sfc_main$3.setup;
+_sfc_main$3.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/PricingSection.vue");
+  return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
+};
+const __nuxt_component_4 = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-031fd903"]]);
+const _sfc_main$2 = {
+  __name: "CtaSection",
+  __ssrInlineRender: true,
+  setup(__props) {
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<section${ssrRenderAttrs(mergeProps({
+        class: "cta",
+        "aria-labelledby": "cta-heading"
+      }, _attrs))} data-v-9b204f85><div class="container" data-v-9b204f85><div class="cta-content" data-v-9b204f85><h2 id="cta-heading" class="cta-title" data-v-9b204f85> Готов начать контролировать питание? </h2><p class="cta-subtitle" data-v-9b204f85> Запусти бота прямо сейчас и получи первый анализ за 5 секунд </p><div class="cta-buttons" data-v-9b204f85><a href="https://t.me/caloriesnote_bot" class="cta-button primary" data-v-9b204f85> 🚀 Попробовать бесплатно </a><a href="https://t.me/caloriesnote_bot?start=pro" class="cta-button secondary" data-v-9b204f85> ⭐ 7 дней Pro бесплатно </a></div><div class="cta-features" data-v-9b204f85><div class="cta-feature" data-v-9b204f85><span class="feature-icon" data-v-9b204f85>⚡</span><span class="feature-text" data-v-9b204f85>Результат за 5 секунд</span></div><div class="cta-feature" data-v-9b204f85><span class="feature-icon" data-v-9b204f85>📱</span><span class="feature-text" data-v-9b204f85>Работает в Telegram</span></div><div class="cta-feature" data-v-9b204f85><span class="feature-icon" data-v-9b204f85>🔒</span><span class="feature-text" data-v-9b204f85>Безопасно и конфиденциально</span></div></div><div class="cta-legal" data-v-9b204f85><p class="legal-text" data-v-9b204f85> Используя сервис, вы соглашаетесь с нашими условиями использования и политикой конфиденциальности </p></div></div></div></section>`);
+    };
+  }
+};
+const _sfc_setup$2 = _sfc_main$2.setup;
+_sfc_main$2.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/CtaSection.vue");
+  return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
+};
+const __nuxt_component_5 = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-9b204f85"]]);
+const _sfc_main$1 = {
+  __name: "FaqSection",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const openFaq = ref(null);
+    const faqs = [
+      {
+        question: "Как работает бот?",
+        answer: "Просто отправьте фото еды в Telegram. ИИ определит продукты, рассчитает калории и БЖУ за 5 секунд. Результат автоматически сохранится в Google Calendar (если подключен)."
+      },
+      {
+        question: "Насколько точный анализ?",
+        answer: "Точность составляет 85-90% для большинства блюд. Бот использует Google Gemini AI, который обучен на миллионах изображений еды. Для лучших результатов фотографируйте еду сверху при хорошем освещении."
+      },
+      {
+        question: "Сколько стоит использование?",
+        answer: "Lite план бесплатный навсегда (5 фото в день). Pro план стоит 399₽/месяц с 7-дневным бесплатным периодом. Годовая подписка - 2999₽ (экономия 1798₽)."
+      },
+      {
+        question: "Как подключить Google Calendar?",
+        answer: 'В боте нажмите "Настройки" → "Подключить календарь". Выполните OAuth авторизацию с минимальными разрешениями. Все анализы будут автоматически сохраняться в календарь.'
+      },
+      {
+        question: "Сколько фото можно отправить?",
+        answer: "Lite: 5 фото в день. Pro: до 200 фото в месяц. Можно докупать дополнительные анализы за Telegram Stars (99⭐ за 10 анализов)."
+      },
+      {
+        question: "Можно ли исправить результат?",
+        answer: 'Да! Если бот ошибся, просто напишите ему "исправь" и опишите, что не так. Он пересчитает анализ с учетом ваших правок.'
+      }
+    ];
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<section${ssrRenderAttrs(mergeProps({
+        class: "faq",
+        "aria-labelledby": "faq-heading"
+      }, _attrs))} data-v-4c6ec7be><div class="container" data-v-4c6ec7be><h2 id="faq-heading" class="faq-title" data-v-4c6ec7be> Часто задаваемые вопросы </h2><div class="faq-container" data-v-4c6ec7be><!--[-->`);
+      ssrRenderList(faqs, (faq, index) => {
+        _push(`<div class="${ssrRenderClass([{ "faq-item--open": unref(openFaq) === index }, "faq-item"])}" data-v-4c6ec7be><h3 class="faq-question" data-v-4c6ec7be>${ssrInterpolate(faq.question)} <span class="faq-icon" data-v-4c6ec7be>${ssrInterpolate(unref(openFaq) === index ? "−" : "+")}</span></h3><div class="${ssrRenderClass([{ "faq-answer--open": unref(openFaq) === index }, "faq-answer"])}" data-v-4c6ec7be><p data-v-4c6ec7be>${ssrInterpolate(faq.answer)}</p></div></div>`);
+      });
+      _push(`<!--]--></div></div></section>`);
+    };
+  }
+};
+const _sfc_setup$1 = _sfc_main$1.setup;
+_sfc_main$1.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/FaqSection.vue");
+  return _sfc_setup$1 ? _sfc_setup$1(props, ctx) : void 0;
+};
+const __nuxt_component_6 = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-4c6ec7be"]]);
+const _sfc_main = {
+  __name: "index",
+  __ssrInlineRender: true,
+  setup(__props) {
+    useSeoMeta({
+      title: "Calories Bot - ИИ-бот для анализа питания | Подсчет калорий по фото | @caloriesnote_bot",
+      ogTitle: "Calories Bot - ИИ-бот для анализа питания | Подсчет калорий по фото",
+      description: "🤖 ИИ-бот для анализа питания. Сфотографируй еду - получи точный расчет КБЖУ, калорий и витаминов за 5 секунд. Автоматическое сохранение в Google Calendar. Бесплатно!",
+      ogDescription: "Сфотографируй еду - получи точный анализ КБЖУ, калорий и витаминов за 5 секунд. Автоматическое сохранение в Google Calendar.",
+      ogImage: "https://calories.toxiguard.site/og-image.jpg",
+      ogImageAlt: "Calories Bot - ИИ-анализ питания по фото",
+      twitterCard: "summary_large_image",
+      twitterImage: "https://calories.toxiguard.site/og-image.jpg",
+      twitterTitle: "Calories Bot - ИИ-бот для анализа питания | Подсчет калорий по фото",
+      twitterDescription: "Сфотографируй еду - получи точный анализ КБЖУ, калорий и витаминов за 5 секунд. Автоматическое сохранение в Google Calendar.",
+      keywords: "telegram бот, анализ питания, подсчет калорий, КБЖУ, фото еды, диета, похудение, здоровое питание, калории, белки, жиры, углеводы, витамины, ИИ",
+      author: "Calories Bot",
+      robots: "index, follow",
+      googlebot: "index, follow"
+    });
+    useHead({
+      script: [
+        {
+          type: "application/ld+json",
+          innerHTML: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "Calories Notebook Bot",
+            "description": "Telegram-бот для анализа питания по фотографии еды",
+            "url": "https://t.me/caloriesnote_bot",
+            "applicationCategory": "HealthApplication",
+            "operatingSystem": "Telegram",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "RUB"
+            },
+            "featureList": [
+              "Анализ фото еды",
+              "Расчет КБЖУ и калорий",
+              "Определение витаминов",
+              "Сохранение в Google Calendar",
+              "Отчеты по питанию"
+            ]
+          })
+        }
+      ]
+    });
+    return (_ctx, _push, _parent, _attrs) => {
+      const _component_HeaderSection = __nuxt_component_0;
+      const _component_HeroSection = __nuxt_component_1;
+      const _component_HowItWorksSection = __nuxt_component_2;
+      const _component_FeaturesSection = __nuxt_component_3;
+      const _component_PricingSection = __nuxt_component_4;
+      const _component_CtaSection = __nuxt_component_5;
+      const _component_FaqSection = __nuxt_component_6;
+      _push(`<div${ssrRenderAttrs(_attrs)}>`);
+      _push(ssrRenderComponent(_component_HeaderSection, null, null, _parent));
+      _push(ssrRenderComponent(_component_HeroSection, null, null, _parent));
+      _push(ssrRenderComponent(_component_HowItWorksSection, null, null, _parent));
+      _push(`<div id="features">`);
+      _push(ssrRenderComponent(_component_FeaturesSection, null, null, _parent));
+      _push(`</div><div id="pricing">`);
+      _push(ssrRenderComponent(_component_PricingSection, null, null, _parent));
+      _push(`</div>`);
+      _push(ssrRenderComponent(_component_CtaSection, null, null, _parent));
+      _push(`<div id="faq">`);
+      _push(ssrRenderComponent(_component_FaqSection, null, null, _parent));
+      _push(`</div></div>`);
+    };
+  }
+};
+const _sfc_setup = _sfc_main.setup;
+_sfc_main.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("pages/index.vue");
+  return _sfc_setup ? _sfc_setup(props, ctx) : void 0;
+};
+export {
+  _sfc_main as default
+};
+//# sourceMappingURL=index-B211rtn7.js.map

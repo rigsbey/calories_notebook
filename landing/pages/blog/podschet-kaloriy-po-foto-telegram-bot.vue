@@ -32,17 +32,17 @@
 
           <h2>Почему это важно</h2>
           
-          <h3>Контроль веса</h3>
+          <h2>Контроль веса</h2>
           <p>
             Точный подсчет калорий является основой для контроля веса. Исследования показывают, что люди, которые ведут дневник питания, теряют в два раза больше веса, чем те, кто этого не делает.
           </p>
 
-          <h3>Баланс макронутриентов</h3>
+          <h2>Баланс макронутриентов</h2>
           <p>
             Правильное соотношение белков, жиров и углеводов критически важно для здоровья. ИИ-анализ помогает определить не только калорийность, но и состав блюда.
           </p>
 
-          <h3>Витамины и микроэлементы</h3>
+          <h2>Витамины и микроэлементы</h2>
           <p>
             Современные системы анализа могут определить содержание витаминов и микроэлементов в блюде, что помогает поддерживать сбалансированное питание.
           </p>
@@ -65,7 +65,12 @@
           </ol>
 
           <div class="article-image">
-            <img src="/blog/podschet-kaloriy-po-foto.jpg" alt="Анализ еды по фото" />
+            <img 
+              src="/blog/podschet-kaloriy-po-foto.jpg" 
+              alt="Анализ еды по фото" 
+              loading="lazy"
+              class="w-full h-auto rounded-lg shadow-lg"
+            />
             <p class="image-caption">ИИ-анализ фотографии еды для определения калорий и состава</p>
           </div>
 
@@ -74,7 +79,7 @@
             <li><strong>Скорость:</strong> Анализ занимает всего несколько секунд</li>
             <li><strong>Удобство:</strong> Все происходит прямо в Telegram</li>
             <li><strong>Точность:</strong> Современные ИИ показывают точность до 95%</li>
-            <li><strong>Автоматизация:</strong> Данные сохраняются в Google Calendar</li>
+            <li><strong>Автоматизация:</strong> Данные сохраняются автоматически</li>
             <li><strong>Гибкость:</strong> Работает с любыми блюдами и кухнями</li>
           </ul>
 
@@ -103,17 +108,21 @@
 <script setup>
 // SEO мета-теги для статьи
 useSeoMeta({
-  title: 'Подсчет калорий по фото: как Telegram-бот меняет правила игры | Calories Bot',
-  description: 'Узнайте, как ИИ-анализ фотографий еды помогает точно считать калории и контролировать питание',
-  keywords: 'подсчет калорий, анализ еды по фото, Telegram бот, ИИ питание, дневник питания, калории',
-  ogTitle: 'Подсчет калорий по фото: как Telegram-бот меняет правила игры',
-  ogDescription: 'Узнайте, как ИИ-анализ фотографий еды помогает точно считать калории и контролировать питание',
+  title: 'Подсчет калорий по фото: Telegram-бот | Calories Bot',
+  description: 'ИИ-анализ фотографий еды для точного подсчета калорий и КБЖУ. Автоматическое распознавание продуктов за 5 секунд.',
+  ogTitle: 'Подсчет калорий по фото: Telegram-бот',
+  ogDescription: 'ИИ-анализ фотографий еды для точного подсчета калорий и КБЖУ',
   ogImage: 'https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto.jpg',
-  robots: 'index, follow'
+  ogUrl: 'https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto-telegram-bot',
+  robots: 'index, follow',
+  author: 'Calories Bot'
 })
 
-// JSON-LD для статьи
+// Canonical URL и JSON-LD для статьи
 useHead({
+  link: [
+    { rel: 'canonical', href: 'https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto-telegram-bot' }
+  ],
   script: [
     {
       type: 'application/ld+json',
@@ -133,7 +142,11 @@ useHead({
           "url": "https://calories.toxiguard.site"
         },
         "datePublished": "2025-09-26",
-        "dateModified": "2025-09-26"
+        "dateModified": "2025-09-26",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://calories.toxiguard.site/blog/podschet-kaloriy-po-foto-telegram-bot"
+        }
       })
     }
   ]

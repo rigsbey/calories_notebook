@@ -1,0 +1,5 @@
+const terms_vue_vue_type_style_index_0_scoped_ff3b7951_lang = ".terms-hero[data-v-ff3b7951]{@apply bg-gradient-to-br from-green-50 to-emerald-100 py-16;}.container[data-v-ff3b7951]{@apply max-w-4xl mx-auto px-6;}.terms-title[data-v-ff3b7951]{@apply text-4xl font-bold text-gray-900 text-center mb-4;font-size:clamp(2rem,5vw,3rem)}.terms-subtitle[data-v-ff3b7951]{@apply text-xl text-gray-600 text-center;}.terms-content[data-v-ff3b7951]{@apply py-16 bg-white;}.content-wrapper[data-v-ff3b7951]{@apply max-w-3xl mx-auto;}.terms-section[data-v-ff3b7951]{@apply mb-8;}.terms-section h2[data-v-ff3b7951]{@apply text-2xl font-bold text-gray-900 mb-4;}.terms-section p[data-v-ff3b7951]{@apply text-gray-700 mb-4 leading-relaxed;}.terms-section ul[data-v-ff3b7951]{@apply list-disc list-inside space-y-2 mb-4;}.terms-section li[data-v-ff3b7951]{@apply text-gray-700;}@media (max-width:768px){.terms-hero[data-v-ff3b7951]{@apply py-12;}.terms-title[data-v-ff3b7951]{@apply text-3xl;}.terms-subtitle[data-v-ff3b7951]{@apply text-lg;}}";
+export {
+  terms_vue_vue_type_style_index_0_scoped_ff3b7951_lang as default
+};
+//# sourceMappingURL=terms-styles-1.mjs-B8_sJKWC.js.map

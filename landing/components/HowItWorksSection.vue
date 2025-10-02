@@ -14,7 +14,12 @@
             <p class="step-description">{{ step.description }}</p>
             <div class="step-demo">
               <div class="demo-screenshot" v-if="step.screenshot">
-                <img :src="step.screenshot" :alt="step.title" class="screenshot-image" />
+                <img 
+                  :src="step.screenshot" 
+                  :alt="step.title" 
+                  class="screenshot-image"
+                  loading="lazy"
+                />
               </div>
               <div class="demo-placeholder" v-else>
                 {{ step.demoText }}
@@ -42,10 +47,10 @@ const steps = [
     screenshot: '/images/step2-analysis.jpg'
   },
   {
-    title: '📅 Сохрани в календарь',
-    description: 'Результат автоматически попадает в Google Calendar.',
-    demoText: '📅 Сохранено',
-    screenshot: '/images/step3-calendar.jpg'
+    title: '📊 Получи отчет',
+    description: 'Детальная статистика по питанию и рекомендации для улучшения.',
+    demoText: '📊 Отчет готов',
+    screenshot: '/images/step3-report.jpg'
   }
 ]
 
