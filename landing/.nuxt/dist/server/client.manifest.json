@@ -1,56 +1,34 @@
 {
-  "_46Zx8Nr_.js": {
+  "_2W7T1B5s.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "46Zx8Nr_.js",
+    "file": "2W7T1B5s.js",
     "name": "virtual_public",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js"
     ]
   },
-  "_AKq52_CV.js": {
+  "_C4cQpr7J.js": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "AKq52_CV.js",
-    "name": "v3",
-    "imports": [
-      "node_modules/nuxt/dist/app/entry.js",
-      "_CL-ptt7y.js"
-    ]
-  },
-  "_BARh5PXS.js": {
-    "resourceType": "script",
-    "module": true,
-    "prefetch": true,
-    "preload": true,
-    "file": "BARh5PXS.js",
-    "name": "HeaderSection",
-    "imports": [
-      "_46Zx8Nr_.js",
-      "node_modules/nuxt/dist/app/entry.js",
-      "_CL-ptt7y.js"
-    ],
-    "css": [
-      "HeaderSection.BB9rhMEv.css"
-    ]
-  },
-  "HeaderSection.BB9rhMEv.css": {
-    "file": "HeaderSection.BB9rhMEv.css",
-    "resourceType": "style",
-    "prefetch": true,
-    "preload": true
-  },
-  "_C-pHqWj3.js": {
-    "resourceType": "script",
-    "module": true,
-    "prefetch": true,
-    "preload": true,
-    "file": "C-pHqWj3.js",
+    "file": "C4cQpr7J.js",
     "name": "nuxt-link",
+    "imports": [
+      "node_modules/nuxt/dist/app/entry.js",
+      "_CL-ptt7y.js"
+    ]
+  },
+  "_CC2Mwjg4.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "CC2Mwjg4.js",
+    "name": "v3",
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
       "_CL-ptt7y.js"
@@ -64,33 +42,55 @@
     "file": "CL-ptt7y.js",
     "name": "vendor"
   },
-  "_HeaderSection.BB9rhMEv.css": {
+  "_HeaderSection.DLc1D7Wy.css": {
     "resourceType": "style",
     "prefetch": true,
     "preload": true,
-    "file": "HeaderSection.BB9rhMEv.css",
-    "src": "_HeaderSection.BB9rhMEv.css"
+    "file": "HeaderSection.DLc1D7Wy.css",
+    "src": "_HeaderSection.DLc1D7Wy.css"
+  },
+  "_tnBj-qxu.js": {
+    "resourceType": "script",
+    "module": true,
+    "prefetch": true,
+    "preload": true,
+    "file": "tnBj-qxu.js",
+    "name": "HeaderSection",
+    "imports": [
+      "_2W7T1B5s.js",
+      "node_modules/nuxt/dist/app/entry.js",
+      "_CL-ptt7y.js"
+    ],
+    "css": [
+      "HeaderSection.DLc1D7Wy.css"
+    ]
+  },
+  "HeaderSection.DLc1D7Wy.css": {
+    "file": "HeaderSection.DLc1D7Wy.css",
+    "resourceType": "style",
+    "prefetch": true,
+    "preload": true
   },
   "layouts/default.vue": {
     "resourceType": "script",
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "gNd4o33a.js",
+    "file": "uWGv6Bvr.js",
     "name": "default",
     "src": "layouts/default.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_C-pHqWj3.js",
-      "_46Zx8Nr_.js",
-      "_AKq52_CV.js",
+      "_C4cQpr7J.js",
+      "_2W7T1B5s.js",
+      "_CC2Mwjg4.js",
       "node_modules/nuxt/dist/app/entry.js",
       "_CL-ptt7y.js"
     ],
     "css": []
   },
-  "default.9PTl1x9v.css": {
-    "file": "default.9PTl1x9v.css",
+  "default.CI4S9vz5.css": {
+    "file": "default.CI4S9vz5.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -100,14 +100,14 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "D68O4huS.js",
+    "file": "Ik96WxBK.js",
     "name": "error-404",
     "src": "node_modules/nuxt/dist/app/components/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_C-pHqWj3.js",
+      "_C4cQpr7J.js",
       "node_modules/nuxt/dist/app/entry.js",
-      "_AKq52_CV.js",
+      "_CC2Mwjg4.js",
       "_CL-ptt7y.js"
     ],
     "css": []
@@ -123,13 +123,13 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CHTXABN-.js",
+    "file": "CJgqZomg.js",
     "name": "error-500",
     "src": "node_modules/nuxt/dist/app/components/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
       "node_modules/nuxt/dist/app/entry.js",
-      "_AKq52_CV.js",
+      "_CC2Mwjg4.js",
       "_CL-ptt7y.js"
     ],
     "css": []
@@ -145,7 +145,7 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CNr8U9YP.js",
+    "file": "Dh18WoIG.js",
     "name": "entry",
     "src": "node_modules/nuxt/dist/app/entry.js",
     "isEntry": true,
@@ -164,21 +164,21 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "C_cmV_LT.js",
+    "file": "D-vAnPOU.js",
     "name": "avtomaticheskiy-dnevnik-pitaniya",
     "src": "pages/blog/avtomaticheskiy-dnevnik-pitaniya.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_BARh5PXS.js",
+      "_tnBj-qxu.js",
       "node_modules/nuxt/dist/app/entry.js",
-      "_AKq52_CV.js",
+      "_CC2Mwjg4.js",
       "_CL-ptt7y.js",
-      "_46Zx8Nr_.js"
+      "_2W7T1B5s.js"
     ],
     "css": []
   },
-  "avtomaticheskiy-dnevnik-pitaniya.v1EHWcgH.css": {
-    "file": "avtomaticheskiy-dnevnik-pitaniya.v1EHWcgH.css",
+  "avtomaticheskiy-dnevnik-pitaniya.BgniKyj1.css": {
+    "file": "avtomaticheskiy-dnevnik-pitaniya.BgniKyj1.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -188,21 +188,21 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CSbn9c9D.js",
+    "file": "KhjLOz55.js",
     "name": "ii-v-pitanii-kak-iskusstvennyy-intellekt-menyaet-zdorove",
     "src": "pages/blog/ii-v-pitanii-kak-iskusstvennyy-intellekt-menyaet-zdorove.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_BARh5PXS.js",
+      "_tnBj-qxu.js",
       "node_modules/nuxt/dist/app/entry.js",
-      "_AKq52_CV.js",
+      "_CC2Mwjg4.js",
       "_CL-ptt7y.js",
-      "_46Zx8Nr_.js"
+      "_2W7T1B5s.js"
     ],
     "css": []
   },
-  "ii-v-pitanii-kak-iskusstvennyy-intellekt-menyaet-zdorove.C6d87Xeb.css": {
-    "file": "ii-v-pitanii-kak-iskusstvennyy-intellekt-menyaet-zdorove.C6d87Xeb.css",
+  "ii-v-pitanii-kak-iskusstvennyy-intellekt-menyaet-zdorove.6rOsI3p-.css": {
+    "file": "ii-v-pitanii-kak-iskusstvennyy-intellekt-menyaet-zdorove.6rOsI3p-.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -212,22 +212,22 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "jxlsaCBy.js",
+    "file": "nH4igsMG.js",
     "name": "index",
     "src": "pages/blog/index.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_BARh5PXS.js",
-      "_C-pHqWj3.js",
-      "_AKq52_CV.js",
+      "_tnBj-qxu.js",
+      "_C4cQpr7J.js",
+      "_CC2Mwjg4.js",
       "node_modules/nuxt/dist/app/entry.js",
       "_CL-ptt7y.js",
-      "_46Zx8Nr_.js"
+      "_2W7T1B5s.js"
     ],
     "css": []
   },
-  "index.CnlOSqPs.css": {
-    "file": "index.CnlOSqPs.css",
+  "index.BJT_v1KT.css": {
+    "file": "index.BJT_v1KT.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -237,21 +237,21 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "CH2UKHPo.js",
+    "file": "DJohcxae.js",
     "name": "pochemu-vazhno-sledit-za-kaloriyami-nauka-zdorove-prakticheskie-vyvody",
     "src": "pages/blog/pochemu-vazhno-sledit-za-kaloriyami-nauka-zdorove-prakticheskie-vyvody.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_BARh5PXS.js",
+      "_tnBj-qxu.js",
       "node_modules/nuxt/dist/app/entry.js",
-      "_AKq52_CV.js",
+      "_CC2Mwjg4.js",
       "_CL-ptt7y.js",
-      "_46Zx8Nr_.js"
+      "_2W7T1B5s.js"
     ],
     "css": []
   },
-  "pochemu-vazhno-sledit-za-kaloriyami-nauka-zdorove-prakticheskie-vyvody.DdN-Zg1P.css": {
-    "file": "pochemu-vazhno-sledit-za-kaloriyami-nauka-zdorove-prakticheskie-vyvody.DdN-Zg1P.css",
+  "pochemu-vazhno-sledit-za-kaloriyami-nauka-zdorove-prakticheskie-vyvody.BgT4ozwm.css": {
+    "file": "pochemu-vazhno-sledit-za-kaloriyami-nauka-zdorove-prakticheskie-vyvody.BgT4ozwm.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -261,21 +261,21 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "DRqQVCBj.js",
+    "file": "CeTAL2bW.js",
     "name": "podschet-kaloriy-po-foto-telegram-bot",
     "src": "pages/blog/podschet-kaloriy-po-foto-telegram-bot.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_BARh5PXS.js",
+      "_tnBj-qxu.js",
       "node_modules/nuxt/dist/app/entry.js",
-      "_AKq52_CV.js",
+      "_CC2Mwjg4.js",
       "_CL-ptt7y.js",
-      "_46Zx8Nr_.js"
+      "_2W7T1B5s.js"
     ],
     "css": []
   },
-  "podschet-kaloriy-po-foto-telegram-bot.BsM1BBgY.css": {
-    "file": "podschet-kaloriy-po-foto-telegram-bot.BsM1BBgY.css",
+  "podschet-kaloriy-po-foto-telegram-bot.D5DOvrlv.css": {
+    "file": "podschet-kaloriy-po-foto-telegram-bot.D5DOvrlv.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -285,23 +285,23 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "QF1EASAD.js",
+    "file": "iNaS-H1k.js",
     "name": "index",
     "src": "pages/index.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_BARh5PXS.js",
+      "_tnBj-qxu.js",
       "node_modules/nuxt/dist/app/entry.js",
       "_CL-ptt7y.js",
-      "_AKq52_CV.js",
-      "_46Zx8Nr_.js"
+      "_CC2Mwjg4.js",
+      "_2W7T1B5s.js"
     ],
     "css": [
-      "index.CqAa7okZ.css"
+      "index.MeQCBz9I.css"
     ]
   },
-  "index.CqAa7okZ.css": {
-    "file": "index.CqAa7okZ.css",
+  "index.MeQCBz9I.css": {
+    "file": "index.MeQCBz9I.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -311,21 +311,21 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "Dk31d54y.js",
+    "file": "BM8y3dwv.js",
     "name": "privacy",
     "src": "pages/privacy.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_BARh5PXS.js",
-      "_AKq52_CV.js",
+      "_tnBj-qxu.js",
+      "_CC2Mwjg4.js",
       "node_modules/nuxt/dist/app/entry.js",
       "_CL-ptt7y.js",
-      "_46Zx8Nr_.js"
+      "_2W7T1B5s.js"
     ],
     "css": []
   },
-  "privacy.DJ6B_kO_.css": {
-    "file": "privacy.DJ6B_kO_.css",
+  "privacy.CfDbFaMn.css": {
+    "file": "privacy.CfDbFaMn.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true
@@ -335,21 +335,21 @@
     "module": true,
     "prefetch": true,
     "preload": true,
-    "file": "B_UwkCqy.js",
+    "file": "CehYmycm.js",
     "name": "terms",
     "src": "pages/terms.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_BARh5PXS.js",
-      "_AKq52_CV.js",
+      "_tnBj-qxu.js",
+      "_CC2Mwjg4.js",
       "node_modules/nuxt/dist/app/entry.js",
       "_CL-ptt7y.js",
-      "_46Zx8Nr_.js"
+      "_2W7T1B5s.js"
     ],
     "css": []
   },
-  "terms.BG7dyBZF.css": {
-    "file": "terms.BG7dyBZF.css",
+  "terms.CMCCaSd5.css": {
+    "file": "terms.CMCCaSd5.css",
     "resourceType": "style",
     "prefetch": true,
     "preload": true

@@ -1,5 +1,0 @@
-const default_vue_vue_type_style_index_0_scoped_fdf84ce5_lang = ".container[data-v-fdf84ce5]{@apply max-w-7xl mx-auto px-6;}.footer[data-v-fdf84ce5]{@apply bg-gray-900 text-white py-12;}.footer-content[data-v-fdf84ce5]{@apply flex flex-col md:flex-row items-center justify-between mb-8;}.footer-brand[data-v-fdf84ce5]{@apply flex items-center space-x-2 text-xl font-bold mb-4 md:mb-0;}.brand-icon[data-v-fdf84ce5]{@apply w-8 h-8 rounded-full object-cover;border:1px solid hsla(0,0%,100%,.2)}.footer-links[data-v-fdf84ce5]{@apply flex space-x-6;}.footer-link[data-v-fdf84ce5]{@apply text-gray-300 hover:text-white transition-colors duration-300;}.privacy-link[data-v-fdf84ce5]{@apply font-semibold text-white border-b border-gray-400 hover:border-white;}.footer-bottom[data-v-fdf84ce5]{@apply text-center pt-8 border-t border-gray-700;}.footer-text[data-v-fdf84ce5]{@apply text-gray-400;}@media (max-width:768px){.footer-content[data-v-fdf84ce5]{@apply text-center;}.footer-links[data-v-fdf84ce5]{@apply justify-center mt-4;}}";
-export {
-  default_vue_vue_type_style_index_0_scoped_fdf84ce5_lang as default
-};
-//# sourceMappingURL=default-styles-1.mjs-CJBSUmQ0.js.map
