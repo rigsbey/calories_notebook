@@ -19,43 +19,107 @@ class PersonalGoalsService:
         self.firebase_service = FirebaseService()
         self.gemini_service = GeminiService()
         
-        # Базовые рекомендации по калориям в зависимости от цели
-        self.GOAL_CALORIES = {
+        # Детальная логика целей согласно новому плану
+        self.GOAL_CONFIG = {
             GoalType.WEIGHT_LOSS: {
-                "deficit": 500,  # дефицит калорий для похудения
-                "protein_ratio": 0.25,  # 25% белка
-                "fat_ratio": 0.25,     # 25% жиров
-                "carbs_ratio": 0.50    # 50% углеводов
+                "name": "📉 Похудение",
+                "deficit_percent": 0.175,  # 17.5% дефицит (15-20% среднее)
+                "protein_per_kg": 2.2,     # 2.2г белка на кг веса
+                "fat_percent": 0.25,       # 25% жиров
+                "carbs_percent": 0.35,     # 35% углеводов (меньше для дефицита)
+                "description": "Дефицит калорий для здорового похудения",
+                "free_features": [
+                    "Расчет дневной нормы калорий",
+                    "Отслеживание прогресса по калориям",
+                    "Напоминания о норме"
+                ],
+                "premium_features": [
+                    "ИИ-рекомендации по питанию",
+                    "Советы как не срываться",
+                    "Анализ недели (дефицит дней)",
+                    "Персональные советы по белку"
+                ]
             },
             GoalType.WEIGHT_GAIN: {
-                "surplus": 300,  # профицит калорий для набора веса
-                "protein_ratio": 0.30,  # 30% белка
-                "fat_ratio": 0.25,     # 25% жиров
-                "carbs_ratio": 0.45    # 45% углеводов
+                "name": "📈 Набор веса", 
+                "surplus_percent": 0.175,  # 17.5% профицит (15-20% среднее)
+                "protein_per_kg": 1.8,     # 1.8г белка на кг веса
+                "fat_percent": 0.30,       # 30% жиров (больше для калорийности)
+                "carbs_percent": 0.50,     # 50% углеводов (больше для энергии)
+                "description": "Профицит калорий для здорового набора веса",
+                "free_features": [
+                    "Расчет дневной нормы калорий",
+                    "Отслеживание прогресса по калориям"
+                ],
+                "premium_features": [
+                    "Советы по высококалорийным продуктам",
+                    "Анализ недели (дни с профицитом)",
+                    "График веса",
+                    "Рекомендации по перекусам"
+                ]
             },
             GoalType.MAINTENANCE: {
-                "deficit": 0,    # поддержание веса
-                "protein_ratio": 0.25,  # 25% белка
-                "fat_ratio": 0.30,     # 30% жиров
-                "carbs_ratio": 0.45    # 45% углеводов
+                "name": "⚖️ Поддержание веса",
+                "deficit_percent": 0,      # без дефицита/профицита
+                "surplus_percent": 0,
+                "protein_per_kg": 1.6,     # 1.6г белка на кг веса
+                "fat_percent": 0.30,       # 30% жиров
+                "carbs_percent": 0.45,     # 45% углеводов
+                "description": "Баланс калорий для поддержания веса",
+                "free_features": [
+                    "Расчет дневной нормы калорий",
+                    "Отслеживание баланса калорий"
+                ],
+                "premium_features": [
+                    "Анализ качества рациона",
+                    "Отслеживание отклонений (±10%)",
+                    "Советы по улучшению питания",
+                    "Тренд стабильности веса"
+                ]
             },
             GoalType.MUSCLE_GAIN: {
-                "surplus": 200,  # небольшой профицит для набора мышц
-                "protein_ratio": 0.35,  # 35% белка
-                "fat_ratio": 0.20,     # 20% жиров
-                "carbs_ratio": 0.45    # 45% углеводов
+                "name": "💪 Набор мышц",
+                "surplus_percent": 0.125,  # 12.5% профицит (10-15% среднее)
+                "protein_per_kg": 2.0,     # 2г белка на кг веса
+                "fat_percent": 0.25,       # 25% жиров
+                "carbs_percent": 0.50,     # 50% углеводов (для энергии)
+                "description": "Профицит калорий с акцентом на белки для роста мышц",
+                "free_features": [
+                    "Расчет дневной нормы калорий",
+                    "Отслеживание белка"
+                ],
+                "premium_features": [
+                    "Рекомендации по приемам пищи",
+                    "Советы по питанию до/после тренировки",
+                    "Отслеживание прогресса по белку",
+                    "Корректировка под тренировки"
+                ]
             },
             GoalType.HEALTH_IMPROVEMENT: {
-                "deficit": 0,    # фокус на качестве питания
-                "protein_ratio": 0.25,  # 25% белка
-                "fat_ratio": 0.30,     # 30% жиров
-                "carbs_ratio": 0.45    # 45% углеводов
+                "name": "🏥 Улучшение здоровья",
+                "deficit_percent": 0,      # без дефицита/профицита
+                "surplus_percent": 0,
+                "protein_per_kg": 1.6,     # 1.6г белка на кг веса
+                "fat_percent": 0.30,       # 30% жиров
+                "carbs_percent": 0.45,     # 45% углеводов
+                "description": "Фокус на витаминах, минералах и качестве питания",
+                "free_features": [
+                    "Расчет дневной нормы калорий",
+                    "Базовые витамины (C, кальций)"
+                ],
+                "premium_features": [
+                    "Полный отчет по витаминам и минералам",
+                    "Персональные советы по нутриентам",
+                    "История нутриентов за неделю",
+                    "Рекомендации по продуктам"
+                ]
             }
         }
 
     async def set_user_goal(self, user_id: int, goal_type: str, target_weight: Optional[float] = None, 
                            current_weight: Optional[float] = None, height: Optional[float] = None,
-                           age: Optional[int] = None, activity_level: str = "moderate") -> bool:
+                           age: Optional[int] = None, activity_level: str = "moderate", 
+                           gender: str = "male") -> bool:
         """Устанавливает персональную цель пользователя"""
         try:
             # Валидируем тип цели
@@ -66,18 +130,26 @@ class PersonalGoalsService:
                 return False
             
             # Рассчитываем базовые потребности
-            daily_calories = await self._calculate_daily_calories(
-                current_weight, height, age, activity_level, goal_enum
+            daily_calories, macro_nutrients = await self._calculate_daily_calories(
+                current_weight, height, age, activity_level, goal_enum, gender
             )
+            
+            goal_config = self.GOAL_CONFIG[goal_enum]
             
             goal_data = {
                 'goal_type': goal_type,
+                'goal_name': goal_config['name'],
+                'description': goal_config['description'],
                 'target_weight': target_weight,
                 'current_weight': current_weight,
                 'height': height,
                 'age': age,
+                'gender': gender,
                 'activity_level': activity_level,
                 'daily_calories': daily_calories,
+                'macro_nutrients': macro_nutrients,
+                'free_features': goal_config['free_features'],
+                'premium_features': goal_config['premium_features'],
                 'goal_set_at': datetime.now(),
                 'last_updated': datetime.now()
             }
@@ -96,19 +168,19 @@ class PersonalGoalsService:
             return False
 
     async def _calculate_daily_calories(self, weight: Optional[float], height: Optional[float], 
-                                      age: Optional[int], activity_level: str, goal_type: GoalType) -> int:
-        """Рассчитывает дневную норму калорий"""
+                                      age: Optional[int], activity_level: str, goal_type: GoalType, 
+                                      gender: str = "male") -> Tuple[int, Dict]:
+        """Рассчитывает дневную норму калорий и БЖУ согласно новой логике"""
         try:
             if not all([weight, height, age]):
                 # Возвращаем средние значения если данных нет
-                base_calories = 2000
+                tdee = 2000
             else:
                 # Формула Миффлина-Сан Жеора
-                if weight and height and age:
-                    # Мужская формула (упрощенная, предполагаем мужской пол)
+                if gender.lower() == "female":
+                    bmr = 10 * weight + 6.25 * height - 5 * age - 161
+                else:  # male
                     bmr = 10 * weight + 6.25 * height - 5 * age + 5
-                else:
-                    bmr = 2000
                 
                 # Коэффициенты активности
                 activity_multipliers = {
@@ -120,23 +192,41 @@ class PersonalGoalsService:
                 }
                 
                 multiplier = activity_multipliers.get(activity_level, 1.55)
-                base_calories = int(bmr * multiplier)
+                tdee = int(bmr * multiplier)
             
             # Применяем коррекцию в зависимости от цели
-            goal_config = self.GOAL_CALORIES[goal_type]
+            goal_config = self.GOAL_CONFIG[goal_type]
             
-            if goal_config.get('deficit', 0) > 0:
-                daily_calories = base_calories - goal_config['deficit']
-            elif goal_config.get('surplus', 0) > 0:
-                daily_calories = base_calories + goal_config['surplus']
+            if goal_config.get('deficit_percent', 0) > 0:
+                # Дефицит для похудения
+                deficit = int(tdee * goal_config['deficit_percent'])
+                daily_calories = tdee - deficit
+            elif goal_config.get('surplus_percent', 0) > 0:
+                # Профицит для набора веса/мышц
+                surplus = int(tdee * goal_config['surplus_percent'])
+                daily_calories = tdee + surplus
             else:
-                daily_calories = base_calories
+                # Поддержание веса
+                daily_calories = tdee
             
-            return max(daily_calories, 1200)  # Минимум 1200 калорий
+            daily_calories = max(daily_calories, 1200)  # Минимум 1200 калорий
+            
+            # Рассчитываем БЖУ согласно цели
+            target_proteins = weight * goal_config['protein_per_kg'] if weight else 120
+            target_fats = daily_calories * goal_config['fat_percent'] / 9  # 9 ккал/г жира
+            target_carbs = daily_calories * goal_config['carbs_percent'] / 4  # 4 ккал/г углеводов
+            
+            macro_nutrients = {
+                'proteins': round(target_proteins, 1),
+                'fats': round(target_fats, 1), 
+                'carbs': round(target_carbs, 1)
+            }
+            
+            return daily_calories, macro_nutrients
             
         except Exception as e:
             logger.error(f"Ошибка расчета калорий: {e}")
-            return 2000
+            return 2000, {'proteins': 120, 'fats': 67, 'carbs': 225}
 
     async def get_user_goal(self, user_id: int) -> Optional[Dict]:
         """Получает персональную цель пользователя"""
@@ -147,7 +237,7 @@ class PersonalGoalsService:
             logger.error(f"Ошибка получения цели: {e}")
             return None
 
-    async def generate_smart_recommendations(self, user_id: int, daily_nutrition: Dict) -> str:
+    async def generate_smart_recommendations(self, user_id: int, daily_nutrition: Dict, is_premium: bool = False) -> str:
         """Генерирует умные рекомендации на основе цели и текущего питания"""
         try:
             goal = await self.get_user_goal(user_id)
@@ -156,6 +246,7 @@ class PersonalGoalsService:
             
             goal_type = GoalType(goal['goal_type'])
             daily_calories = goal.get('daily_calories', 2000)
+            macro_nutrients = goal.get('macro_nutrients', {})
             
             # Анализируем текущее питание
             current_calories = daily_nutrition.get('calories', 0)
@@ -165,47 +256,51 @@ class PersonalGoalsService:
             
             recommendations = []
             
-            # Анализ калорий
-            calorie_diff = current_calories - daily_calories
-            if abs(calorie_diff) > 200:
-                if calorie_diff > 0:
-                    recommendations.append(f"📉 Сегодня на {calorie_diff:.0f} ккал больше нормы. Рекомендую легкий ужин.")
-                else:
-                    recommendations.append(f"📈 Сегодня на {abs(calorie_diff):.0f} ккал меньше нормы. Добавьте полезный перекус.")
+            # Базовые рекомендации (для всех пользователей)
+            calorie_percent = (current_calories / daily_calories * 100) if daily_calories > 0 else 0
             
-            # Анализ БЖУ
-            goal_config = self.GOAL_CALORIES[goal_type]
-            target_proteins = daily_calories * goal_config['protein_ratio'] / 4  # 4 ккал/г белка
-            target_fats = daily_calories * goal_config['fat_ratio'] / 9  # 9 ккал/г жира
-            target_carbs = daily_calories * goal_config['carbs_ratio'] / 4  # 4 ккал/г углеводов
+            if calorie_percent < 70:
+                recommendations.append(f"📈 Вы на {calorie_percent:.0f}% от дневной нормы. Добавьте полезный перекус!")
+            elif calorie_percent > 130:
+                recommendations.append(f"📉 Вы превысили норму на {calorie_percent-100:.0f}%. Рекомендую легкий ужин.")
             
-            if current_proteins < target_proteins * 0.8:
-                protein_diff = target_proteins - current_proteins
-                recommendations.append(f"🥩 Мало белка! Добавьте {protein_diff:.0f}г белка: курица, творог, яйца.")
-            
-            if current_fats < target_fats * 0.7:
-                fat_diff = target_fats - current_fats
-                recommendations.append(f"🥑 Мало жиров! Добавьте {fat_diff:.0f}г: орехи, авокадо, оливковое масло.")
-            
-            if current_carbs < target_carbs * 0.8:
-                carb_diff = target_carbs - current_carbs
-                recommendations.append(f"🍞 Мало углеводов! Добавьте {carb_diff:.0f}г: крупы, фрукты, овощи.")
-            
-            # Специфичные рекомендации по цели
-            if goal_type == GoalType.WEIGHT_LOSS:
-                if current_calories > daily_calories:
-                    recommendations.append("💪 Для похудения: больше белка, меньше простых углеводов.")
-            elif goal_type == GoalType.MUSCLE_GAIN:
-                if current_proteins < target_proteins:
-                    recommendations.append("💪 Для набора мышц: увеличьте белок до 1.6-2г на кг веса.")
-            
-            # Генерируем ИИ рекомендации через Gemini
-            ai_recommendations = await self._generate_ai_recommendations(
-                goal_type, daily_nutrition, goal
-            )
-            
-            if ai_recommendations:
-                recommendations.append(ai_recommendations)
+            # Premium рекомендации
+            if is_premium:
+                # Детальный анализ БЖУ
+                target_proteins = macro_nutrients.get('proteins', 120)
+                target_fats = macro_nutrients.get('fats', 67)
+                target_carbs = macro_nutrients.get('carbs', 225)
+                
+                if current_proteins < target_proteins * 0.8:
+                    protein_diff = target_proteins - current_proteins
+                    recommendations.append(f"🥩 Мало белка! Добавьте {protein_diff:.0f}г: курица, творог, яйца.")
+                
+                # Специфичные рекомендации по цели
+                if goal_type == GoalType.WEIGHT_LOSS:
+                    if current_calories > daily_calories:
+                        recommendations.append("💪 Для похудения: больше белка, меньше простых углеводов.")
+                    recommendations.append("🧠 Совет: пейте воду перед едой, это поможет контролировать аппетит.")
+                    
+                elif goal_type == GoalType.WEIGHT_GAIN:
+                    if current_calories < daily_calories * 0.9:
+                        recommendations.append("🥜 Для набора веса: добавьте орехи, авокадо, оливковое масло.")
+                        
+                elif goal_type == GoalType.MUSCLE_GAIN:
+                    if current_proteins < target_proteins:
+                        recommendations.append("💪 Для набора мышц: белок после тренировки - ключ к росту!")
+                        
+                elif goal_type == GoalType.HEALTH_IMPROVEMENT:
+                    recommendations.append("🥬 Фокус на витаминах: больше овощей и фруктов разных цветов.")
+                    
+                # ИИ рекомендации только для Premium
+                ai_recommendations = await self._generate_ai_recommendations(
+                    goal_type, daily_nutrition, goal
+                )
+                if ai_recommendations:
+                    recommendations.append(ai_recommendations)
+            else:
+                # Базовая рекомендация для Free
+                recommendations.append("⭐ В Pro версии: персональные советы ИИ и детальный анализ БЖУ!")
             
             if not recommendations:
                 return "✅ Отличное питание! Вы на правильном пути к цели!"
@@ -307,3 +402,109 @@ class PersonalGoalsService:
         except Exception as e:
             logger.error(f"Ошибка проверки доступа к целям: {e}")
             return False, "Ошибка проверки доступа"
+
+    async def get_goal_info(self, goal_type: str) -> Optional[Dict]:
+        """Получает информацию о конкретной цели"""
+        try:
+            goal_enum = GoalType(goal_type)
+            return self.GOAL_CONFIG.get(goal_enum)
+        except ValueError:
+            return None
+
+    async def get_daily_progress_summary(self, user_id: int, daily_nutrition: Dict) -> str:
+        """Генерирует краткую сводку прогресса за день"""
+        try:
+            goal = await self.get_user_goal(user_id)
+            if not goal:
+                return "🎯 Установите персональную цель для отслеживания прогресса!"
+            
+            daily_calories = goal.get('daily_calories', 2000)
+            current_calories = daily_nutrition.get('calories', 0)
+            calorie_percent = (current_calories / daily_calories * 100) if daily_calories > 0 else 0
+            
+            goal_name = goal.get('goal_name', 'Цель')
+            
+            if calorie_percent >= 90 and calorie_percent <= 110:
+                status = "✅ Отлично!"
+            elif calorie_percent < 70:
+                status = f"📈 Недобор {100-calorie_percent:.0f}%"
+            elif calorie_percent > 130:
+                status = f"📉 Превышение {calorie_percent-100:.0f}%"
+            else:
+                status = "👍 Хорошо!"
+            
+            return f"🎯 **{goal_name}**\n📊 Прогресс: {calorie_percent:.0f}% ({current_calories}/{daily_calories} ккал)\n{status}"
+            
+        except Exception as e:
+            logger.error(f"Ошибка генерации сводки: {e}")
+            return "❌ Ошибка расчета прогресса"
+
+    async def get_weekly_analysis(self, user_id: int, days: int = 7) -> Dict:
+        """Анализирует недельный прогресс по цели"""
+        try:
+            goal = await self.get_user_goal(user_id)
+            if not goal:
+                return {"error": "Цель не установлена"}
+            
+            goal_type = GoalType(goal['goal_type'])
+            goal_config = self.GOAL_CONFIG[goal_type]
+            
+            # Получаем данные за неделю
+            from datetime import datetime, timedelta
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            
+            analyses = await self.firebase_service.get_weekly_analyses(
+                user_id, start_date.strftime('%Y-%m-%d')
+            )
+            
+            if not analyses:
+                return {"error": "Нет данных за период"}
+            
+            # Анализируем прогресс по дням
+            daily_target = goal.get('daily_calories', 2000)
+            success_days = 0
+            
+            for analysis in analyses:
+                daily_calories = analysis.get('calories', 0)
+                if goal_type == GoalType.WEIGHT_LOSS:
+                    # Для похудения считаем успешным день с дефицитом
+                    if daily_calories <= daily_target:
+                        success_days += 1
+                elif goal_type in [GoalType.WEIGHT_GAIN, GoalType.MUSCLE_GAIN]:
+                    # Для набора веса/мышц считаем успешным день с профицитом
+                    if daily_calories >= daily_target:
+                        success_days += 1
+                else:
+                    # Для поддержания и здоровья считаем успешным день в пределах ±10%
+                    if 0.9 * daily_target <= daily_calories <= 1.1 * daily_target:
+                        success_days += 1
+            
+            success_rate = (success_days / len(analyses)) * 100
+            
+            analysis = {
+                'goal_name': goal_config['name'],
+                'goal_type': goal_type.value,
+                'period_days': len(analyses),
+                'success_days': success_days,
+                'success_rate': round(success_rate, 1),
+                'daily_target': daily_target,
+                'avg_calories': round(sum(a.get('calories', 0) for a in analyses) / len(analyses), 0)
+            }
+            
+            # Добавляем специфичные метрики для каждой цели
+            if goal_type == GoalType.WEIGHT_LOSS:
+                analysis['deficit_days'] = success_days
+                analysis['message'] = f"Вы были в дефиците {success_days} из {len(analyses)} дней"
+            elif goal_type in [GoalType.WEIGHT_GAIN, GoalType.MUSCLE_GAIN]:
+                analysis['surplus_days'] = success_days
+                analysis['message'] = f"Вы добрали калории {success_days} из {len(analyses)} дней"
+            else:
+                analysis['balanced_days'] = success_days
+                analysis['message'] = f"Вы держали баланс {success_days} из {len(analyses)} дней"
+            
+            return analysis
+            
+        except Exception as e:
+            logger.error(f"Ошибка недельного анализа: {e}")
+            return {"error": "Ошибка анализа"}

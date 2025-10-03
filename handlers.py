@@ -27,6 +27,7 @@ class PersonalGoalStates(StatesGroup):
     waiting_for_weight = State()
     waiting_for_height = State()
     waiting_for_age = State()
+    waiting_for_gender = State()
     waiting_for_activity = State()
 
 # Создаем клавиатуру с кнопками
@@ -985,14 +986,24 @@ async def goals_handler(message: Message):
             [InlineKeyboardButton(text="🏥 Улучшение здоровья", callback_data="set_goal_health_improvement")]
         ])
         
+        # Получаем информацию о целях
+        goal_info_text = ""
+        for goal_type in ["weight_loss", "weight_gain", "maintenance", "muscle_gain", "health_improvement"]:
+            info = await personal_goals_service.get_goal_info(goal_type)
+            if info:
+                goal_info_text += f"**{info['name']}** - {info['description']}\n"
+        
         await message.answer(
             "🎯 **Персональные цели**\n\n"
             "Установите персональную цель для получения умных рекомендаций!\n\n"
-            "**Что вы получите:**\n"
+            f"{goal_info_text}\n"
+            "**Free функции:**\n"
             "• Расчет дневной нормы калорий\n"
-            "• Персональные рекомендации ИИ\n"
-            "• Советы по БЖУ под вашу цель\n"
             "• Отслеживание прогресса\n\n"
+            "**Pro функции:**\n"
+            "• Персональные рекомендации ИИ\n"
+            "• Детальный анализ БЖУ\n"
+            "• Недельная аналитика\n\n"
             "Выберите вашу цель:",
             parse_mode="Markdown",
             reply_markup=keyboard
@@ -1010,10 +1021,16 @@ async def set_goal_handler(callback: CallbackQuery, state: FSMContext):
     await state.update_data(goal_type=goal_type)
     await state.set_state(PersonalGoalStates.waiting_for_weight)
     
+    # Получаем информацию о цели
+    goal_info = await personal_goals_service.get_goal_info(goal_type)
+    goal_name = goal_info['name'] if goal_info else goal_type
+    goal_description = goal_info['description'] if goal_info else ""
+    
     await callback.message.edit_text(
-        "🎯 **Установка персональной цели**\n\n"
-        f"**Выбранная цель:** {goal_type}\n\n"
-        "Теперь укажите ваш текущий вес в килограммах (например: 70):",
+        f"🎯 **Установка персональной цели**\n\n"
+        f"**Выбранная цель:** {goal_name}\n"
+        f"{goal_description}\n\n"
+        "Для точного расчета ваших потребностей укажите ваш текущий вес в килограммах (например: 70):",
         parse_mode="Markdown"
     )
 
@@ -1070,24 +1087,45 @@ async def goal_age_handler(message: Message, state: FSMContext):
             return
         
         await state.update_data(age=age)
-        await state.set_state(PersonalGoalStates.waiting_for_activity)
+        await state.set_state(PersonalGoalStates.waiting_for_gender)
         
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🛋️ Малоподвижный", callback_data="activity_sedentary")],
-            [InlineKeyboardButton(text="🚶 Легкая активность", callback_data="activity_light")],
-            [InlineKeyboardButton(text="🏃 Умеренная активность", callback_data="activity_moderate")],
-            [InlineKeyboardButton(text="💪 Высокая активность", callback_data="activity_active")],
-            [InlineKeyboardButton(text="🔥 Очень высокая", callback_data="activity_very_active")]
+            [InlineKeyboardButton(text="👨 Мужской", callback_data="gender_male")],
+            [InlineKeyboardButton(text="👩 Женский", callback_data="gender_female")]
         ])
         
         await message.answer(
             "✅ Возраст сохранен!\n\n"
-            "Выберите ваш уровень физической активности:",
+            "Выберите ваш пол:",
             reply_markup=keyboard
         )
         
     except ValueError:
         await message.answer("❌ Пожалуйста, введите возраст числом (например: 25)")
+
+@router.callback_query(F.data.startswith("gender_"))
+@error_handler
+async def goal_gender_handler(callback: CallbackQuery, state: FSMContext):
+    """Обработчик выбора пола для цели"""
+    await callback.answer()
+    
+    gender = "male" if callback.data == "gender_male" else "female"
+    await state.update_data(gender=gender)
+    await state.set_state(PersonalGoalStates.waiting_for_activity)
+    
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🛋️ Малоподвижный", callback_data="activity_sedentary")],
+        [InlineKeyboardButton(text="🚶 Легкая активность", callback_data="activity_light")],
+        [InlineKeyboardButton(text="🏃 Умеренная активность", callback_data="activity_moderate")],
+        [InlineKeyboardButton(text="💪 Высокая активность", callback_data="activity_active")],
+        [InlineKeyboardButton(text="🔥 Очень высокая", callback_data="activity_very_active")]
+    ])
+    
+    await callback.message.edit_text(
+        "✅ Пол сохранен!\n\n"
+        "Выберите ваш уровень физической активности:",
+        reply_markup=keyboard
+    )
 
 @router.callback_query(F.data.startswith("activity_"))
 @error_handler
@@ -1115,6 +1153,7 @@ async def goal_activity_handler(callback: CallbackQuery, state: FSMContext):
         current_weight=data['current_weight'],
         height=data['height'],
         age=data['age'],
+        gender=data.get('gender', 'male'),
         activity_level=activity_level
     )
     
@@ -1122,11 +1161,26 @@ async def goal_activity_handler(callback: CallbackQuery, state: FSMContext):
         goal = await personal_goals_service.get_user_goal(callback.from_user.id)
         daily_calories = goal.get('daily_calories', 2000)
         
+        goal_name = goal.get('goal_name', 'Цель')
+        macro_nutrients = goal.get('macro_nutrients', {})
+        target_proteins = macro_nutrients.get('proteins', 0)
+        target_fats = macro_nutrients.get('fats', 0)
+        target_carbs = macro_nutrients.get('carbs', 0)
+        
         await callback.message.edit_text(
-            f"🎉 **Цель установлена!**\n\n"
-            f"✅ Персональная цель настроена\n"
-            f"📊 Дневная норма калорий: {daily_calories} ккал\n\n"
-            f"🤖 Теперь вы будете получать умные рекомендации!\n"
+            f"🎉 **{goal_name} - Цель установлена!**\n\n"
+            f"📊 **Ваши дневные нормы:**\n"
+            f"• Калории: {daily_calories} ккал\n"
+            f"• Белки: {target_proteins}г\n"
+            f"• Жиры: {target_fats}г\n"
+            f"• Углеводы: {target_carbs}г\n\n"
+            f"🎯 **Free функции:**\n"
+            f"• Отслеживание калорий\n"
+            f"• Напоминания о норме\n\n"
+            f"⭐ **Pro функции:**\n"
+            f"• ИИ-рекомендации\n"
+            f"• Детальный анализ БЖУ\n"
+            f"• Недельная аналитика\n\n"
             f"📸 Анализируйте еду и следите за прогрессом!",
             parse_mode="Markdown"
         )
