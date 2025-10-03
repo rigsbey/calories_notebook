@@ -127,15 +127,15 @@ async def help_handler(message: Message, state: FSMContext):
 • Получите информацию о витаминах и минералах
 
 **📊 Команды:**
-• `/start` - запустить бота
-• `/status` - статус подписки
-• `/day` - итоги дня
-• `/week` - итоги недели (Pro)
-• `/summary` - сводка питания
-• `/goals` - персональные цели (Pro)
-• `/recommendations` - умные рекомендации (Pro)
-• `/export` - экспорт отчетов (Pro)
-• `/cancel` - отменить текущую операцию
+• /start - запустить бота
+• /status - статус подписки
+• /day - итоги дня
+• /week - итоги недели (Pro)
+• /summary - сводка питания
+• /goals - персональные цели (Pro)
+• /recommendations - умные рекомендации (Pro)
+• /export - экспорт отчетов (Pro)
+• /cancel - отменить текущую операцию
 
 **⭐ Pro функции:**
 • Неограниченные фото
@@ -145,7 +145,7 @@ async def help_handler(message: Message, state: FSMContext):
 • История и аналитика
 
 **🆘 Поддержка:**
-Если возникли проблемы, используйте команду `/cancel` для сброса состояния.
+Если возникли проблемы, используйте команду /cancel для сброса состояния.
     """
     
     await message.answer(help_text, parse_mode="Markdown", reply_markup=get_main_keyboard())
@@ -1431,7 +1431,8 @@ async def disable_reminders_handler(callback: CallbackQuery):
         if success:
             # Создаем клавиатуру для включения обратно
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="🔔 Включить напоминания", callback_data="enable_reminders")]
+                [InlineKeyboardButton(text="🔔 Включить напоминания", callback_data="enable_reminders")],
+                [InlineKeyboardButton(text="🔙 Назад к управлению", callback_data="manage_notifications")]
             ])
             
             await callback.message.edit_text(
@@ -1494,7 +1495,8 @@ async def enable_reminders_handler(callback: CallbackQuery):
         if success:
             # Создаем клавиатуру для отключения
             keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="🔕 Отключить напоминания", callback_data="disable_reminders")]
+                [InlineKeyboardButton(text="🔕 Отключить напоминания", callback_data="disable_reminders")],
+                [InlineKeyboardButton(text="🔙 Назад к управлению", callback_data="manage_notifications")]
             ])
             
             await callback.message.edit_text(
@@ -1562,6 +1564,57 @@ async def show_goals_callback_handler(callback: CallbackQuery):
     # Используем существующий обработчик целей
     await goals_handler(callback.message)
 
+@router.callback_query(F.data == "manage_notifications")
+@error_handler
+async def manage_notifications_handler(callback: CallbackQuery):
+    """Обработчик кнопки 'Управление уведомлениями'"""
+    await callback.answer()
+    
+    user_id = callback.from_user.id
+    
+    try:
+        # Импортируем ReminderService
+        from services.reminder_service import ReminderService
+        reminder_service = ReminderService()
+        
+        # Получаем текущие настройки напоминаний
+        current_reminders = await reminder_service.get_user_reminders(user_id)
+        
+        # Определяем текущий статус
+        all_enabled = all([
+            current_reminders.get('water_reminders', True),
+            current_reminders.get('meal_reminders', True),
+            current_reminders.get('calorie_reminders', True),
+            current_reminders.get('progress_reminders', True),
+            current_reminders.get('motivation_reminders', True)
+        ])
+        
+        if all_enabled:
+            status_text = "🔔 **Управление уведомлениями**\n\n✅ **Все напоминания включены**\n\nВы получаете:\n• Напоминания о воде (5 раз в день)\n• Напоминания о еде (3 раза в день)\n• Напоминания о калориях (вечером)\n• Напоминания о прогрессе (вечером)\n• Мотивационные сообщения (утром и вечером)\n\n💡 Напоминания помогают поддерживать здоровые привычки!"
+            
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔕 Отключить все напоминания", callback_data="disable_reminders")]
+            ])
+        else:
+            status_text = "🔕 **Управление уведомлениями**\n\n❌ **Напоминания отключены**\n\nВы больше не получаете:\n• Напоминания о воде\n• Напоминания о еде\n• Напоминания о калориях\n• Напоминания о прогрессе\n• Мотивационные сообщения\n\n💡 Вы можете включить их обратно в любое время!"
+            
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔔 Включить все напоминания", callback_data="enable_reminders")]
+            ])
+        
+        await callback.message.edit_text(
+            status_text,
+            parse_mode="Markdown",
+            reply_markup=keyboard
+        )
+        
+    except Exception as e:
+        logger.error(f"Ошибка управления уведомлениями для пользователя {user_id}: {e}")
+        await callback.message.edit_text(
+            "❌ **Произошла ошибка**\n\nНе удалось загрузить настройки уведомлений. Попробуйте позже.",
+            parse_mode="Markdown"
+        )
+
 @router.message(Command("status"))
 @error_handler
 async def status_handler(message: Message):
@@ -1614,7 +1667,8 @@ async def status_handler(message: Message):
         
         keyboard_buttons.extend([
             [InlineKeyboardButton(text="💎 Купить Pro (399₽/мес)", callback_data="buy_pro_monthly")],
-            [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")]
+            [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")],
+            [InlineKeyboardButton(text="🔔 Управление уведомлениями", callback_data="manage_notifications")]
         ])
         
         keyboard = InlineKeyboardMarkup(inline_keyboard=keyboard_buttons)
@@ -1646,7 +1700,8 @@ async def status_handler(message: Message):
         from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="💎 Продлить Pro (399₽/мес)", callback_data="buy_pro_monthly")],
-            [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")]
+            [InlineKeyboardButton(text="🏆 Pro Год (2990₽, -50%)", callback_data="buy_pro_annual")],
+            [InlineKeyboardButton(text="🔔 Управление уведомлениями", callback_data="manage_notifications")]
         ])
         
     elif subscription_type == 'pro':
@@ -1676,7 +1731,8 @@ async def status_handler(message: Message):
         from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="💎 Продлить Pro (399₽/мес)", callback_data="buy_pro_monthly")],
-            [InlineKeyboardButton(text="🏆 Перейти на Pro Год (-50%)", callback_data="buy_pro_annual")]
+            [InlineKeyboardButton(text="🏆 Перейти на Pro Год (-50%)", callback_data="buy_pro_annual")],
+            [InlineKeyboardButton(text="🔔 Управление уведомлениями", callback_data="manage_notifications")]
         ])
     
     else:
