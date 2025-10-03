@@ -21,13 +21,13 @@ class ReminderService:
         self.subscription_service = SubscriptionService()
         self.personal_goals_service = PersonalGoalsService()
         
-        # Настройки напоминаний
+        # Настройки напоминаний (более разумные по умолчанию)
         self.REMINDER_TIMES = {
-            ReminderType.WATER: [9, 12, 15, 18, 21],  # Часы для напоминаний о воде
-            ReminderType.MEAL: [8, 13, 19],  # Часы для напоминаний о еде
+            ReminderType.WATER: [12, 18],  # 2 напоминания о воде в день
+            ReminderType.MEAL: [13, 19],  # 2 напоминания о еде в день
             ReminderType.CALORIE_LIMIT: [20],  # Вечернее напоминание о лимите калорий
-            ReminderType.GOAL_PROGRESS: [22],  # Вечерний отчет о прогрессе
-            ReminderType.MOTIVATION: [7, 19]  # Утренняя и вечерняя мотивация
+            ReminderType.GOAL_PROGRESS: [],  # Отключены по умолчанию
+            ReminderType.MOTIVATION: [19]  # Только вечерняя мотивация
         }
         
         # Шаблоны сообщений
