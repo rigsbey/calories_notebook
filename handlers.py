@@ -38,7 +38,7 @@ def get_main_keyboard():
             [KeyboardButton(text="📊 Итоги дня"), KeyboardButton(text="📈 Итоги недели")],
             [KeyboardButton(text="📸 Анализ еды"), KeyboardButton(text="🎯 Цели")],
             [KeyboardButton(text="⭐ Pro"), KeyboardButton(text="📊 Статус")],
-            [KeyboardButton(text="ℹ️ Помощь")]
+            [KeyboardButton(text="🔔 Уведомления"), KeyboardButton(text="ℹ️ Помощь")]
         ],
         resize_keyboard=True,
         one_time_keyboard=False
@@ -859,6 +859,56 @@ async def status_button(message: Message):
     """Обработчик кнопки 'Статус'"""
     # Используем тот же обработчик, что и для команды /status
     await status_handler(message)
+
+@router.message(F.text == "🔔 Уведомления")
+@error_handler
+async def notifications_button(message: Message):
+    """Обработчик кнопки 'Уведомления'"""
+    user_id = message.from_user.id
+    
+    try:
+        # Импортируем ReminderService
+        from services.reminder_service import ReminderService
+        reminder_service = ReminderService()
+        
+        # Получаем текущие настройки напоминаний
+        current_reminders = await reminder_service.get_user_reminders(user_id)
+        
+        # Определяем текущий статус
+        all_enabled = all([
+            current_reminders.get('water_reminders', True),
+            current_reminders.get('meal_reminders', True),
+            current_reminders.get('calorie_reminders', True),
+            current_reminders.get('progress_reminders', True),
+            current_reminders.get('motivation_reminders', True)
+        ])
+        
+        if all_enabled:
+            status_text = "🔔 **Управление уведомлениями**\n\n✅ **Все напоминания включены**\n\nВы получаете:\n• Напоминания о воде (5 раз в день)\n• Напоминания о еде (3 раза в день)\n• Напоминания о калориях (вечером)\n• Напоминания о прогрессе (вечером)\n• Мотивационные сообщения (утром и вечером)\n\n💡 Напоминания помогают поддерживать здоровые привычки!"
+            
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔕 Отключить все напоминания", callback_data="disable_reminders")]
+            ])
+        else:
+            status_text = "🔕 **Управление уведомлениями**\n\n❌ **Напоминания отключены**\n\nВы больше не получаете:\n• Напоминания о воде\n• Напоминания о еде\n• Напоминания о калориях\n• Напоминания о прогрессе\n• Мотивационные сообщения\n\n💡 Вы можете включить их обратно в любое время!"
+            
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔔 Включить все напоминания", callback_data="enable_reminders")]
+            ])
+        
+        await message.answer(
+            status_text,
+            parse_mode="Markdown",
+            reply_markup=keyboard
+        )
+        
+    except Exception as e:
+        logger.error(f"Ошибка управления уведомлениями для пользователя {user_id}: {e}")
+        await message.answer(
+            "❌ **Произошла ошибка**\n\nНе удалось загрузить настройки уведомлений. Попробуйте позже.",
+            parse_mode="Markdown",
+            reply_markup=get_main_keyboard()
+        )
 
 @router.message(F.text == "ℹ️ Помощь")
 @error_handler
