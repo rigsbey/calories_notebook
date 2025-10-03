@@ -113,11 +113,10 @@ class ReminderService:
     async def should_send_reminder(self, user_id: int, reminder_type: ReminderType) -> bool:
         """Проверяет, нужно ли отправить напоминание"""
         try:
-            # Проверяем подписку (исключение для водных напоминаний - отправляем всем)
-            if reminder_type != ReminderType.WATER:
-                subscription = await self.subscription_service.get_user_subscription(user_id)
-                if subscription.get('type') == 'lite':
-                    return False
+            # Проверяем подписку - отправляем напоминания всем пользователям
+            # subscription = await self.subscription_service.get_user_subscription(user_id)
+            # if subscription.get('type') == 'lite':
+            #     return False
             
             # Получаем настройки пользователя
             reminders = await self.get_user_reminders(user_id)
@@ -254,11 +253,10 @@ class ReminderService:
             for user in users:
                 user_id = user['user_id']
                 
-                # Проверяем подписку (исключение для водных напоминаний - отправляем всем)
-                if reminder_type != ReminderType.WATER:
-                    subscription = await self.subscription_service.get_user_subscription(user_id)
-                    if subscription.get('type') == 'lite':
-                        continue
+                # Проверяем подписку - отправляем напоминания всем пользователям
+                # subscription = await self.subscription_service.get_user_subscription(user_id)
+                # if subscription.get('type') == 'lite':
+                #     continue
                 
                 # Проверяем настройки напоминаний
                 reminders = await self.get_user_reminders(user_id)
@@ -277,10 +275,10 @@ class ReminderService:
     async def send_motivational_message(self, bot, user_id: int) -> bool:
         """Отправляет мотивационное сообщение"""
         try:
-            # Проверяем подписку
-            subscription = await self.subscription_service.get_user_subscription(user_id)
-            if subscription.get('type') == 'lite':
-                return False
+            # Проверяем подписку - отправляем мотивационные сообщения всем пользователям
+            # subscription = await self.subscription_service.get_user_subscription(user_id)
+            # if subscription.get('type') == 'lite':
+            #     return False
             
             # Получаем данные пользователя
             goal = await self.personal_goals_service.get_user_goal(user_id)
