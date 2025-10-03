@@ -113,10 +113,11 @@ class ReminderService:
     async def should_send_reminder(self, user_id: int, reminder_type: ReminderType) -> bool:
         """Проверяет, нужно ли отправить напоминание"""
         try:
-            # Проверяем подписку (напоминания только для Pro)
-            subscription = await self.subscription_service.get_user_subscription(user_id)
-            if subscription.get('type') == 'lite':
-                return False
+            # Проверяем подписку (исключение для водных напоминаний - отправляем всем)
+            if reminder_type != ReminderType.WATER:
+                subscription = await self.subscription_service.get_user_subscription(user_id)
+                if subscription.get('type') == 'lite':
+                    return False
             
             # Получаем настройки пользователя
             reminders = await self.get_user_reminders(user_id)
@@ -253,10 +254,11 @@ class ReminderService:
             for user in users:
                 user_id = user['user_id']
                 
-                # Проверяем подписку
-                subscription = await self.subscription_service.get_user_subscription(user_id)
-                if subscription.get('type') == 'lite':
-                    continue
+                # Проверяем подписку (исключение для водных напоминаний - отправляем всем)
+                if reminder_type != ReminderType.WATER:
+                    subscription = await self.subscription_service.get_user_subscription(user_id)
+                    if subscription.get('type') == 'lite':
+                        continue
                 
                 # Проверяем настройки напоминаний
                 reminders = await self.get_user_reminders(user_id)
