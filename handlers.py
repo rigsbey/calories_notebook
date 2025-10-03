@@ -1398,6 +1398,170 @@ async def cancel_export_handler(callback: CallbackQuery):
         parse_mode="Markdown"
     )
 
+@router.callback_query(F.data == "disable_reminders")
+@error_handler
+async def disable_reminders_handler(callback: CallbackQuery):
+    """Обработчик отключения напоминаний"""
+    await callback.answer()
+    
+    user_id = callback.from_user.id
+    
+    try:
+        # Импортируем ReminderService
+        from services.reminder_service import ReminderService
+        reminder_service = ReminderService()
+        
+        # Получаем текущие настройки напоминаний
+        current_reminders = await reminder_service.get_user_reminders(user_id)
+        
+        # Отключаем все напоминания
+        updated_reminders = {
+            'water_reminders': False,
+            'meal_reminders': False,
+            'calorie_reminders': False,
+            'progress_reminders': False,
+            'motivation_reminders': False,
+            'reminder_timezone': current_reminders.get('reminder_timezone', 'UTC'),
+            'last_reminder_sent': current_reminders.get('last_reminder_sent')
+        }
+        
+        # Обновляем настройки
+        success = await reminder_service.update_user_reminders(user_id, updated_reminders)
+        
+        if success:
+            # Создаем клавиатуру для включения обратно
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔔 Включить напоминания", callback_data="enable_reminders")]
+            ])
+            
+            await callback.message.edit_text(
+                "🔕 **Напоминания отключены**\n\n"
+                "✅ Вы больше не будете получать:\n"
+                "• Напоминания о воде\n"
+                "• Напоминания о еде\n"
+                "• Напоминания о калориях\n"
+                "• Напоминания о прогрессе\n"
+                "• Мотивационные сообщения\n\n"
+                "💡 Вы можете включить их обратно в любое время:",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+            )
+        else:
+            await callback.message.edit_text(
+                "❌ **Ошибка отключения напоминаний**\n\n"
+                "Попробуйте позже или обратитесь в поддержку.",
+                parse_mode="Markdown"
+            )
+            
+    except Exception as e:
+        logger.error(f"Ошибка отключения напоминаний для пользователя {user_id}: {e}")
+        await callback.message.edit_text(
+            "❌ **Произошла ошибка**\n\n"
+            "Не удалось отключить напоминания. Попробуйте позже.",
+            parse_mode="Markdown"
+        )
+
+@router.callback_query(F.data == "enable_reminders")
+@error_handler
+async def enable_reminders_handler(callback: CallbackQuery):
+    """Обработчик включения напоминаний"""
+    await callback.answer()
+    
+    user_id = callback.from_user.id
+    
+    try:
+        # Импортируем ReminderService
+        from services.reminder_service import ReminderService
+        reminder_service = ReminderService()
+        
+        # Получаем текущие настройки напоминаний
+        current_reminders = await reminder_service.get_user_reminders(user_id)
+        
+        # Включаем все напоминания
+        updated_reminders = {
+            'water_reminders': True,
+            'meal_reminders': True,
+            'calorie_reminders': True,
+            'progress_reminders': True,
+            'motivation_reminders': True,
+            'reminder_timezone': current_reminders.get('reminder_timezone', 'UTC'),
+            'last_reminder_sent': current_reminders.get('last_reminder_sent')
+        }
+        
+        # Обновляем настройки
+        success = await reminder_service.update_user_reminders(user_id, updated_reminders)
+        
+        if success:
+            # Создаем клавиатуру для отключения
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🔕 Отключить напоминания", callback_data="disable_reminders")]
+            ])
+            
+            await callback.message.edit_text(
+                "🔔 **Напоминания включены**\n\n"
+                "✅ Теперь вы будете получать:\n"
+                "• Напоминания о воде (5 раз в день)\n"
+                "• Напоминания о еде (3 раза в день)\n"
+                "• Напоминания о калориях (вечером)\n"
+                "• Напоминания о прогрессе (вечером)\n"
+                "• Мотивационные сообщения (утром и вечером)\n\n"
+                "💡 Напоминания помогают поддерживать здоровые привычки!",
+                parse_mode="Markdown",
+                reply_markup=keyboard
+            )
+        else:
+            await callback.message.edit_text(
+                "❌ **Ошибка включения напоминаний**\n\n"
+                "Попробуйте позже или обратитесь в поддержку.",
+                parse_mode="Markdown"
+            )
+            
+    except Exception as e:
+        logger.error(f"Ошибка включения напоминаний для пользователя {user_id}: {e}")
+        await callback.message.edit_text(
+            "❌ **Произошла ошибка**\n\n"
+            "Не удалось включить напоминания. Попробуйте позже.",
+            parse_mode="Markdown"
+        )
+
+@router.callback_query(F.data == "analyze_food")
+@error_handler
+async def analyze_food_callback_handler(callback: CallbackQuery):
+    """Обработчик кнопки 'Анализ еды' из напоминаний"""
+    await callback.answer()
+    
+    await callback.message.answer(
+        "📸 Отправьте фото еды для анализа!\n\n"
+        "Я проанализирую состав, рассчитаю КБЖУ и определю витамины.",
+        reply_markup=get_main_keyboard()
+    )
+
+@router.callback_query(F.data == "daily_summary")
+@error_handler
+async def daily_summary_callback_handler(callback: CallbackQuery):
+    """Обработчик кнопки 'Итоги дня' из напоминаний"""
+    await callback.answer()
+    
+    from services.report_service import ReportService
+    report_service = ReportService()
+    
+    try:
+        await callback.message.answer("📊 Генерирую отчет за день...")
+        report = await report_service.generate_daily_report(callback.from_user.id)
+        await callback.message.answer(report, reply_markup=get_main_keyboard())
+    except Exception as e:
+        logger.error(f"Ошибка генерации дневного отчета: {e}")
+        await callback.message.answer("❌ Ошибка при генерации отчета. Попробуйте позже.", reply_markup=get_main_keyboard())
+
+@router.callback_query(F.data == "show_goals")
+@error_handler
+async def show_goals_callback_handler(callback: CallbackQuery):
+    """Обработчик кнопки 'Мои цели' из напоминаний"""
+    await callback.answer()
+    
+    # Используем существующий обработчик целей
+    await goals_handler(callback.message)
+
 @router.message(Command("status"))
 @error_handler
 async def status_handler(message: Message):
