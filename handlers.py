@@ -68,6 +68,76 @@ export_service = ExportService()
 # Создаем роутер
 router = Router()
 
+async def get_goal_progress_text(user_id: int, current_analysis_calories: int = 0) -> str:
+    """Получает текст прогресса по целям пользователя"""
+    try:
+        # Получаем цель пользователя
+        goal = await personal_goals_service.get_user_goal(user_id)
+        if not goal:
+            return ""
+        
+        # Получаем анализы за сегодня
+        today = datetime.now().strftime('%Y-%m-%d')
+        daily_analyses = await firebase_service.get_daily_analyses(user_id, today)
+        
+        # Агрегируем данные за день
+        total_nutrition = await firebase_service.aggregate_daily_nutrition(daily_analyses)
+        
+        # Добавляем текущий анализ
+        total_calories = total_nutrition.get('calories', 0) + current_analysis_calories
+        total_proteins = total_nutrition.get('proteins', 0)
+        total_fats = total_nutrition.get('fats', 0)
+        total_carbs = total_nutrition.get('carbs', 0)
+        
+        # Получаем целевые значения
+        daily_calories = goal.get('daily_calories', 2200)
+        macro_nutrients = goal.get('macro_nutrients', {})
+        target_proteins = macro_nutrients.get('proteins', 0)
+        target_fats = macro_nutrients.get('fats', 0)
+        target_carbs = macro_nutrients.get('carbs', 0)
+        
+        # Название цели
+        goal_type_names = {
+            "weight_loss": "📉 Похудение",
+            "weight_gain": "📈 Набор веса", 
+            "maintenance": "⚖️ Поддержание веса",
+            "muscle_gain": "💪 Набор мышц",
+            "health_improvement": "🏥 Улучшение здоровья"
+        }
+        goal_name = goal_type_names.get(goal['goal_type'], goal['goal_type'])
+        
+        # Рассчитываем проценты
+        calories_percent = min(100, (total_calories / daily_calories) * 100) if daily_calories > 0 else 0
+        proteins_percent = min(100, (total_proteins / target_proteins) * 100) if target_proteins > 0 else 0
+        fats_percent = min(100, (total_fats / target_fats) * 100) if target_fats > 0 else 0
+        carbs_percent = min(100, (total_carbs / target_carbs) * 100) if target_carbs > 0 else 0
+        
+        # Остаток до цели
+        remaining_calories = max(0, daily_calories - total_calories)
+        
+        # Формируем текст
+        progress_text = f"\n📊 **Прогресс к цели \"{goal_name}\":**\n"
+        progress_text += f"🔥 **Калории:** {total_calories} / {daily_calories} ккал ({calories_percent:.0f}%)\n"
+        
+        if target_proteins > 0:
+            progress_text += f"🥩 **Белки:** {total_proteins:.1f} / {target_proteins:.1f}г ({proteins_percent:.0f}%)\n"
+        if target_fats > 0:
+            progress_text += f"🥑 **Жиры:** {total_fats:.1f} / {target_fats:.1f}г ({fats_percent:.0f}%)\n"
+        if target_carbs > 0:
+            progress_text += f"🌾 **Углеводы:** {total_carbs:.1f} / {target_carbs:.1f}г ({carbs_percent:.0f}%)\n"
+        
+        # Мотивационное сообщение
+        if remaining_calories > 0:
+            progress_text += f"\n💪 **Осталось:** {remaining_calories} ккал до цели!"
+        elif total_calories >= daily_calories:
+            progress_text += f"\n🎉 **Цель достигнута!** Вы набрали {total_calories} ккал"
+        
+        return progress_text
+        
+    except Exception as e:
+        logger.error(f"Ошибка расчета прогресса по целям для пользователя {user_id}: {e}")
+        return ""
+
 # Обработчики команд с высоким приоритетом (должны быть ПЕРЕД FSM обработчиками)
 @router.message(Command("cancel"))
 @error_handler
@@ -360,6 +430,15 @@ async def unknown_weight_handler(callback: CallbackQuery, state: FSMContext):
         logger.warning(f"Ошибка отправки с Markdown: {e}")
         await callback.message.answer(final_response)
     
+    # Показываем прогресс по целям
+    try:
+        current_calories = analysis_result.get('calories', 0)
+        progress_text = await get_goal_progress_text(user_id, current_calories)
+        if progress_text:
+            await callback.message.answer(progress_text, parse_mode="Markdown")
+    except Exception as e:
+        logger.warning(f"Ошибка показа прогресса по целям: {e}")
+    
     # Удаляем временный файл
     try:
         os.remove(photo_path)
@@ -478,6 +557,15 @@ async def multi_dish_handler(callback: CallbackQuery, state: FSMContext):
     except Exception as e:
         logger.warning(f"Ошибка отправки с Markdown: {e}")
         await callback.message.answer(final_response)
+    
+    # Показываем прогресс по целям
+    try:
+        current_calories = analysis_result.get('calories', 0)
+        progress_text = await get_goal_progress_text(user_id, current_calories)
+        if progress_text:
+            await callback.message.answer(progress_text, parse_mode="Markdown")
+    except Exception as e:
+        logger.warning(f"Ошибка показа прогресса по целям: {e}")
     
     # Удаляем временный файл
     try:
@@ -614,6 +702,15 @@ async def weight_handler(message: Message, state: FSMContext):
             logger.warning(f"Ошибка отправки с Markdown: {e}")
             # Отправляем без форматирования если есть проблемы с Markdown
             await message.answer(final_response)
+        
+        # Показываем прогресс по целям
+        try:
+            current_calories = analysis_result.get('calories', 0)
+            progress_text = await get_goal_progress_text(user_id, current_calories)
+            if progress_text:
+                await message.answer(progress_text, parse_mode="Markdown")
+        except Exception as e:
+            logger.warning(f"Ошибка показа прогресса по целям: {e}")
         
         # Google Calendar отключен по запросу пользователя
         # await message.answer("📅 Google Calendar отключен")
