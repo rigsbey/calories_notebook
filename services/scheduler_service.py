@@ -107,48 +107,7 @@ class SchedulerService:
     async def _add_reminder_jobs(self):
         """Добавляет задачи для напоминаний"""
         try:
-            # Напоминания о воде (каждый час с 9 до 21)
-            for hour in range(9, 22):
-                self.scheduler.add_job(
-                    self._send_water_reminders,
-                    CronTrigger(hour=hour, minute=0),
-                    id=f'water_reminders_{hour}',
-                    name=f'Напоминания о воде в {hour:02d}:00',
-                    replace_existing=True
-                )
-            
-            # Напоминания о еде (8:00, 13:00, 19:00)
-            meal_times = [(8, 0), (13, 0), (19, 0)]
-            for hour, minute in meal_times:
-                self.scheduler.add_job(
-                    self._send_meal_reminders,
-                    CronTrigger(hour=hour, minute=minute),
-                    id=f'meal_reminders_{hour}_{minute}',
-                    name=f'Напоминания о еде в {hour:02d}:{minute:02d}',
-                    replace_existing=True
-                )
-            
-            # Напоминания о лимите калорий (20:00)
-            self.scheduler.add_job(
-                self._send_calorie_reminders,
-                CronTrigger(hour=20, minute=0),
-                id='calorie_reminders_20_00',
-                name='Напоминания о лимите калорий в 20:00',
-                replace_existing=True
-            )
-            
-            # Мотивационные сообщения (7:00, 19:00)
-            motivation_times = [(7, 0), (19, 0)]
-            for hour, minute in motivation_times:
-                self.scheduler.add_job(
-                    self._send_motivation_reminders,
-                    CronTrigger(hour=hour, minute=minute),
-                    id=f'motivation_reminders_{hour}_{minute}',
-                    name=f'Мотивационные сообщения в {hour:02d}:{minute:02d}',
-                    replace_existing=True
-                )
-            
-            logger.info("Задачи напоминаний добавлены")
+            logger.info("Все напоминания отключены по запросу пользователя")
             
         except Exception as e:
             logger.error(f"Ошибка добавления задач напоминаний: {e}")
