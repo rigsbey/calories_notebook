@@ -70,17 +70,18 @@ def clean_temp_files(directory: str, max_age_hours: int = 24):
         logger.error(f"Ошибка при очистке временных файлов: {e}")
 
 def create_vitamin_bar(percentage: int) -> str:
-    """Создает цветной прогресс-бар для витамина"""
+    """Создает компактный текстовый прогресс-бар для витамина"""
+    total_slots = 10
+    
     if percentage <= 0:
-        return "⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜"
-    elif percentage >= 100:
-        return "🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩"
+        return "." * total_slots
+    if percentage >= 100:
+        return "●" * total_slots
     
-    # Рассчитываем количество заполненных блоков (максимум 10 блоков)
-    filled_blocks = int((percentage / 100) * 10)
-    empty_blocks = 10 - filled_blocks
+    filled_slots = max(1, int((percentage / 100) * total_slots))
+    empty_slots = total_slots - filled_slots
     
-    return "🟩" * filled_blocks + "⬜" * empty_blocks
+    return "●" * filled_slots + "." * empty_slots
 
 def get_vitamin_emoji(vitamin_name: str) -> str:
     """Возвращает эмодзи для витамина или минерала"""
